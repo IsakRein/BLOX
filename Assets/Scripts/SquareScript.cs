@@ -8,6 +8,8 @@ public class SquareScript : MonoBehaviour {
 
 	public GameObject Line;
 
+	public LineScript lineScript;
+
 	public Color[] setColor;
 	private int colorNum;
 
@@ -17,6 +19,7 @@ public class SquareScript : MonoBehaviour {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
 
 		Line = GameObject.Find ("LineHolder");
+		lineScript = Line.GetComponent<LineScript>();
 
 		colorNum = Random.Range (0, setColor.Length);
 		spriteRenderer.color = setColor [colorNum];
@@ -32,7 +35,12 @@ public class SquareScript : MonoBehaviour {
 
 	void OnTouchStay() {
 		int num = System.Convert.ToInt32 (gameObject.name);
-		Line.SendMessage ("AddSquare", num);
+
+		//SquareSend send = new SquareSend{ num, colorNum };  
+
+		//Line.SendMessage ("AddSquare", send);
+
+		lineScript.AddSquare (num, colorNum);
 	}
 
 	void OnTouchExit() {

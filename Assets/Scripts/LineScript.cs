@@ -16,14 +16,20 @@ public class LineScript : MonoBehaviour {
 
 	private float localScaleX;
 	private float localScaleY;
+	 
+	public Color[] setColor;
 
+	void Start() {
+		
+	}
+	
 	void Update () {
 		if (Input.touchCount > 0) {
 			
 		}
 	}
 
-	public void AddSquare(int squareNum) {
+	public void AddSquare(int squareNum, int colorNum) {
 		GameObject square;
 		GameObject square2;
 
@@ -33,73 +39,48 @@ public class LineScript : MonoBehaviour {
 		if (lastSquare == 0) {
 			circle = Instantiate (circlePrefab, transform) as GameObject;
 			circle.transform.position = square.transform.position;
-			lastSquare = squareNum;
-		}
-
-		else if (squareNum == lastSquare - Squares.Rows)
-		{
-			circle = Instantiate (circlePrefab, transform) as GameObject;
-			circle.transform.position = square.transform.position;
-
-			line = Instantiate (linePrefab, transform) as GameObject;
-			line.transform.position = square2.transform.position;
-			line.transform.localEulerAngles = new Vector3 (0, 0, 90);
+			circle.transform.localScale = new Vector3 (square.transform.lossyScale.x/3, square.transform.lossyScale.x/3, 1);
 
 			lastSquare = squareNum;
-
-
-		}
-
-		else if (squareNum == lastSquare - 1)
-		{
-			circle = Instantiate (circlePrefab, transform) as GameObject;
-			circle.transform.position = square.transform.position;
-
-			line = Instantiate (linePrefab, transform) as GameObject;
-			line.transform.position = square2.transform.position;
-			line.transform.localEulerAngles = new Vector3 (0, 0, 180);
-
-			lastSquare = squareNum;
-		}
-
-		else if (squareNum == lastSquare + 1)
-		{
-			circle = Instantiate (circlePrefab, transform) as GameObject;
-			circle.transform.position = square.transform.position;
-
-			line = Instantiate (linePrefab, transform) as GameObject;
-			line.transform.position = square2.transform.position;
-			line.transform.localEulerAngles = new Vector3 (0, 0, 0);
-
-			lastSquare = squareNum;
-		}
-
-		else if (squareNum == lastSquare + Squares.Rows)
-		{
-			circle = Instantiate (circlePrefab, transform) as GameObject;
-			circle.transform.position = square.transform.position;
-
-			line = Instantiate (linePrefab, transform) as GameObject;
-			line.transform.position = square2.transform.position;
-			line.transform.localEulerAngles = new Vector3 (0, 0, 270);
-
-			foreach (Transform child in line.transform)
-			{
-				if (child.name == "Square") {
-					lineChild = child.gameObject;
+		} else {
+			if (square2.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) {
+				if (squareNum == lastSquare - Squares.Rows) {
+					DrawLine (square, square2, squareNum, 90);
+				} else if (squareNum == lastSquare - 1) {
+					DrawLine (square, square2, squareNum, 180);
+				} else if (squareNum == lastSquare + 1) {
+					DrawLine (square, square2, squareNum, 0);
+				} else if (squareNum == lastSquare + Squares.Rows) {
+					DrawLine (square, square2, squareNum, 270);
 				}
-			}	
-
-			localScaleX = square.transform.lossyScale.x;
-			localScaleY = circle.transform.lossyScale.y;
-
-			lineChild.transform.localPosition = new Vector2(square.transform.lossyScale.x/2, 0);
-
-			lineChild.transform.localScale = new Vector3 (localScaleX, 0.2f, 1);
-
-
-			lastSquare = squareNum;
+			}
 		}
 	}
-		
+
+	void DrawLine(GameObject square, GameObject square2, int squareNum, float rotation) 
+	{
+		circle = Instantiate (circlePrefab, transform) as GameObject;
+		circle.transform.position = square.transform.position;
+
+		line = Instantiate (linePrefab, transform) as GameObject;
+		line.transform.position = square2.transform.position;
+		line.transform.localEulerAngles = new Vector3 (0, 0, rotation);
+
+		foreach (Transform child in line.transform)
+		{
+			if (child.name == "Square") {
+				lineChild = child.gameObject;
+			}
+		}	
+
+		localScaleX = (square.transform.lossyScale.x * 10)/9f;
+		localScaleY = (circle.transform.lossyScale.y * 10)/9f;
+
+		lineChild.transform.localPosition = new Vector2(((square.transform.lossyScale.x/2) * 10)/9f, 0);
+
+		lineChild.transform.localScale = new Vector3 (localScaleX, 0.2f, 1);
+
+
+		lastSquare = squareNum;
+	}
 }
