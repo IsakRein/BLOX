@@ -32,12 +32,13 @@ public class Game : MonoBehaviour {
 			yPos = -i + ((Rows + 1f) / 2); 
 
 			for (int j = 1; j <= Rows; j++) {
-
 				square = Instantiate (squarePrefab, transform) as GameObject; 
+
 				xPos = j - ((Rows + 1f) / 2); 
 				square.transform.localPosition = new Vector2 (xPos, yPos);
 
 				square.name = "" + (j + ((i - 1) * Rows));
+
 				transform.localScale = new Vector3 (scale, scale);
 			}
 		}

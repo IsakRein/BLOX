@@ -1,13 +1,14 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class SquareScript : MonoBehaviour {
 
-	public Color color1;
-	public Color color2;
+	public GameObject Line;
 
-	public Color[] color;
+	public Color[] setColor;
 	private int colorNum;
 
 	public SpriteRenderer spriteRenderer;
@@ -15,23 +16,26 @@ public class SquareScript : MonoBehaviour {
 	void Start () {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
 
-		colorNum = Random.Range (0, 3);
-		spriteRenderer.color = color [colorNum];
+		Line = GameObject.Find ("LineHolder");
+
+		colorNum = Random.Range (0, setColor.Length);
+		spriteRenderer.color = setColor [colorNum];
 	}
 
 	void OnTouchDown() {
-		gameObject.SetActive (false);
+		
 	}
-
+	
 	void OnTouchUp() {
-		spriteRenderer.color = color1;
-	}
+
+	}	
 
 	void OnTouchStay() {
-		spriteRenderer.color = color2;
+		int num = System.Convert.ToInt32 (gameObject.name);
+		Line.SendMessage ("AddSquare", num);
 	}
 
 	void OnTouchExit() {
-		spriteRenderer.color = color2;
+		
 	}
 }
