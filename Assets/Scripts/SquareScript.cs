@@ -36,10 +36,6 @@ public class SquareScript : MonoBehaviour {
 	void OnTouchStay() {
 		int num = System.Convert.ToInt32 (gameObject.name);
 
-		//SquareSend send = new SquareSend{ num, colorNum };  
-
-		//Line.SendMessage ("AddSquare", send);
-
 		lineScript.AddSquare (num, colorNum);
 	}
 
