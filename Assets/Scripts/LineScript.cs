@@ -190,14 +190,26 @@ public class LineScript : MonoBehaviour {
 
 		} else {	
 			if (square2.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color && !squareList.Contains(squareNum)) {
-				if (squareNum == lastSquare - Squares.Rows) {
+				int squarerows = Squares.Rows;
+
+				if (squareNum == lastSquare - squarerows) {
 					DrawLine (square, square2, squareNum, 90, colorNum);
-				} else if (squareNum == lastSquare - 1 && (squareNum % Squares.Rows != 0)) {
+				} else if (squareNum == lastSquare - 1 && (squareNum % squarerows != 0)) {
 					DrawLine (square, square2, squareNum, 180, colorNum);
-				} else if (squareNum == lastSquare + 1 && ((squareNum-1) % Squares.Rows != 0)) {
+				} else if (squareNum == lastSquare + 1 && ((squareNum - 1) % squarerows != 0)) {
 					DrawLine (square, square2, squareNum, 0, colorNum);
-				} else if (squareNum == lastSquare + Squares.Rows) {
+				} else if (squareNum == lastSquare + squarerows) {
 					DrawLine (square, square2, squareNum, 270, colorNum);
+				}
+
+				//squares more than one square away
+				else if (squareNum % squarerows == lastSquare % squarerows) {
+					bool drawOrNot = true;
+
+					for (int i = 0; i < ((Mathf.Abs(squareNum - lastSquare))/squarerows); i++) {
+
+
+					}
 				}
 			}
 		}
