@@ -7,6 +7,7 @@ public class LineScript : MonoBehaviour {
 
 	public GameObject square;
 	public GameObject square2;
+	public GameObject lastOkSquare;
 
 	public GameObject dragLine;
 	public GameObject dragCircle;
@@ -40,6 +41,8 @@ public class LineScript : MonoBehaviour {
 
 	private int lastDrawnSquare;
 
+	public List<int> squareList = new List<int>();
+
 	void Start() {
 		
 	}
@@ -66,10 +69,12 @@ public class LineScript : MonoBehaviour {
 					dragCircleSpr.color = setColor [currentColor];
 					dragLineSpr.color = setColor [currentColor];
 
+					lastOkSquare = GameObject.Find ("Game/Squares/" + lastSquare.ToString ());
+
 					newSquareInitialize = false;
 				}
 					
-				point1 = square.transform.position;
+				point1 = lastOkSquare.transform.position;
 				point2 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 				point2[2] = 0;
 
@@ -89,6 +94,11 @@ public class LineScript : MonoBehaviour {
 			if (updateInitialize == false) {
 				dragLine.SetActive (false);
 				dragCircle.SetActive (false);
+
+				RemoveLine ();
+				SwitchColor();
+				lastSquare = 0;
+				squareList.Clear ();
 
 				updateInitialize = true;
 			}
@@ -116,12 +126,13 @@ public class LineScript : MonoBehaviour {
 						dragCircleSpr.color = setColor [currentColor];
 						dragLineSpr.color = setColor [currentColor];
 
+						lastOkSquare = GameObject.Find ("Game/Squares/" + lastSquare.ToString ());
+
 						newSquareInitialize = false;
-						square = GameObject.Find ("Game/Squares/" + lastSquare.ToString ());
 					}
 
 
-					Vector3 point1 = square.transform.position;
+					Vector3 point1 = lastOkSquare.transform.position;
 					Vector3 point2 = Camera.main.ScreenToWorldPoint (Input.touches [0].position);
 					point2 [2] = 0;
 
@@ -141,6 +152,11 @@ public class LineScript : MonoBehaviour {
 				if (updateInitialize == false) {
 					dragLine.SetActive (false);
 					dragCircle.SetActive (false);
+
+					RemoveLine ();
+					SwitchColor();
+					lastSquare = 0;
+					squareList.Clear ();
 
 					updateInitialize = true;
 				}
@@ -162,24 +178,27 @@ public class LineScript : MonoBehaviour {
 			} else {
 				currentColor = colorNum + 1;
 			}
+
+			square.GetComponent<SquareScript>().colorNum = currentColor;
+
 			circle.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 
 			newSquareInitialize = true;
 				
 			lastSquare = squareNum;
-		} else {
-			if (square2.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) {
+			squareList.Add (squareNum);
+
+		} else {	
+			if (square2.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color && !squareList.Contains(squareNum)) {
 				if (squareNum == lastSquare - Squares.Rows) {
 					DrawLine (square, square2, squareNum, 90, colorNum);
-				} else if (squareNum == lastSquare - 1) {
+				} else if (squareNum == lastSquare - 1 && (squareNum % Squares.Rows != 0)) {
 					DrawLine (square, square2, squareNum, 180, colorNum);
-				} else if (squareNum == lastSquare + 1) {
+				} else if (squareNum == lastSquare + 1 && ((squareNum-1) % Squares.Rows != 0)) {
 					DrawLine (square, square2, squareNum, 0, colorNum);
 				} else if (squareNum == lastSquare + Squares.Rows) {
 					DrawLine (square, square2, squareNum, 270, colorNum);
 				}
-				lastSquare = squareNum;
-				lastDrawnSquare = squareNum;
 			}
 		}
 	}
@@ -213,10 +232,30 @@ public class LineScript : MonoBehaviour {
 		} else {
 			currentColor = colorNum + 1;
 		}
+			
+		square.GetComponent<SquareScript>().colorNum = currentColor;
 
 		circle.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 		lineChild.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 
+		lastDrawnSquare = squareNum;
+		lastSquare = squareNum;
+		squareList.Add (squareNum);
+
 		newSquareInitialize = true;
+	}
+
+	void RemoveLine() {
+		foreach (Transform child in transform) {
+			GameObject.Destroy(child.gameObject);
+		}
+	}
+
+	void SwitchColor() {
+		foreach (int square in squareList) {
+			GameObject squareToChange = GameObject.Find ("Game/Squares/" + square.ToString ());
+			//animate
+			squareToChange.GetComponent<SpriteRenderer>().color = setColor [currentColor];
+		}
 	}
 }
