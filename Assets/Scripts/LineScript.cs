@@ -43,8 +43,11 @@ public class LineScript : MonoBehaviour {
 
 	public List<int> squareList = new List<int>();
 
+	public AudioClip[] hits;
+	private AudioSource audio;
+
 	void Start() {
-		
+		audio = GetComponent<AudioSource> ();
 	}
 	
 	void Update () {
@@ -183,6 +186,9 @@ public class LineScript : MonoBehaviour {
 
 			circle.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 
+			audio.clip = hits [0];
+			audio.Play ();
+
 			newSquareInitialize = true;
 				
 			lastSquare = squareNum;
@@ -253,6 +259,12 @@ public class LineScript : MonoBehaviour {
 		lastDrawnSquare = squareNum;
 		lastSquare = squareNum;
 		squareList.Add (squareNum);
+
+		if (squareList.Count > 15) {
+			audio.PlayOneShot(hits [14]);
+		} else {
+			audio.PlayOneShot(hits [squareList.Count - 1]);
+		}
 
 		newSquareInitialize = true;
 	}
