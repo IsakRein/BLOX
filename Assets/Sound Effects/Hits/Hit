@@ -1,0 +1,13 @@
+FILE "C:\Users\isakr\Desktop\Hits\Hits.mp3" MP3
+  TRACK 01 AUDIO
+    REM NAME "description here_part1"
+    INDEX 01 00:07:49
+  TRACK 02 AUDIO
+    REM NAME "description here_part2"
+    INDEX 01 00:08:89
+  TRACK 03 AUDIO
+    REM NAME "description here_part3"
+    INDEX 01 00:09:09
+  TRACK 04 AUDIO
+    REM NAME "description here_part4"
+    INDEX 01 00:09:28
