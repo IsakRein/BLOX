@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LineScript : MonoBehaviour {
+
+	#region variables
 	public int lastSquare = 0;
 
 	public GameObject square;
@@ -44,10 +46,17 @@ public class LineScript : MonoBehaviour {
 	public List<int> squareList = new List<int>();
 
 	public AudioClip[] hits;
-	private AudioSource audio;
+	private AudioSource audioSource;
+
+	public int animationNumber;
+
+	public bool controlsEnabled = true;
+
+	#endregion
 
 	void Start() {
-		audio = GetComponent<AudioSource> ();
+		audioSource = GetComponent<AudioSource> ();
+		controlsEnabled = true;
 	}
 	
 	void Update () {
@@ -55,7 +64,7 @@ public class LineScript : MonoBehaviour {
 		#if UNITY_EDITOR
 		isOnMobile = false;
 
-		if (Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)) {
+		if ((Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)) && controlsEnabled) {
 			if (lastSquare != 0) {
 				if (updateInitialize == true) {
 					square2 = GameObject.Find ("Game/Squares/" + lastSquare.ToString ());
@@ -100,8 +109,6 @@ public class LineScript : MonoBehaviour {
 
 				RemoveLine ();
 				SwitchColor();
-				lastSquare = 0;
-				squareList.Clear ();
 
 				updateInitialize = true;
 			}
@@ -111,7 +118,7 @@ public class LineScript : MonoBehaviour {
 		#endif
 
 		if (isOnMobile) {
-			if (Input.touchCount > 0) {
+			if (Input.touchCount > 0 && controlsEnabled) {
 				if (lastSquare != 0) {
 					if (updateInitialize == true) {
 						square2 = GameObject.Find ("Game/Squares/" + lastSquare.ToString ());
@@ -158,8 +165,6 @@ public class LineScript : MonoBehaviour {
 
 					RemoveLine ();
 					SwitchColor();
-					lastSquare = 0;
-					squareList.Clear ();
 
 					updateInitialize = true;
 				}
@@ -167,11 +172,13 @@ public class LineScript : MonoBehaviour {
 		}
 	}
 
-	public void AddSquare(int squareNum, int colorNum) {
-		square = GameObject.Find ("Game/Squares/" + squareNum.ToString());
-		square2 = GameObject.Find ("Game/Squares/" + lastSquare.ToString());
-
+	public void AddSquare(int squareNum, int colorNum)
+	{
+		#region close square
 		if (lastSquare == 0) {
+			square = GameObject.Find ("Game/Squares/" + squareNum.ToString());
+			square2 = GameObject.Find ("Game/Squares/" + lastSquare.ToString());
+
 			circle = Instantiate (circlePrefab, transform) as GameObject;
 			circle.transform.position = square.transform.position;
 			circle.transform.localScale = new Vector3 (square.transform.lossyScale.x*1.5f, square.transform.lossyScale.x*1.5f, 1);
@@ -184,44 +191,265 @@ public class LineScript : MonoBehaviour {
 
 			square.GetComponent<SquareScript>().colorNum = currentColor;
 
+
 			circle.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 
-			audio.clip = hits [0];
-			audio.Play ();
+			audioSource.PlayOneShot(hits [0]);
 
 			newSquareInitialize = true;
 				
 			lastSquare = squareNum;
 			squareList.Add (squareNum);
 
-		} else {	
+		} 
+		#endregion
+
+		#region next squares
+		else if (lastSquare != squareNum) {	
+			square = GameObject.Find ("Game/Squares/" + squareNum.ToString());
+			square2 = GameObject.Find ("Game/Squares/" + lastSquare.ToString());
+
 			if (square2.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color && !squareList.Contains(squareNum)) {
 				int squarerows = Squares.Rows;
+				#region squares close
 
+				#region up
 				if (squareNum == lastSquare - squarerows) {
-					DrawLine (square, square2, squareNum, 90, colorNum);
-				} else if (squareNum == lastSquare - 1 && (squareNum % squarerows != 0)) {
-					DrawLine (square, square2, squareNum, 180, colorNum);
-				} else if (squareNum == lastSquare + 1 && ((squareNum - 1) % squarerows != 0)) {
-					DrawLine (square, square2, squareNum, 0, colorNum);
-				} else if (squareNum == lastSquare + squarerows) {
-					DrawLine (square, square2, squareNum, 270, colorNum);
-				}
+					DrawLine (square, square2, squareNum, 90);
 
-				//squares more than one square away
-				else if (squareNum % squarerows == lastSquare % squarerows) {
-					bool drawOrNot = true;
-
-					for (int i = 0; i < ((Mathf.Abs(squareNum - lastSquare))/squarerows); i++) {
-
-
+					if (squareList.Count < 15) {
+						audioSource.PlayOneShot(hits [squareList.Count - 1]);	
 					}
+					else {
+						audioSource.PlayOneShot(hits [14]);
+					}	
+				} 
+				#endregion
+
+				#region left
+				else if (squareNum == lastSquare - 1 && (squareNum % squarerows != 0)) {
+					DrawLine (square, square2, squareNum, 180);
+
+					if (squareList.Count < 15) {
+						audioSource.PlayOneShot(hits [squareList.Count - 1]);	
+					}
+					else {
+						audioSource.PlayOneShot(hits [14]);
+					}	
 				}
+				#endregion
+
+				#region right
+				else if (squareNum == lastSquare + 1 && ((squareNum - 1) % squarerows != 0)) {
+					DrawLine (square, square2, squareNum, 0);
+
+					if (squareList.Count < 15) {
+						audioSource.PlayOneShot(hits [squareList.Count - 1]);	
+					}
+					else {
+						audioSource.PlayOneShot(hits [14]);
+					}	
+				} 
+				#endregion
+
+				#region down
+				else if (squareNum == lastSquare + squarerows) {
+					DrawLine (square, square2, squareNum, 270);
+
+					if (squareList.Count < 15) {
+						audioSource.PlayOneShot(hits [squareList.Count - 1]);	
+					}
+					else {
+						audioSource.PlayOneShot(hits [14]);
+					}		
+				}
+				#endregion
+
+				#endregion
+
+				#region squares far
+				#region up and down
+				else if (squareNum % squarerows == lastSquare % squarerows) {
+					#region up
+					if (squareNum < lastSquare) {
+						bool draw = true;
+						for (int i = 0; i < ((Mathf.Abs(squareNum - lastSquare))/squarerows); i++) {
+							if (draw) {
+								int tempSquareNum = lastSquare - ((i + 1) * squarerows);
+								GameObject tempSquare = GameObject.Find ("Game/Squares/" + (tempSquareNum).ToString ());
+								if ((tempSquare.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) && !squareList.Contains (tempSquareNum)) {
+									draw = true;
+								} else {
+									draw = false;
+								}
+							}
+						}
+
+						if (draw) {
+							int loopLength = (Mathf.Abs (squareNum - lastSquare)) / squarerows;
+							int currentLastSquare = lastSquare;
+
+							for (int i = 0; i < loopLength; i++) {
+								int squareCloseNum = currentLastSquare - ((i) * squarerows);
+								int squareFarNum = currentLastSquare - ((i + 1) * squarerows);
+
+								GameObject SquareClose = GameObject.Find ("Game/Squares/" + squareCloseNum.ToString ());
+								GameObject SquareFar = GameObject.Find ("Game/Squares/" + squareFarNum.ToString ());
+								DrawLine (SquareFar, SquareClose, squareCloseNum, 90);
+									
+								lastSquare = squareFarNum;
+							}
+
+							squareList.Add (lastSquare);
+						
+							if (squareList.Count < 15) {
+								audioSource.PlayOneShot(hits [squareList.Count - 1]);	
+							}
+							else {
+								audioSource.PlayOneShot(hits [14]);
+							}	
+						}				
+					}
+					#endregion
+
+					#region down
+					else if (squareNum > lastSquare) {
+						bool draw = true;
+						for (int i = 0; i < ((Mathf.Abs(lastSquare - squareNum))/squarerows); i++) {
+							if (draw) {
+								int tempSquareNum = lastSquare + ((i + 1) * squarerows);
+								GameObject tempSquare = GameObject.Find ("Game/Squares/" + (tempSquareNum).ToString ());
+								if ((tempSquare.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) && !squareList.Contains (tempSquareNum)) {
+									draw = true;
+								} else {
+									draw = false;
+								}
+							}
+						}
+							
+						if (draw) {
+							int loopLength = (Mathf.Abs (lastSquare - squareNum)) / squarerows;
+							int currentLastSquare = lastSquare;
+
+							for (int i = 0; i < loopLength; i++) {
+								int squareCloseNum = currentLastSquare + ((i) * squarerows);
+								int squareFarNum = currentLastSquare + ((i + 1) * squarerows);
+
+								GameObject SquareClose = GameObject.Find ("Game/Squares/" + squareCloseNum.ToString ());
+								GameObject SquareFar = GameObject.Find ("Game/Squares/" + squareFarNum.ToString ());
+								DrawLine (SquareFar, SquareClose, squareCloseNum, 270);
+
+								lastSquare = squareFarNum;
+							}
+
+							squareList.Add (lastSquare);
+
+							if (squareList.Count < 15) {
+								audioSource.PlayOneShot(hits [squareList.Count - 1]);	
+							}
+							else {
+								audioSource.PlayOneShot(hits [14]);
+							}		
+						}		
+					}
+					#endregion
+				}
+				#endregion
+				#region left and right
+				else if (Mathf.Ceil((squareNum - 0.001F) / squarerows) == Mathf.Ceil((lastSquare - 0.001F) / squarerows))
+				{
+					#region left
+					if (squareNum < lastSquare) {
+						bool draw = true;
+						for (int i = 0; i < (Mathf.Abs(squareNum - lastSquare)); i++) {
+							if (draw) {
+								int tempSquareNum = lastSquare - (i + 1);
+								GameObject tempSquare = GameObject.Find ("Game/Squares/" + (tempSquareNum).ToString ());
+								if ((tempSquare.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) && !squareList.Contains (tempSquareNum)) {
+									draw = true;
+								} else {
+									draw = false;
+								}
+							}
+						}
+
+						if (draw) {							
+							int loopLength = Mathf.Abs (squareNum - lastSquare);
+							int currentLastSquare = lastSquare;
+
+							for (int i = 0; i < loopLength; i++) {
+								int squareCloseNum = currentLastSquare - i;
+								int squareFarNum = currentLastSquare - (i + 1);
+
+								GameObject SquareClose = GameObject.Find ("Game/Squares/" + squareCloseNum.ToString ());
+								GameObject SquareFar = GameObject.Find ("Game/Squares/" + squareFarNum.ToString ());
+								DrawLine (SquareFar, SquareClose, squareCloseNum, 180);
+
+								lastSquare = squareFarNum;
+							}
+
+							squareList.Add (lastSquare);
+
+							if (squareList.Count < 15) {
+								audioSource.PlayOneShot(hits [squareList.Count - 1]);	
+							}
+							else {
+								audioSource.PlayOneShot(hits [14]);
+							}	
+						}				
+					}
+					#endregion
+
+					#region right
+					else if (squareNum > lastSquare) {
+						bool draw = true;
+						for (int i = 0; i < (Mathf.Abs(lastSquare - squareNum)); i++) {
+							if (draw) {
+								int tempSquareNum = lastSquare + (i + 1);
+								GameObject tempSquare = GameObject.Find ("Game/Squares/" + (tempSquareNum).ToString ());
+								if ((tempSquare.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) && !squareList.Contains (tempSquareNum)) {
+									draw = true;
+								} else {
+									draw = false;
+								}
+							}
+						}
+
+						if (draw) {
+							int loopLength = Mathf.Abs (lastSquare - squareNum);
+							int currentLastSquare = lastSquare;
+
+							for (int i = 0; i < loopLength; i++) {
+								int squareCloseNum = currentLastSquare + (i);
+								int squareFarNum = currentLastSquare + (i + 1);
+
+								GameObject SquareClose = GameObject.Find ("Game/Squares/" + squareCloseNum.ToString ());
+								GameObject SquareFar = GameObject.Find ("Game/Squares/" + squareFarNum.ToString ());
+								DrawLine (SquareFar, SquareClose, squareCloseNum, 0);
+
+								lastSquare = squareFarNum;
+							}
+
+							squareList.Add (lastSquare);
+
+							if (squareList.Count < 15) {
+								audioSource.PlayOneShot(hits [squareList.Count - 1]);	
+							}
+							else {
+								audioSource.PlayOneShot(hits [14]);
+							}	
+						}		
+					}
+					#endregion
+				}
+				#endregion
+				#endregion
 			}
 		}
+		#endregion
 	}
 
-	void DrawLine(GameObject square, GameObject square2, int squareNum, float rotation, int colorNum) 
+	void DrawLine(GameObject square, GameObject square2, int squareNum, float rotation) 
 	{
 		circle = Instantiate (circlePrefab, transform) as GameObject;
 		circle.transform.position = square.transform.position;
@@ -245,12 +473,6 @@ public class LineScript : MonoBehaviour {
 
 		lineChild.transform.localScale = new Vector3 (localScaleX, localScaleY, 1);
 
-		if (colorNum == setColor.Length-1) {
-			currentColor = 0;
-		} else {
-			currentColor = colorNum + 1;
-		}
-			
 		square.GetComponent<SquareScript>().colorNum = currentColor;
 
 		circle.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
@@ -258,12 +480,8 @@ public class LineScript : MonoBehaviour {
 
 		lastDrawnSquare = squareNum;
 		lastSquare = squareNum;
-		squareList.Add (squareNum);
-
-		if (squareList.Count > 15) {
-			audio.PlayOneShot(hits [14]);
-		} else {
-			audio.PlayOneShot(hits [squareList.Count - 1]);
+		if (!squareList.Contains (squareNum)) {
+			squareList.Add (squareNum);
 		}
 
 		newSquareInitialize = true;
@@ -275,11 +493,18 @@ public class LineScript : MonoBehaviour {
 		}
 	}
 
-	void SwitchColor() {
-		foreach (int square in squareList) {
-			GameObject squareToChange = GameObject.Find ("Game/Squares/" + square.ToString ());
-			//animate
-			squareToChange.GetComponent<SpriteRenderer>().color = setColor [currentColor];
+	public void SwitchColor() {
+		if (animationNumber < squareList.Count) {
+			GameObject squareToChange = GameObject.Find ("Game/Squares/" + squareList [animationNumber].ToString ());
+			squareToChange.GetComponent<Animator> ().SetTrigger ("Trigger");
+			squareToChange.GetComponent<SquareScript> ().colorNum = currentColor;
+			animationNumber = animationNumber + 1;
+			controlsEnabled = false;
+		} else {
+			animationNumber = 0;
+			lastSquare = 0;
+			squareList.Clear ();
+			controlsEnabled = true;
 		}
 	}
 }

@@ -44,4 +44,12 @@ public class SquareScript : MonoBehaviour {
 	void OnTouchExit() {
 		
 	}
+
+	void TriggerNextSquare () {
+		lineScript.SwitchColor ();
+	}
+
+	void ChangeColor() {
+		spriteRenderer.color = setColor [colorNum];
+	}
 }
