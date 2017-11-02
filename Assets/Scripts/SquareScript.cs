@@ -15,6 +15,21 @@ public class SquareScript : MonoBehaviour {
 
 	public SpriteRenderer spriteRenderer;
 
+	private bool isOnMobile = true;
+
+	public bool touchSwitch = true;
+
+	public bool hoverSwitch = false;
+
+	public bool hoverSwitch2 = false;
+
+	[Space]
+
+	public bool isHovering = false;
+	public int counter = 0;
+
+
+
 	void Start () {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
 
@@ -25,25 +40,71 @@ public class SquareScript : MonoBehaviour {
 
 		colorNum = Random.Range (0, setColor.Length);
 		spriteRenderer.color = setColor [colorNum];
+
+		isHovering = false;
+
+		touchSwitch = false;
+		hoverSwitch = false;
+		hoverSwitch2 = true;
 	}
+
+
+	void Update () {
+		if (isHovering) {
+			if (touchSwitch) {
+				hoverSwitch2 = !hoverSwitch2;
+				touchSwitch = false;
+
+				if (hoverSwitch2) {
+					hoverSwitch = !hoverSwitch;
+				}
+			} else {
+				hoverSwitch = false;
+			}
+		} 
+		else {
+			touchSwitch = true;
+		}
+
+		#if UNITY_EDITOR
+		isOnMobile = false;
+
+		if (!(Input.GetMouseButton(0) || Input.GetMouseButtonDown(0))) {
+			touchSwitch = false;
+			hoverSwitch = false;
+			hoverSwitch2 = true;		
+		}
+		#endif
+
+		if (isOnMobile) {
+			if (Input.touchCount == 0) {
+				touchSwitch = false;
+				hoverSwitch = false;
+				hoverSwitch2 = true;
+			}
+		}
+	}
+
 
 	void OnTouchDown() {
 		
 	}
 	
 	void OnTouchUp() {
-		
+		isHovering = false;
 	}	
 
 	void OnTouchStay() {
 		int num = System.Convert.ToInt32 (gameObject.name);
+		lineScript.AddSquare (num, colorNum, hoverSwitch, hoverSwitch2);
 
-		lineScript.AddSquare (num, colorNum);
+		isHovering = true;
 	}
 
 	void OnTouchExit() {
-		
+		isHovering = false;
 	}
+
 
 	void TriggerNextSquare () {
 		lineScript.SwitchColor ();
@@ -51,5 +112,13 @@ public class SquareScript : MonoBehaviour {
 
 	void ChangeColor() {
 		spriteRenderer.color = setColor [colorNum];
+	}
+
+	void ControlSwitch() {
+		lineScript.EnableControllers ();
+	}
+
+	void PlaySound() {
+		lineScript.PlaySound ();
 	}
 }
