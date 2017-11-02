@@ -17,18 +17,17 @@ public class SquareScript : MonoBehaviour {
 
 	private bool isOnMobile = true;
 
-	public bool touchSwitch = true;
+	[Space]
+
+	public bool touchSwitch = false;
 
 	public bool hoverSwitch = false;
-
-	public bool hoverSwitch2 = false;
 
 	[Space]
 
 	public bool isHovering = false;
-	public int counter = 0;
 
-
+	public bool addSquareHasBeenCalled = false;
 
 	void Start () {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
@@ -41,28 +40,24 @@ public class SquareScript : MonoBehaviour {
 		colorNum = Random.Range (0, setColor.Length);
 		spriteRenderer.color = setColor [colorNum];
 
+		addSquareHasBeenCalled = false;
+
 		isHovering = false;
 
 		touchSwitch = false;
 		hoverSwitch = false;
-		hoverSwitch2 = true;
 	}
 
 
 	void Update () {
 		if (isHovering) {
-			if (touchSwitch) {
-				hoverSwitch2 = !hoverSwitch2;
-				touchSwitch = false;
-
-				if (hoverSwitch2) {
-					hoverSwitch = !hoverSwitch;
-				}
-			} else {
-				hoverSwitch = false;
-			}
+//			if (touchSwitch) {
+//				hoverSwitch = !hoverSwitch;
+//				touchSwitch = false;
+//			}
 		} 
 		else {
+			addSquareHasBeenCalled = false;
 			touchSwitch = true;
 		}
 
@@ -70,17 +65,19 @@ public class SquareScript : MonoBehaviour {
 		isOnMobile = false;
 
 		if (!(Input.GetMouseButton(0) || Input.GetMouseButtonDown(0))) {
+			addSquareHasBeenCalled = false;
+
 			touchSwitch = false;
-			hoverSwitch = false;
-			hoverSwitch2 = true;		
+			hoverSwitch = false;		
 		}
 		#endif
 
 		if (isOnMobile) {
+			addSquareHasBeenCalled = false;
+
 			if (Input.touchCount == 0) {
 				touchSwitch = false;
 				hoverSwitch = false;
-				hoverSwitch2 = true;
 			}
 		}
 	}
@@ -95,10 +92,15 @@ public class SquareScript : MonoBehaviour {
 	}	
 
 	void OnTouchStay() {
-		int num = System.Convert.ToInt32 (gameObject.name);
-		lineScript.AddSquare (num, colorNum, hoverSwitch, hoverSwitch2);
-
 		isHovering = true;
+
+
+		if (addSquareHasBeenCalled == false) {
+			int num = System.Convert.ToInt32 (gameObject.name);
+			lineScript.AddSquare (num, colorNum, hoverSwitch);
+
+			addSquareHasBeenCalled = true;
+		}
 	}
 
 	void OnTouchExit() {
