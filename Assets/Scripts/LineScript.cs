@@ -255,11 +255,11 @@ public class LineScript : MonoBehaviour {
 
 						squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
-						if (squareList.Count < 15) {
+						if (squareList.Count < hits.Length) {
 							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 						} else {
-							audioSource.PlayOneShot (hits [14]);
-						}	
+							audioSource.PlayOneShot (hits [hits.Length-1]);
+						}		
 					}
 					#endregion
 
@@ -534,11 +534,12 @@ public class LineScript : MonoBehaviour {
 						lastSquare = squareList [squareList.Count - 1];
 					} 
 
-					if (squareList.Count < 15) {
+					if (squareList.Count < hits.Length) {
 						audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 					} else {
-						audioSource.PlayOneShot (hits [14]);
-					}	
+						audioSource.PlayOneShot (hits [hits.Length-1]);
+					}
+
 					if (squareList.Count == 1) {
 						GameObject finalCircle = GameObject.Find ("circle " + squareList [0].ToString ());
 						GameObject.Destroy (finalCircle);
