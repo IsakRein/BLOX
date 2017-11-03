@@ -62,9 +62,9 @@ public class SquareScript : MonoBehaviour {
 		#endif
 
 		if (isOnMobile) {
-			addSquareHasBeenCalled = false;
-
 			if (Input.touchCount == 0) {
+				addSquareHasBeenCalled = false;
+
 				hoverSwitch = false;
 			}
 		}
