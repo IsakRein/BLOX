@@ -41,8 +41,6 @@ public class LineScript : MonoBehaviour {
 	public SpriteRenderer dragLineSpr;
 	public SpriteRenderer dragCircleSpr;
 
-	private int lastDrawnSquare;
-
 	public List<int> squareList = new List<int>();
 
 	public AudioClip[] hits;
@@ -123,7 +121,6 @@ public class LineScript : MonoBehaviour {
 
 				RemoveLine ();
 				SwitchColor ();
-
 				updateInitialize = true;
 			}
 		}
@@ -176,9 +173,6 @@ public class LineScript : MonoBehaviour {
 					dragLine.SetActive (false);
 					dragCircle.SetActive (false);
 
-					RemoveLine ();
-					SwitchColor();
-
 					if (squareList.Count == 0) {
 						if (currentColor == 0) {
 							currentColor = setColor.Length - 1;
@@ -188,22 +182,21 @@ public class LineScript : MonoBehaviour {
 						}
 					}
 
+					RemoveLine ();
+					SwitchColor ();
 					updateInitialize = true;
 				}
 			}
 		}
 	}
 
-	void LateUpdate() {
-
-	}
-
 	public void AddSquare(int squareNum, int colorNum, bool hoverSwitch)
 	{ 
-		#region same square
+		if (controlsEnabled) {
+			#region same square
 		if (lastSquare == 0) {
 			square = GameObject.Find ("Game/Squares/" + squareNum.ToString ());
-			SquareScript squareScript = square.GetComponent<SquareScript>();
+			SquareScript squareScript = square.GetComponent<SquareScript> ();
 
 			circle = Instantiate (circlePrefab, transform) as GameObject;
 			circle.transform.position = square.transform.position;
@@ -229,10 +222,10 @@ public class LineScript : MonoBehaviour {
 		} 
 		#endregion
 
-		#region next squares
+			#region next squares
 		else if (lastSquare != squareNum && hoverSwitch == false) {	
 			square = GameObject.Find ("Game/Squares/" + squareNum.ToString ());
-			SquareScript squareScript = square.GetComponent<SquareScript>();
+			SquareScript squareScript = square.GetComponent<SquareScript> ();
 
 			lastSquareNum = squareNum;
 
@@ -250,10 +243,10 @@ public class LineScript : MonoBehaviour {
 
 					squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
-					if (squareList.Count < 15) {
+					if (squareList.Count < hits.Length) {
 						audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 					} else {
-						audioSource.PlayOneShot (hits [14]);
+						audioSource.PlayOneShot (hits [hits.Length-1]);
 					}	
 				} 
 				#endregion
@@ -278,10 +271,10 @@ public class LineScript : MonoBehaviour {
 
 					squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
-					if (squareList.Count < 15) {
+					if (squareList.Count < hits.Length) {
 						audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 					} else {
-						audioSource.PlayOneShot (hits [14]);
+						audioSource.PlayOneShot (hits [hits.Length-1]);
 					}	
 				} 
 				#endregion
@@ -292,11 +285,11 @@ public class LineScript : MonoBehaviour {
 
 					squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
-					if (squareList.Count < 15) {
+					if (squareList.Count < hits.Length) {
 						audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 					} else {
-						audioSource.PlayOneShot (hits [14]);
-					}		
+						audioSource.PlayOneShot (hits [hits.Length-1]);
+					}	
 				}
 				#endregion
 
@@ -334,17 +327,17 @@ public class LineScript : MonoBehaviour {
 								GameObject SquareFar = GameObject.Find ("Game/Squares/" + squareFarNum.ToString ());
 								DrawLine (SquareFar, SquareClose, squareFarNum, 90);
 
-								SquareScript squareScript2 = SquareFar.GetComponent<SquareScript>();
+								SquareScript squareScript2 = SquareFar.GetComponent<SquareScript> ();
 								squareScript2.hoverSwitch = !squareScript2.hoverSwitch;
 
 								lastSquare = squareFarNum;
 							}
 								
-							if (squareList.Count < 15) {
+							if (squareList.Count < hits.Length) {
 								audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 							} else {
-								audioSource.PlayOneShot (hits [14]);
-							}	
+								audioSource.PlayOneShot (hits [hits.Length-1]);
+							}
 						}				
 					}
 					#endregion
@@ -376,15 +369,16 @@ public class LineScript : MonoBehaviour {
 								GameObject SquareFar = GameObject.Find ("Game/Squares/" + squareFarNum.ToString ());
 								DrawLine (SquareFar, SquareClose, squareFarNum, 270);
 
-								SquareScript squareScript2 = SquareFar.GetComponent<SquareScript>();
-								squareScript2.hoverSwitch = !squareScript2.hoverSwitch;		lastSquare = squareFarNum;
+								SquareScript squareScript2 = SquareFar.GetComponent<SquareScript> ();
+								squareScript2.hoverSwitch = !squareScript2.hoverSwitch;
+								lastSquare = squareFarNum;
 							}
 
-							if (squareList.Count < 15) {
+							if (squareList.Count < hits.Length) {
 								audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 							} else {
-								audioSource.PlayOneShot (hits [14]);
-							}		
+								audioSource.PlayOneShot (hits [hits.Length-1]);
+							}
 						}		
 					}
 					#endregion
@@ -422,17 +416,17 @@ public class LineScript : MonoBehaviour {
 								GameObject SquareFar = GameObject.Find ("Game/Squares/" + squareFarNum.ToString ());
 								DrawLine (SquareFar, SquareClose, squareFarNum, 180);
 
-								SquareScript squareScript2 = SquareFar.GetComponent<SquareScript>();
+								SquareScript squareScript2 = SquareFar.GetComponent<SquareScript> ();
 								squareScript2.hoverSwitch = !squareScript2.hoverSwitch;
 
 								lastSquare = squareFarNum;
 							}
 								
-							if (squareList.Count < 15) {
+							if (squareList.Count < hits.Length) {
 								audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 							} else {
-								audioSource.PlayOneShot (hits [14]);
-							}	
+								audioSource.PlayOneShot (hits [hits.Length-1]);
+							}
 						}				
 					}
 					#endregion
@@ -464,17 +458,17 @@ public class LineScript : MonoBehaviour {
 								GameObject SquareFar = GameObject.Find ("Game/Squares/" + squareFarNum.ToString ());
 								DrawLine (SquareFar, SquareClose, squareFarNum, 0);
 
-								SquareScript squareScript2 = SquareFar.GetComponent<SquareScript>();
+								SquareScript squareScript2 = SquareFar.GetComponent<SquareScript> ();
 								squareScript2.hoverSwitch = !squareScript2.hoverSwitch;
 
 								lastSquare = squareFarNum;
 							}
 
-							if (squareList.Count < 15) {
+							if (squareList.Count < hits.Length) {
 								audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 							} else {
-								audioSource.PlayOneShot (hits [14]);
-							}	
+								audioSource.PlayOneShot (hits [hits.Length-1]);
+							}
 						}		
 					}
 					#endregion
@@ -487,23 +481,31 @@ public class LineScript : MonoBehaviour {
 		}
 		#endregion
 
-		#region regret
-		else if ((lastSquare == squareNum) && hoverSwitch == true) {
+			#region regret
+		else if ((lastSquare == squareNum) && hoverSwitch) {
 			square = GameObject.Find ("Game/Squares/" + squareNum.ToString ());
-			SquareScript squareScript = square.GetComponent<SquareScript>();
+			square2 = GameObject.Find ("Game/Squares/" + squareList [squareList.Count - 1].ToString ());
+
+			SquareScript squareScript = square.GetComponent<SquareScript> ();
 
 			GameObject circle = GameObject.Find ("circle " + lastSquare.ToString ());
 			GameObject line = GameObject.Find ("line " + lastSquare.ToString ());
 
-			GameObject.Destroy(circle);
-			GameObject.Destroy(line);
+			GameObject.Destroy (circle);
+			GameObject.Destroy (line);
+
+			if (squareList.Count < hits.Length) {
+				audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+			} else {
+				audioSource.PlayOneShot (hits [hits.Length-1]);
+			}
 
 			if (squareList.Count > 1) {
-				squareList.RemoveAt(squareList.Count - 1);
-				lastSquare = squareList[squareList.Count - 1];
+				squareList.RemoveAt (squareList.Count - 1);
+				lastSquare = squareList [squareList.Count - 1];
 
 			} else if (squareList.Count == 1) {
-				squareList.RemoveAt(0);
+				squareList.RemoveAt (0);
 				lastSquare = -1;
 
 				dragLine.SetActive (false);
@@ -515,8 +517,49 @@ public class LineScript : MonoBehaviour {
 			squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
 			newSquareInitialize = true;
+		} else if (squareList.Count > 1 && hoverSwitch) {
+			if ((squareNum == squareList [squareList.Count - 2])) {
+				GameObject square = GameObject.Find ("Game/Squares/" + squareList [squareList.Count - 1].ToString ());
+				square2 = GameObject.Find ("Game/Squares/" + squareList [squareList.Count - 1].ToString ());
+
+				SquareScript squareScript = square.GetComponent<SquareScript> ();
+
+				GameObject circle = GameObject.Find ("circle " + lastSquare.ToString ());
+				GameObject line = GameObject.Find ("line " + lastSquare.ToString ());
+
+				GameObject.Destroy (circle);
+				GameObject.Destroy (line);
+
+				if (squareList.Count > 1) {
+					squareList.RemoveAt (squareList.Count - 1);
+					lastSquare = squareList [squareList.Count - 1];
+				} 
+
+				if (squareList.Count < 15) {
+					audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+				} else {
+					audioSource.PlayOneShot (hits [14]);
+				}	
+				if (squareList.Count == 1) {
+					GameObject finalCircle = GameObject.Find ("circle " + squareList [0].ToString ());
+					GameObject.Destroy (finalCircle);
+
+					squareList.RemoveAt (0);
+					lastSquare = -1;
+
+					dragLine.SetActive (false);
+					dragCircle.SetActive (false);
+
+					controlsEnabled = false;
+				}
+
+				squareScript.hoverSwitch = !squareScript.hoverSwitch;
+
+				newSquareInitialize = true;
+			}
 		}
 		#endregion
+		}
 	}
 
 	void DrawLine(GameObject square, GameObject square2, int squareNum, float rotation) 
@@ -546,7 +589,6 @@ public class LineScript : MonoBehaviour {
 		lineChild.transform.localScale = new Vector3 (localScaleX, localScaleY, 1);
 		lineChild.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 
-		lastDrawnSquare = squareNum;
 		lastSquare = squareNum;
 
 		if (!squareList.Contains (squareNum)) {

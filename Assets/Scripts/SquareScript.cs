@@ -19,8 +19,6 @@ public class SquareScript : MonoBehaviour {
 
 	[Space]
 
-	public bool touchSwitch = false;
-
 	public bool hoverSwitch = false;
 
 	[Space]
@@ -44,22 +42,14 @@ public class SquareScript : MonoBehaviour {
 
 		isHovering = false;
 
-		touchSwitch = false;
 		hoverSwitch = false;
 	}
 
 
 	void Update () {
-		if (isHovering) {
-//			if (touchSwitch) {
-//				hoverSwitch = !hoverSwitch;
-//				touchSwitch = false;
-//			}
-		} 
-		else {
+		if (!isHovering) {
 			addSquareHasBeenCalled = false;
-			touchSwitch = true;
-		}
+		} 
 
 		#if UNITY_EDITOR
 		isOnMobile = false;
@@ -67,7 +57,6 @@ public class SquareScript : MonoBehaviour {
 		if (!(Input.GetMouseButton(0) || Input.GetMouseButtonDown(0))) {
 			addSquareHasBeenCalled = false;
 
-			touchSwitch = false;
 			hoverSwitch = false;		
 		}
 		#endif
@@ -76,7 +65,6 @@ public class SquareScript : MonoBehaviour {
 			addSquareHasBeenCalled = false;
 
 			if (Input.touchCount == 0) {
-				touchSwitch = false;
 				hoverSwitch = false;
 			}
 		}
