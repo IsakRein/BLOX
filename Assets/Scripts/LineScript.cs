@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LineScript : MonoBehaviour {
 
@@ -16,6 +17,18 @@ public class LineScript : MonoBehaviour {
 
 	private Vector3 point1;
 	private Vector3 point2;
+
+	[Space]
+	[Space]
+
+	public int score;
+	public Text scoreText;
+
+	public int movesLeft;
+	public Text movesLeftText;
+
+	[Space]
+	[Space]
 
 	public bool updateInitialize = true;
 	public bool newSquareInitialize = true;
@@ -61,6 +74,11 @@ public class LineScript : MonoBehaviour {
 	void Start() {
 		audioSource = GetComponent<AudioSource> ();
 		controlsEnabled = true;
+
+		score = 0;
+		scoreText.text = "" + score;
+
+		movesLeftText.text = "" + movesLeft;
 	}
 	
 	void Update () {
@@ -75,7 +93,7 @@ public class LineScript : MonoBehaviour {
 					dragLine.SetActive (true);
 					dragCircle.SetActive (true);
 
-					dragCircle.transform.localScale = new Vector3 (square2.transform.lossyScale.x*size, square.transform.lossyScale.x*size, 1);
+					dragCircle.transform.localScale = new Vector3 (square2.transform.lossyScale.x*size*10, square2.transform.lossyScale.x*size*10, 1);
 
 					updateInitialize = false;
 				}
@@ -101,7 +119,7 @@ public class LineScript : MonoBehaviour {
 
 				dragLine.transform.position = point1;
 				Vector2 direction = point2 - point1;
-				dragLine.transform.localScale = new Vector3(direction.magnitude*1.25f,dragCircle.transform.lossyScale.x/5f,1);
+				dragLine.transform.localScale = new Vector3(direction.magnitude*1.25f,dragCircle.transform.lossyScale.x/50f,1);
 			}
 		} 
 
@@ -136,7 +154,7 @@ public class LineScript : MonoBehaviour {
 						dragLine.SetActive (true);
 						dragCircle.SetActive (true);
 
-						dragCircle.transform.localScale = new Vector3 (square2.transform.lossyScale.x*size, square.transform.lossyScale.x*size, 1);
+						dragCircle.transform.localScale = new Vector3 (square2.transform.lossyScale.x*size*10, square2.transform.lossyScale.x*size*10, 1);
 
 						updateInitialize = false;
 					}
@@ -162,7 +180,7 @@ public class LineScript : MonoBehaviour {
 
 					dragLine.transform.position = point1;
 					Vector2 direction = point2 - point1;
-					dragLine.transform.localScale = new Vector3(direction.magnitude*1.25f,dragCircle.transform.lossyScale.x/5f,1);
+					dragLine.transform.localScale = new Vector3(direction.magnitude*1.25f,dragCircle.transform.lossyScale.x/50f,1);
 				}
 
 			}
@@ -199,7 +217,7 @@ public class LineScript : MonoBehaviour {
 				circle = Instantiate (circlePrefab, transform) as GameObject;
 				circle.transform.position = square.transform.position;
 				circle.name = "circle " + squareNum;
-				circle.transform.localScale = new Vector3 (square.transform.lossyScale.x * size, square.transform.lossyScale.x * size, 1);
+				circle.transform.localScale = new Vector3 (square.transform.lossyScale.x * size*10, square.transform.lossyScale.x * size*10, 1);
 
 				if (colorNum == setColor.Length - 1) {
 					currentColor = 0;
@@ -567,7 +585,7 @@ public class LineScript : MonoBehaviour {
 		circle = Instantiate (circlePrefab, transform) as GameObject;
 		circle.transform.position = square.transform.position;
 		circle.name = "circle " + squareNum;
-		circle.transform.localScale = new Vector3 (square.transform.lossyScale.x*size, square.transform.lossyScale.x*size, 1);
+		circle.transform.localScale = new Vector3 (square.transform.lossyScale.x*size*10, square.transform.lossyScale.x*size*10, 1);
 		circle.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 
 		line = Instantiate (linePrefab, transform) as GameObject;
@@ -583,7 +601,7 @@ public class LineScript : MonoBehaviour {
 		}	
 
 		localScaleX = (square.transform.lossyScale.x * 10)/9f;
-		localScaleY = (circle.transform.lossyScale.x/5f);
+		localScaleY = (circle.transform.lossyScale.x/50f);
 
 		lineChild.transform.localPosition = new Vector2(((square.transform.lossyScale.x/2) * 10)/9f, 0);
 		lineChild.transform.localScale = new Vector3 (localScaleX, localScaleY, 1);
@@ -610,11 +628,21 @@ public class LineScript : MonoBehaviour {
 			squareToChange.GetComponent<Animator> ().SetTrigger ("Trigger");
 			squareToChange.GetComponent<SquareScript> ().colorNum = currentColor;
 			animationNumber = animationNumber + 1;
+
+			score = score + 1;
+			scoreText.text = "" + score;
+
+			if (animationNumber == squareList.Count) {
+				movesLeft = movesLeft - 1;
+				movesLeftText.text = "" + movesLeft;
+			}
+
 			controlsEnabled = false;
 		} else {
 			animationNumber = 0;
 			lastSquare = 0;
 			squareList.Clear ();
+
 			controlsEnabled = true;
 			controlSwitch = true;
 		}
