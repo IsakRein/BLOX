@@ -13,7 +13,8 @@ public class SquareScript : MonoBehaviour {
 	public Color[] setColor;
 	public int colorNum;
 
-	public SpriteRenderer spriteRenderer;
+	private SpriteRenderer spriteRenderer;
+	private Animator animator;
 
 	private bool isOnMobile = true;
 
@@ -27,8 +28,11 @@ public class SquareScript : MonoBehaviour {
 
 	public bool addSquareHasBeenCalled = false;
 
-	void Start () {
+	public bool interactable = false;
+
+	void Start() {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
+		animator = gameObject.GetComponent<Animator> ();
 
 		Line = GameObject.Find ("LineHolder");
 		lineScript = Line.GetComponent<LineScript>();
@@ -43,6 +47,10 @@ public class SquareScript : MonoBehaviour {
 		isHovering = false;
 
 		hoverSwitch = false;
+
+		lineScript.AddToColorList (System.Convert.ToInt32 (gameObject.name), colorNum);
+
+		animator.SetTrigger ("OnEnable");
 	}
 
 
@@ -59,6 +67,7 @@ public class SquareScript : MonoBehaviour {
 
 			hoverSwitch = false;		
 		}
+
 		#endif
 
 		if (isOnMobile) {
@@ -69,7 +78,6 @@ public class SquareScript : MonoBehaviour {
 			}
 		}
 	}
-
 
 	void OnTouchDown() {
 		
@@ -83,7 +91,7 @@ public class SquareScript : MonoBehaviour {
 		isHovering = true;
 
 
-		if (addSquareHasBeenCalled == false) {
+		if (addSquareHasBeenCalled == false && interactable) {
 			int num = System.Convert.ToInt32 (gameObject.name);
 			lineScript.AddSquare (num, colorNum, hoverSwitch);
 
@@ -94,7 +102,6 @@ public class SquareScript : MonoBehaviour {
 	void OnTouchExit() {
 		isHovering = false;
 	}
-
 
 	void TriggerNextSquare () {
 		lineScript.SwitchColor ();
@@ -110,5 +117,9 @@ public class SquareScript : MonoBehaviour {
 
 	void PlaySound() {
 		lineScript.PlaySound ();
+	}
+
+	void MakeInteractable () {
+		interactable = true;
 	}
 }
