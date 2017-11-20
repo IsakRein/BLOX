@@ -4,19 +4,26 @@ using UnityEngine;
 
 public class CubeScript : MonoBehaviour {
 
+	private Transform parent;
+
+	void Start () {
+		parent = transform.parent;
+	}
+
+
 	void OnTouchDown() {
-		transform.parent.SendMessage("OnTouchDown", SendMessageOptions.DontRequireReceiver);
+		parent.SendMessage("OnTouchDown", SendMessageOptions.DontRequireReceiver);
 	}
 
 	void OnTouchUp() {
-		transform.parent.SendMessage("OnTouchUp", SendMessageOptions.DontRequireReceiver);
+		parent.SendMessage("OnTouchUp", SendMessageOptions.DontRequireReceiver);
 	}
 
 	void OnTouchStay() {
-		transform.parent.SendMessage("OnTouchStay", SendMessageOptions.DontRequireReceiver);
+		parent.SendMessage("OnTouchStay", SendMessageOptions.DontRequireReceiver);
 	}
 
 	void OnTouchExit() {
-		transform.parent.SendMessage("OnTouchExit", SendMessageOptions.DontRequireReceiver);
+		parent.SendMessage("OnTouchExit", SendMessageOptions.DontRequireReceiver);
 	}
 }
