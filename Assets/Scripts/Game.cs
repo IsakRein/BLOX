@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Game : MonoBehaviour {
 
+	[SerializeField]
+	private float totalWidth;
+
 	public GameObject squarePrefab;
 	GameObject square;
 
@@ -21,6 +24,10 @@ public class Game : MonoBehaviour {
 	}
 
 	void Start () {
+		foreach (Transform child in transform) {
+			GameObject.Destroy(child.gameObject);
+		}
+
 		GenerateGrid ();
 	}
 
@@ -29,7 +36,8 @@ public class Game : MonoBehaviour {
 			GameObject.Destroy(child.gameObject);
 		}
 
-		scale = 12*(Mathf.Pow((3.67f * Rows), -1.0f));
+		//scale = 12*(Mathf.Pow((3.67f * Rows), -1.0f));
+		scale = totalWidth/Rows;
 
 		for (int i = 1; i <= Rows; i++) {
 			yPos = -i + ((Rows + 1f) / 2); 
@@ -39,7 +47,6 @@ public class Game : MonoBehaviour {
 
 				xPos = j - ((Rows + 1f) / 2); 
 				square.transform.localPosition = new Vector2 (xPos, yPos);
-
 				square.name = "" + (j + ((i - 1) * Rows));
 
 				transform.localScale = new Vector3 (scale, scale);
