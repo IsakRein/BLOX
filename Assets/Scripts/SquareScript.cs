@@ -80,7 +80,15 @@ public class SquareScript : MonoBehaviour {
 	}
 
 	void OnTouchDown() {
-		
+		isHovering = true;
+
+
+		if (addSquareHasBeenCalled == false && interactable) {
+			int num = System.Convert.ToInt32 (gameObject.name);
+			lineScript.AddSquare (num, colorNum, hoverSwitch);
+
+			addSquareHasBeenCalled = true;
+		}
 	}
 	
 	void OnTouchUp() {

@@ -87,6 +87,8 @@ public class LineScript : MonoBehaviour {
 	void Start() {
 		audioSource = GetComponent<AudioSource> ();
 
+		animationNumber = 0;
+
 		controlsEnabled = true;
 
 		score = 0;
@@ -99,12 +101,12 @@ public class LineScript : MonoBehaviour {
 
 		squareRows = Squares.Rows;	
 
-		colorList.Clear ();
-
 		foreach (Transform square in squares.transform)
 		{
 			square.gameObject.SetActive (true);
 		}
+
+		colorList.Clear ();
 	}
 
 	void Update () {
