@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LineScript : MonoBehaviour {
+public class LineScriptForLevels : MonoBehaviour {
 
 	#region variables
 	public int lastSquare = 0;
@@ -24,6 +24,10 @@ public class LineScript : MonoBehaviour {
 
 	public int score;
 	public Text scoreText;
+
+	public int defaultMovesLeft;
+	public int movesLeft;
+	public Text movesLeftText;
 
 	[Space]
 	[Space]
@@ -45,7 +49,7 @@ public class LineScript : MonoBehaviour {
 
 	private float localScaleX;
 	private float localScaleY;
-	 
+
 	public Color[] setColor;
 
 	public int currentSquare;
@@ -55,9 +59,8 @@ public class LineScript : MonoBehaviour {
 	public SpriteRenderer dragCircleSpr;
 
 	public List<int> squareList = new List<int>();
-	public List<int> rowList = new List<int> ();
-
 	public List<int> colorList = new List<int>();
+
 
 	public AudioClip[] hits;
 	public AudioClip snap;
@@ -75,7 +78,7 @@ public class LineScript : MonoBehaviour {
 
 	public int lastSquareNum;
 
-	public int squareRows;
+	private int squareRows;
 
 	private bool randomizeColors = false;
 
@@ -91,6 +94,9 @@ public class LineScript : MonoBehaviour {
 		score = 0;
 		scoreText.text = "" + score;
 
+		movesLeft = defaultMovesLeft;	
+		movesLeftText.text = "" + movesLeft;
+
 		randomizeColors = false;
 
 		squareRows = Squares.Rows;	
@@ -101,11 +107,6 @@ public class LineScript : MonoBehaviour {
 		}
 
 		colorList.Clear ();
-
-		for (int i = 0; i < squareRows; i++) {
-			rowList.Add (0);
-		}
-
 	}
 
 	void Update () {
@@ -133,7 +134,7 @@ public class LineScript : MonoBehaviour {
 
 					newSquareInitialize = false;
 				}
-					
+
 				point1 = lastOkSquare.transform.position;
 				point2 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 				point2[2] = 0;
@@ -165,15 +166,16 @@ public class LineScript : MonoBehaviour {
 				}
 				else 
 				{
-
+					movesLeft = movesLeft - 1;
+					movesLeftText.text = "" + movesLeft;
 				}
-					
+
 				RemoveLine ();
 				SwitchColor ();
 				updateInitialize = true;
 			}
 		}
-			
+
 		#endif
 
 		if (isOnMobile) {
@@ -228,7 +230,10 @@ public class LineScript : MonoBehaviour {
 							currentColor = currentColor - 1;
 						}
 					}
-						
+
+					movesLeft = movesLeft - 1;
+					movesLeftText.text = "" + movesLeft;
+
 					RemoveLine ();
 					SwitchColor ();
 					updateInitialize = true;
@@ -378,7 +383,7 @@ public class LineScript : MonoBehaviour {
 
 									lastSquare = squareFarNum;
 								}
-									
+
 								if (squareList.Count < hits.Length) {
 									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 								} else {
@@ -402,7 +407,7 @@ public class LineScript : MonoBehaviour {
 									}
 								}
 							}
-								
+
 							if (draw) {
 								int loopLength = (Mathf.Abs (lastSquare - squareNum)) / squareRows;
 								int currentLastSquare = lastSquare;
@@ -428,7 +433,7 @@ public class LineScript : MonoBehaviour {
 							}		
 						}
 						#endregion
-					
+
 					}
 					#endregion
 
@@ -467,7 +472,7 @@ public class LineScript : MonoBehaviour {
 
 									lastSquare = squareFarNum;
 								}
-									
+
 								if (squareList.Count < hits.Length) {
 									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
 								} else {
@@ -525,8 +530,8 @@ public class LineScript : MonoBehaviour {
 					#endregion
 				}
 
-		}
-		#endregion
+			}
+			#endregion
 
 			#region regret
 			else if ((lastSquare == squareNum) && hoverSwitch) {
@@ -680,7 +685,7 @@ public class LineScript : MonoBehaviour {
 			}
 
 			if (animationNumber == squareList.Count) {
-				
+
 			}
 
 			controlsEnabled = false;
@@ -689,10 +694,9 @@ public class LineScript : MonoBehaviour {
 		else {
 			animationNumber = 0;
 			lastSquare = 0;
-
-			FallingManager ();
-
 			squareList.Clear ();
+
+			checkMoves ();
 
 			controlsEnabled = true;
 			controlSwitch = true;
@@ -736,38 +740,20 @@ public class LineScript : MonoBehaviour {
 
 				if (colorList.Count-2 == i)
 				{
-					
+					ShuffleBoard();
 				}
 			}
 		}
 	}
-		
-	void FallingManager () {
-		//while (squares.transform.childCount < Math.Pow(squareRows, 2)) {
-			
-		//}
-		foreach (int square in squareList) {
-			int currentSquareRow = 0;
 
-			if (square % squareRows == 0) {
-				currentSquareRow = squareRows;
-			} else {
-				currentSquareRow = square % squareRows;
-			}
-
-			int value = rowList [currentSquareRow - 1] + 1;
-
-			Debug.Log (currentSquareRow);
-
-			rowList.RemoveAt (currentSquareRow - 1);
-			rowList.Insert (currentSquareRow - 1, value);
+	void checkMoves () {
+		if (movesLeft <= 0)
+		{
+			Debug.Log ("You Lost!!!");
 		}
-
-
-
 	}
 
-	/*public void ShuffleBoard () {
+	public void ShuffleBoard () {
 		squareList.Clear ();
 
 		for (int i = 0; i < squareRows; i++)
@@ -792,5 +778,5 @@ public class LineScript : MonoBehaviour {
 		randomizeColors = true;
 
 		SwitchColor ();
-	}*/
+	}
 }

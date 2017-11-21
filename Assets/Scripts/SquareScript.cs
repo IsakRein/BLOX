@@ -30,6 +30,8 @@ public class SquareScript : MonoBehaviour {
 
 	public bool interactable = false;
 
+	private int squareRows;
+
 	void Start() {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
 		animator = gameObject.GetComponent<Animator> ();
@@ -50,7 +52,10 @@ public class SquareScript : MonoBehaviour {
 
 		lineScript.AddToColorList (System.Convert.ToInt32 (gameObject.name), colorNum);
 
+		squareRows = lineScript.squareRows;
+
 		animator.SetTrigger ("OnEnable");
+		NameSquare ();
 	}
 
 
@@ -78,6 +83,14 @@ public class SquareScript : MonoBehaviour {
 			}
 		}
 	}
+
+	void NameSquare() {
+		float x = (transform.localPosition.x - (0.5f-(squareRows / 2)))+1;
+		float y = (((squareRows / 2)-0.5f) - transform.localPosition.y);
+
+		gameObject.name = "" + ((squareRows * y) + x);
+	}
+
 
 	void OnTouchDown() {
 		isHovering = true;
@@ -129,5 +142,9 @@ public class SquareScript : MonoBehaviour {
 
 	void MakeInteractable () {
 		interactable = true;
+	}
+
+	void DisableGameObject () {
+		GameObject.Destroy (gameObject);	
 	}
 }

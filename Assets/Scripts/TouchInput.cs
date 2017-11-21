@@ -40,14 +40,15 @@ public class TouchInput : MonoBehaviour {
 			}
 
 			foreach (GameObject g in touchesOld) {
-				if (!touchList.Contains (g)) {
+				if (g != null) {
+					if (!touchList.Contains (g)) {
 					g.SendMessage ("OnTouchExit", hit.point, SendMessageOptions.DontRequireReceiver);
+					}
 				}
 			}
 		}
 
 		#endif
-
 
 		if (Input.touchCount > 0) {
 
