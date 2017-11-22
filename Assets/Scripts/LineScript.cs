@@ -80,6 +80,8 @@ public class LineScript : MonoBehaviour {
 
 	public bool fallDown;
 
+	private bool InitializeFallHasBeenCalled = false;
+
 	public GameObject squarePrefab;
 	GameObject instSquare;
 
@@ -171,6 +173,7 @@ public class LineScript : MonoBehaviour {
 				}
 					
 				RemoveLine ();
+				InitializeFallHasBeenCalled = false;
 				updateInitialize = true;
 			}
 		}
@@ -235,6 +238,7 @@ public class LineScript : MonoBehaviour {
 					}
 						
 					RemoveLine ();
+					InitializeFallHasBeenCalled = false;
 					updateInitialize = true;
 				}
 			}
@@ -719,20 +723,23 @@ public class LineScript : MonoBehaviour {
 	}
 
 	public void InitializeFall() {
-		foreach (int row in rowList)
-		{
-			float xPos = ((float)squareRows + 1f / 2) + row;
 
-			Debug.Log (xPos);
+		if (!InitializeFallHasBeenCalled) {
+			InitializeFallHasBeenCalled = true;
 
-			if (rowList [row] != 0) {
-				for (int i = 0; i < rowList [row]; i++)
-				{
+			for (int row = 0; row < squareRows; row++) {
 
-					instSquare = Instantiate (squarePrefab, transform) as GameObject; 
+				if (rowList [row] != 0) {
+					float xPos = -((float)squareRows/ 2) + row + 0.5f;
 
-					float yPos = i + ((squareRows + 1f) / 2); 
-					instSquare.transform.localPosition = new Vector2 (xPos, yPos);
+					for (int i = 0; i < rowList [row]; i++) {
+						instSquare = Instantiate (squarePrefab, squares.transform) as GameObject; 
+
+						float yPos = i + (((float)squareRows/2) + 0.5f); 
+						instSquare.transform.localPosition = new Vector2 (xPos, yPos);
+						instSquare.SendMessage ("AddToFallCounter", rowList [row], SendMessageOptions.DontRequireReceiver);
+
+					}
 				}
 			}
 		}

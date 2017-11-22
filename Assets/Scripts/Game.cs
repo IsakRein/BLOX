@@ -48,6 +48,8 @@ public class Game : MonoBehaviour {
 				xPos = j - ((Rows + 1f) / 2); 
 				square.transform.localPosition = new Vector2 (xPos, yPos);
 
+				square.GetComponent<Animator> ().SetTrigger ("OnEnable");
+
 				transform.localScale = new Vector3 (scale, scale);
 			}
 		}

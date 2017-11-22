@@ -36,15 +36,15 @@ public class SquareScript : MonoBehaviour {
 
 	public int fallCounter;
 
-	public float speed;
+	public float speed = 100f;
 
 	private Vector3 targetPos;
 
 	private bool fallInitialized;
 
-	private bool largestValue = false;
+	public bool largestValue = false;
 
-	private bool resetTimer;
+	public bool resetTimer;
 
 	private float time = 0.5f;
 
@@ -70,8 +70,6 @@ public class SquareScript : MonoBehaviour {
 		hoverSwitch = false;
 
 		NameSquare ();
-
-		animator.SetTrigger ("OnEnable");
 	}
 
 
@@ -82,8 +80,7 @@ public class SquareScript : MonoBehaviour {
 
 		if (lineScript.fallDown == true && fallCounter > 0)
 		{
-			float step = speed * Time.deltaTime;
-			transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, step);
+			transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed/75);
 
 			if (targetPos == transform.localPosition)
 			{
@@ -207,15 +204,15 @@ public class SquareScript : MonoBehaviour {
 
 		for (int i = int.Parse (name); i > 0; i = i - squareRows)
 		{
-			GameObject.Find ("Game/Squares/" + i.ToString ()).SendMessage ("AddToFallCounter", SendMessageOptions.DontRequireReceiver);
+			GameObject.Find ("Game/Squares/" + i.ToString ()).SendMessage ("AddToFallCounter", 1, SendMessageOptions.DontRequireReceiver);
 		}
 
 		GameObject.Destroy (gameObject);	
 	}
 
-	void AddToFallCounter() 
+	void AddToFallCounter(int howMuch) 
 	{
-		fallCounter = fallCounter + 1;
+		fallCounter = fallCounter + howMuch;
 	}
 
 
