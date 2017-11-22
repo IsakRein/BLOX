@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class LineScript : MonoBehaviour {
 
@@ -57,8 +58,6 @@ public class LineScript : MonoBehaviour {
 	public List<int> squareList = new List<int>();
 	public List<int> rowList = new List<int> ();
 
-	public List<int> colorList = new List<int>();
-
 	public AudioClip[] hits;
 	public AudioClip snap;
 
@@ -78,6 +77,11 @@ public class LineScript : MonoBehaviour {
 	public int squareRows;
 
 	private bool randomizeColors = false;
+
+	public bool fallDown;
+
+	public GameObject squarePrefab;
+	GameObject instSquare;
 
 	#endregion
 
@@ -99,8 +103,6 @@ public class LineScript : MonoBehaviour {
 		{
 			square.gameObject.SetActive (true);
 		}
-
-		colorList.Clear ();
 
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
@@ -165,11 +167,10 @@ public class LineScript : MonoBehaviour {
 				}
 				else 
 				{
-
+					StartAnimation();
 				}
 					
 				RemoveLine ();
-				SwitchColor ();
 				updateInitialize = true;
 			}
 		}
@@ -228,9 +229,12 @@ public class LineScript : MonoBehaviour {
 							currentColor = currentColor - 1;
 						}
 					}
+					else 
+					{
+						StartAnimation();
+					}
 						
 					RemoveLine ();
-					SwitchColor ();
 					updateInitialize = true;
 				}
 			}
@@ -655,7 +659,7 @@ public class LineScript : MonoBehaviour {
 		}
 	}
 
-	public void SwitchColor() {
+	/*public void SwitchColor() {
 		if (animationNumber < squareList.Count) 
 		{
 			if (randomizeColors)
@@ -667,9 +671,6 @@ public class LineScript : MonoBehaviour {
 			squareToChange.GetComponent<Animator> ().SetTrigger ("Trigger");
 
 			squareToChange.GetComponent<SquareScript> ().colorNum = currentColor;
-
-			colorList.RemoveAt (squareList [animationNumber] - 1);
-			colorList.Insert (squareList [animationNumber] - 1, currentColor);
 
 			animationNumber = animationNumber + 1;
 
@@ -690,23 +691,84 @@ public class LineScript : MonoBehaviour {
 			animationNumber = 0;
 			lastSquare = 0;
 
-			FallingManager ();
+			fallDown = true;
 
 			squareList.Clear ();
 
 			controlsEnabled = true;
 			controlSwitch = true;
 		}
+	}*/
+
+	public void StartAnimation() {
+		controlsEnabled = false;
+
+		foreach (int square in squareList)
+		{
+			GameObject squareObj = GameObject.Find (square.ToString());
+			squareObj.SendMessage("Animate", SendMessageOptions.DontRequireReceiver);
+		}
+
+		FallingManager ();
+
+		checkIfFallingDone ();
+
+		lastSquare = 0;
+		squareList.Clear ();
+		fallDown = true;
 	}
 
-	public void EnableControllers() {
-		if (controlSwitch) {
-			randomizeColors = false;
-			checkIfWon ();
+	public void InitializeFall() {
+		foreach (int row in rowList)
+		{
+			float xPos = ((float)squareRows + 1f / 2) + row;
 
-			controlsEnabled = true;
-			controlSwitch = false;
+			Debug.Log (xPos);
+
+			if (rowList [row] != 0) {
+				for (int i = 0; i < rowList [row]; i++)
+				{
+
+					instSquare = Instantiate (squarePrefab, transform) as GameObject; 
+
+					float yPos = i + ((squareRows + 1f) / 2); 
+					instSquare.transform.localPosition = new Vector2 (xPos, yPos);
+				}
+			}
 		}
+
+		foreach (Transform child in squares.transform)
+		{
+			child.SendMessage ("InitializeFall", SendMessageOptions.DontRequireReceiver);
+		}	
+	}
+
+	public void FallingDone() {
+		controlsEnabled = true;
+
+		int m = rowList.Max();
+		int n = rowList.IndexOf (m)+1;
+
+		GameObject.Find ("Game/Squares/" + n.ToString ()).SendMessage("DisableLargestValue", SendMessageOptions.DontRequireReceiver);
+
+		fallDown = false;
+
+		foreach (Transform square in squares.transform)
+		{
+			square.SendMessage ("NameSquare", SendMessageOptions.DontRequireReceiver);
+		}
+
+		rowList.Clear ();
+		for (int i = 0; i < squareRows; i++) {
+			rowList.Add (0);
+		}
+	}
+
+	void checkIfFallingDone () {
+		int m = rowList.Max();
+		int n = rowList.IndexOf (m)+1;
+
+		GameObject.Find ("Game/Squares/" + n.ToString ()).SendMessage("SetLargestValue", SendMessageOptions.DontRequireReceiver);
 	}
 
 	public void PlaySound() {
@@ -717,28 +779,6 @@ public class LineScript : MonoBehaviour {
 		else
 		{
 			audioSource.PlayOneShot (snap);
-		}
-	}
-
-	public void AddToColorList(int squareNum, int colorNum) 
-	{
-		colorList.Add (colorNum);
-	}
-
-	void checkIfWon () {
-		bool shouldContinue = true;
-		for (int i = 0; i < colorList.Count-1; i++) {
-			if (shouldContinue) {
-				if (colorList [i] != colorList [i + 1])
-				{
-					shouldContinue = false;
-				}
-
-				if (colorList.Count-2 == i)
-				{
-					
-				}
-			}
 		}
 	}
 		
@@ -757,15 +797,24 @@ public class LineScript : MonoBehaviour {
 
 			int value = rowList [currentSquareRow - 1] + 1;
 
-			Debug.Log (currentSquareRow);
-
 			rowList.RemoveAt (currentSquareRow - 1);
 			rowList.Insert (currentSquareRow - 1, value);
 		}
-
-
-
 	}
+
+	/*void checkBelow(int i, int square) {
+		if (!(Mathf.Ceil((i + squareRows - 0.001F)/squareRows) == squareRows)) {
+			if (squareList.Contains (i + squareRows))
+			{
+				checkBelow (i + squareRows, square);
+			}
+			else if (i != square)
+			{
+				GameObject.Find ("Game/Squares/" + square.ToString ()).SendMessage ("FallDown", ((i-square)/squareRows), SendMessageOptions.DontRequireReceiver);;
+			}
+		}
+
+	}*/
 
 	/*public void ShuffleBoard () {
 		squareList.Clear ();

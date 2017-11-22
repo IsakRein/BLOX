@@ -6,8 +6,10 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class SquareScript : MonoBehaviour {
 
+	public GameObject squares;
 	public GameObject Line;
 
+	public Game squareScript;
 	public LineScript lineScript;
 
 	public Color[] setColor;
@@ -32,12 +34,29 @@ public class SquareScript : MonoBehaviour {
 
 	private int squareRows;
 
+	public int fallCounter;
+
+	public float speed;
+
+	private Vector3 targetPos;
+
+	private bool fallInitialized;
+
+	private bool largestValue = false;
+
+	private bool resetTimer;
+
+	private float time = 0.5f;
+
 	void Start() {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
 		animator = gameObject.GetComponent<Animator> ();
 
 		Line = GameObject.Find ("LineHolder");
 		lineScript = Line.GetComponent<LineScript>();
+
+		squares = GameObject.Find ("Squares");
+		squareScript = squares.GetComponent<Game>();
 
 		setColor = lineScript.setColor;
 
@@ -50,12 +69,9 @@ public class SquareScript : MonoBehaviour {
 
 		hoverSwitch = false;
 
-		lineScript.AddToColorList (System.Convert.ToInt32 (gameObject.name), colorNum);
-
-		squareRows = lineScript.squareRows;
+		NameSquare ();
 
 		animator.SetTrigger ("OnEnable");
-		NameSquare ();
 	}
 
 
@@ -63,6 +79,35 @@ public class SquareScript : MonoBehaviour {
 		if (!isHovering) {
 			addSquareHasBeenCalled = false;
 		} 
+
+		if (lineScript.fallDown == true && fallCounter > 0)
+		{
+			float step = speed * Time.deltaTime;
+			transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, step);
+
+			if (targetPos == transform.localPosition)
+			{
+				fallCounter = 0;
+
+				if (largestValue)
+				{
+					resetTimer = true;
+				}
+			}
+		}
+
+		if (resetTimer)
+		{
+			time = time - Time.deltaTime;
+
+			if (time <= 0)
+			{
+				lineScript.FallingDone ();
+				resetTimer = false;
+				time = 0.5f;
+			}
+		}
+
 
 		#if UNITY_EDITOR
 		isOnMobile = false;
@@ -85,10 +130,22 @@ public class SquareScript : MonoBehaviour {
 	}
 
 	void NameSquare() {
-		float x = (transform.localPosition.x - (0.5f-(squareRows / 2)))+1;
-		float y = (((squareRows / 2)-0.5f) - transform.localPosition.y);
+		squareRows = squareScript.Rows;
+
+		float x = (transform.localPosition.x - (0.5f-(((float)squareRows)/2)))+1;
+		float y = (((((float)squareRows)/2)-0.5f) - transform.localPosition.y);
 
 		gameObject.name = "" + ((squareRows * y) + x);
+	}
+
+
+	void SetLargestValue() {
+		largestValue = true;
+	}
+
+
+	void DisableLargestValue() {
+		largestValue = false;
 	}
 
 
@@ -119,21 +176,23 @@ public class SquareScript : MonoBehaviour {
 			addSquareHasBeenCalled = true;
 		}
 	}
+		
+	void InitializeFall() {
+		targetPos = transform.localPosition;
+		targetPos.y = transform.localPosition.y - fallCounter;
+	}
+
+	void Animate() {
+		animator.SetTrigger("Trigger");
+	}
 
 	void OnTouchExit() {
 		isHovering = false;
 	}
 
-	void TriggerNextSquare () {
-		lineScript.SwitchColor ();
-	}
+	void EnableFall() {
 
-	void ChangeColor() {
-		spriteRenderer.color = setColor [colorNum];
-	}
-
-	void ControlSwitch() {
-		lineScript.EnableControllers ();
+		lineScript.InitializeFall ();
 	}
 
 	void PlaySound() {
@@ -145,6 +204,19 @@ public class SquareScript : MonoBehaviour {
 	}
 
 	void DisableGameObject () {
+
+		for (int i = int.Parse (name); i > 0; i = i - squareRows)
+		{
+			GameObject.Find ("Game/Squares/" + i.ToString ()).SendMessage ("AddToFallCounter", SendMessageOptions.DontRequireReceiver);
+		}
+
 		GameObject.Destroy (gameObject);	
 	}
+
+	void AddToFallCounter() 
+	{
+		fallCounter = fallCounter + 1;
+	}
+
+
 }
