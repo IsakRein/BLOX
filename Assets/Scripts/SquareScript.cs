@@ -46,7 +46,7 @@ public class SquareScript : MonoBehaviour {
 
 	public bool resetTimer;
 
-	private float time = 0.5f;
+	public float time;
 
 	void Start() {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
@@ -70,6 +70,10 @@ public class SquareScript : MonoBehaviour {
 		hoverSwitch = false;
 
 		NameSquare ();
+
+		squareRows = squareScript.Rows;
+
+		time = squareRows;
 	}
 
 
@@ -101,7 +105,7 @@ public class SquareScript : MonoBehaviour {
 			{
 				lineScript.FallingDone ();
 				resetTimer = false;
-				time = 0.5f;
+				time = squareRows;
 			}
 		}
 

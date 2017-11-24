@@ -159,6 +159,8 @@ public class LineScript : MonoBehaviour {
 				dragLine.SetActive (false);
 				dragCircle.SetActive (false);
 
+				controlsEnabled = true;
+
 				if (squareList.Count == 0) {
 					if (currentColor == 0) {
 						currentColor = setColor.Length - 1;
@@ -223,6 +225,8 @@ public class LineScript : MonoBehaviour {
 				if (updateInitialize == false) {
 					dragLine.SetActive (false);
 					dragCircle.SetActive (false);
+
+					controlsEnabled = true;
 
 					if (squareList.Count == 0) {
 						if (currentColor == 0) {
@@ -752,6 +756,8 @@ public class LineScript : MonoBehaviour {
 
 	public void FallingDone() {
 		controlsEnabled = true;
+
+		Debug.Log ("Falling Done");
 
 		int m = rowList.Max();
 		int n = rowList.IndexOf (m)+1;
