@@ -39,14 +39,12 @@ public class LineScript : MonoBehaviour {
 	GameObject line;
 
 	public Game Squares;
-
 	public GameObject squares;
-
 	private GameObject lineChild;
 
 	private float localScaleX;
 	private float localScaleY;
-	 
+
 	public Color[] setColor;
 
 	public int currentSquare;
@@ -60,37 +58,27 @@ public class LineScript : MonoBehaviour {
 
 	public AudioClip[] hits;
 	public AudioClip snap;
-
 	public AudioClip snap2;
-
 	private AudioSource audioSource;
 
-	public int animationNumber = 0;
-
 	public bool controlsEnabled = true;
-	private bool controlSwitch;
-
-	public float size;
-
-	public int lastSquareNum;
-
-	public int squareRows;
-
 	private bool randomizeColors = false;
-
 	public bool fallDown;
-
 	private bool InitializeFallHasBeenCalled = false;
 
+	public float size;
+	private int fallenSquareCounter;
+	private int initializeCounter;
+	public int lastSquareNum;
+	public int squareRows;
+
 	public GameObject squarePrefab;
-	GameObject instSquare;
+	private	GameObject instSquare;
 
 	#endregion
 
 	void Start() {
 		audioSource = GetComponent<AudioSource> ();
-
-		animationNumber = 0;
 
 		controlsEnabled = true;
 
@@ -175,7 +163,6 @@ public class LineScript : MonoBehaviour {
 				}
 					
 				RemoveLine ();
-				InitializeFallHasBeenCalled = false;
 				updateInitialize = true;
 			}
 		}
@@ -242,7 +229,6 @@ public class LineScript : MonoBehaviour {
 					}
 						
 					RemoveLine ();
-					InitializeFallHasBeenCalled = false;
 					updateInitialize = true;
 				}
 			}
@@ -565,7 +551,7 @@ public class LineScript : MonoBehaviour {
 
 				} else if (squareList.Count == 1) {
 					squareList.RemoveAt (0);
-					lastSquare = -1;
+					lastSquare = 0;
 
 					dragLine.SetActive (false);
 					dragCircle.SetActive (false);
@@ -608,7 +594,7 @@ public class LineScript : MonoBehaviour {
 						GameObject.Destroy (finalCircle);
 
 						squareList.RemoveAt (0);
-						lastSquare = -1;
+						lastSquare = 0;
 
 						dragLine.SetActive (false);
 						dragCircle.SetActive (false);
@@ -667,6 +653,112 @@ public class LineScript : MonoBehaviour {
 		}
 	}
 
+	public void StartAnimation() {
+		controlsEnabled = false;
+
+		foreach (int square in squareList)
+		{
+			GameObject squareObj = GameObject.Find (square.ToString());
+			squareObj.SendMessage("Animate", SendMessageOptions.DontRequireReceiver);
+		}
+
+		score = score + squareList.Count;
+		scoreText.text = "" + score;
+
+		foreach (int square in squareList) {
+			int currentSquareRow = 0;
+
+			if (square % squareRows == 0) {
+				currentSquareRow = squareRows;
+			} else {
+				currentSquareRow = square % squareRows;
+			}
+
+			int value = rowList [currentSquareRow - 1] + 1;
+
+			rowList.RemoveAt (currentSquareRow - 1);
+			rowList.Insert (currentSquareRow - 1, value);
+		}
+
+		fallDown = true;
+	}
+
+	public void InitializeFall() {
+		initializeCounter = initializeCounter + 1;
+
+		Debug.Log (initializeCounter);
+		Debug.Log (squareList.Count);
+
+		if (InitializeFallHasBeenCalled == false && initializeCounter == squareList.Count)
+		{
+			InitializeFallHasBeenCalled = true;
+			initializeCounter = 0;
+
+			for (int row = 0; row < squareRows; row++)
+			{
+				if (rowList [row] != 0)
+				{
+					float xPos = -((float)squareRows / 2) + row + 0.5f;
+
+					for (int i = 0; i < rowList [row]; i++)
+					{
+						instSquare = Instantiate (squarePrefab, squares.transform) as GameObject; 
+
+						float yPos = i + (((float)squareRows / 2) + 0.5f); 
+						instSquare.transform.localPosition = new Vector2 (xPos, yPos);
+						instSquare.SendMessage ("AddToFallCounter", rowList [row], SendMessageOptions.DontRequireReceiver);
+					}
+				}
+			}
+			foreach (Transform child in squares.transform)
+			{
+				child.SendMessage ("InitializeFall", SendMessageOptions.DontRequireReceiver);
+			}
+		}
+	}
+
+	public void AddToFallCounter() {
+		fallenSquareCounter = fallenSquareCounter + 1;
+
+		if (fallenSquareCounter == squareRows*squareRows)
+		{
+			FallingDone ();
+			fallenSquareCounter = 0;
+		}
+	}
+
+	public void FallingDone() {
+		controlsEnabled = true;
+		lastSquare = 0;
+		squareList.Clear ();
+		fallDown = false;
+		InitializeFallHasBeenCalled = false;
+
+		int m = rowList.Max();
+		int n = rowList.IndexOf (m)+1;
+
+		foreach (Transform square in squares.transform)
+		{
+			square.SendMessage ("NameSquare", SendMessageOptions.DontRequireReceiver);
+		}
+
+		rowList.Clear ();
+		for (int i = 0; i < squareRows; i++) {
+			rowList.Add (0);
+		}
+	}
+		
+	public void PlaySound() {
+		if (randomizeColors)
+		{
+			audioSource.PlayOneShot (snap2);
+		}
+		else
+		{
+			audioSource.PlayOneShot (snap);
+		}
+	}
+
 	/*public void SwitchColor() {
 		if (animationNumber < squareList.Count) 
 		{
@@ -707,113 +799,6 @@ public class LineScript : MonoBehaviour {
 			controlSwitch = true;
 		}
 	}*/
-
-	public void StartAnimation() {
-		controlsEnabled = false;
-
-		foreach (int square in squareList)
-		{
-			GameObject squareObj = GameObject.Find (square.ToString());
-			squareObj.SendMessage("Animate", SendMessageOptions.DontRequireReceiver);
-		}
-
-		FallingManager ();
-
-		checkIfFallingDone ();
-
-		lastSquare = 0;
-		squareList.Clear ();
-		fallDown = true;
-	}
-
-	public void InitializeFall() {
-
-		if (!InitializeFallHasBeenCalled) {
-			InitializeFallHasBeenCalled = true;
-
-			for (int row = 0; row < squareRows; row++) {
-
-				if (rowList [row] != 0) {
-					float xPos = -((float)squareRows/ 2) + row + 0.5f;
-
-					for (int i = 0; i < rowList [row]; i++) {
-						instSquare = Instantiate (squarePrefab, squares.transform) as GameObject; 
-
-						float yPos = i + (((float)squareRows/2) + 0.5f); 
-						instSquare.transform.localPosition = new Vector2 (xPos, yPos);
-						instSquare.SendMessage ("AddToFallCounter", rowList [row], SendMessageOptions.DontRequireReceiver);
-
-					}
-				}
-			}
-		}
-
-		foreach (Transform child in squares.transform)
-		{
-			child.SendMessage ("InitializeFall", SendMessageOptions.DontRequireReceiver);
-		}	
-	}
-
-	public void FallingDone() {
-		controlsEnabled = true;
-
-		Debug.Log ("Falling Done");
-
-		int m = rowList.Max();
-		int n = rowList.IndexOf (m)+1;
-
-		GameObject.Find ("Game/Squares/" + n.ToString ()).SendMessage("DisableLargestValue", SendMessageOptions.DontRequireReceiver);
-
-		fallDown = false;
-
-		foreach (Transform square in squares.transform)
-		{
-			square.SendMessage ("NameSquare", SendMessageOptions.DontRequireReceiver);
-		}
-
-		rowList.Clear ();
-		for (int i = 0; i < squareRows; i++) {
-			rowList.Add (0);
-		}
-	}
-
-	void checkIfFallingDone () {
-		int m = rowList.Max();
-		int n = rowList.IndexOf (m)+1;
-
-		GameObject.Find ("Game/Squares/" + n.ToString ()).SendMessage("SetLargestValue", SendMessageOptions.DontRequireReceiver);
-	}
-
-	public void PlaySound() {
-		if (randomizeColors)
-		{
-			audioSource.PlayOneShot (snap2);
-		}
-		else
-		{
-			audioSource.PlayOneShot (snap);
-		}
-	}
-		
-	void FallingManager () {
-		//while (squares.transform.childCount < Math.Pow(squareRows, 2)) {
-			
-		//}
-		foreach (int square in squareList) {
-			int currentSquareRow = 0;
-
-			if (square % squareRows == 0) {
-				currentSquareRow = squareRows;
-			} else {
-				currentSquareRow = square % squareRows;
-			}
-
-			int value = rowList [currentSquareRow - 1] + 1;
-
-			rowList.RemoveAt (currentSquareRow - 1);
-			rowList.Insert (currentSquareRow - 1, value);
-		}
-	}
 
 	/*void checkBelow(int i, int square) {
 		if (!(Mathf.Ceil((i + squareRows - 0.001F)/squareRows) == squareRows)) {

@@ -38,15 +38,10 @@ public class SquareScript : MonoBehaviour {
 
 	public float speed = 100f;
 
-	private Vector3 targetPos;
+	public Vector3 targetPos;
 
-	private bool fallInitialized;
+	private bool fallInitialized = false;
 
-	public bool largestValue = false;
-
-	public bool resetTimer;
-
-	public float time;
 
 	void Start() {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
@@ -72,8 +67,6 @@ public class SquareScript : MonoBehaviour {
 		NameSquare ();
 
 		squareRows = squareScript.Rows;
-
-		time = squareRows;
 	}
 
 
@@ -82,30 +75,17 @@ public class SquareScript : MonoBehaviour {
 			addSquareHasBeenCalled = false;
 		} 
 
-		if (lineScript.fallDown == true && fallCounter > 0)
+		if (lineScript.fallDown == true && fallCounter > 0 && fallInitialized)
 		{
-			transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed/75);
+			transform.localPosition = Vector3.MoveTowards (transform.localPosition, targetPos, speed / 75);
 
 			if (targetPos == transform.localPosition)
 			{
 				fallCounter = 0;
 
-				if (largestValue)
-				{
-					resetTimer = true;
-				}
-			}
-		}
+				lineScript.AddToFallCounter ();
 
-		if (resetTimer)
-		{
-			time = time - Time.deltaTime;
-
-			if (time <= 0)
-			{
-				lineScript.FallingDone ();
-				resetTimer = false;
-				time = squareRows;
+				fallInitialized = false;
 			}
 		}
 
@@ -131,22 +111,14 @@ public class SquareScript : MonoBehaviour {
 	}
 
 	void NameSquare() {
+		squares = GameObject.Find ("Squares");
+		squareScript = squares.GetComponent<Game>();
 		squareRows = squareScript.Rows;
 
 		float x = (transform.localPosition.x - (0.5f-(((float)squareRows)/2)))+1;
 		float y = (((((float)squareRows)/2)-0.5f) - transform.localPosition.y);
 
-		gameObject.name = "" + ((squareRows * y) + x);
-	}
-
-
-	void SetLargestValue() {
-		largestValue = true;
-	}
-
-
-	void DisableLargestValue() {
-		largestValue = false;
+		gameObject.name = "" + (Mathf.CeilToInt(squareRows * y) + x);
 	}
 
 
@@ -179,8 +151,18 @@ public class SquareScript : MonoBehaviour {
 	}
 		
 	void InitializeFall() {
-		targetPos = transform.localPosition;
-		targetPos.y = transform.localPosition.y - fallCounter;
+		if (fallCounter == 0)
+		{
+			lineScript.AddToFallCounter ();
+			fallInitialized = true;
+		}
+		else
+		{
+			targetPos = transform.localPosition;
+			targetPos.y = transform.localPosition.y - fallCounter;
+			interactable = true;
+			fallInitialized = true;
+		}
 	}
 
 	void Animate() {
@@ -191,8 +173,8 @@ public class SquareScript : MonoBehaviour {
 		isHovering = false;
 	}
 
-	void EnableFall() {
-
+	void EnableFall() 
+	{
 		lineScript.InitializeFall ();
 	}
 
