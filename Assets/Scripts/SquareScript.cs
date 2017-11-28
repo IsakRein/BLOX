@@ -36,7 +36,7 @@ public class SquareScript : MonoBehaviour {
 
 	public int fallCounter;
 
-	public float speed = 100f;
+	public float speed = 1f;
 
 	public Vector3 targetPos;
 
@@ -77,7 +77,7 @@ public class SquareScript : MonoBehaviour {
 
 		if (lineScript.fallDown == true && fallCounter > 0 && fallInitialized)
 		{
-			transform.localPosition = Vector3.MoveTowards (transform.localPosition, targetPos, speed / 75);
+			transform.localPosition = Vector3.MoveTowards (transform.localPosition, targetPos, speed / 50);
 
 			if (targetPos == transform.localPosition)
 			{

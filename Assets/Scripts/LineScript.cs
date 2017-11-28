@@ -23,20 +23,20 @@ public class LineScript : MonoBehaviour {
 	[Space]
 	[Space]
 
-	public int score;
+	private int score;
 	public Text scoreText;
 
 	[Space]
 	[Space]
 
-	public bool updateInitialize = true;
-	public bool newSquareInitialize = true;
-	public bool isOnMobile = true;
+	private bool updateInitialize = true;
+	private bool newSquareInitialize = true;
+	private bool isOnMobile = true;
 
 	public GameObject circlePrefab;
-	GameObject circle;
+	private GameObject circle;
 	public GameObject linePrefab;
-	GameObject line;
+	private GameObject line;
 
 	public Game Squares;
 	public GameObject squares;
@@ -47,8 +47,8 @@ public class LineScript : MonoBehaviour {
 
 	public Color[] setColor;
 
-	public int currentSquare;
-	public int currentColor;
+	private int currentSquare;
+	private int currentColor;
 
 	public SpriteRenderer dragLineSpr;
 	public SpriteRenderer dragCircleSpr;
@@ -61,16 +61,17 @@ public class LineScript : MonoBehaviour {
 	public AudioClip snap2;
 	private AudioSource audioSource;
 
-	public bool controlsEnabled = true;
+	private bool controlsEnabled = true;
 	private bool randomizeColors = false;
 	public bool fallDown;
 	private bool InitializeFallHasBeenCalled = false;
 
 	public float size;
+	public int minimumSquaresInMove;
 	private int fallenSquareCounter;
 	private int initializeCounter;
-	public int lastSquareNum;
-	public int squareRows;
+	private int lastSquareNum;
+	private int squareRows;
 
 	public GameObject squarePrefab;
 	private	GameObject instSquare;
@@ -149,19 +150,24 @@ public class LineScript : MonoBehaviour {
 
 				controlsEnabled = true;
 
-				if (squareList.Count == 0) {
-					if (currentColor == 0) {
-						currentColor = setColor.Length - 1;
+				if (minimumSquaresInMove <= squareList.Count) {
+					if (squareList.Count == 0) {
+						if (currentColor == 0) {
+							currentColor = setColor.Length - 1;
+						}
+						else {
+							currentColor = currentColor - 1;
+						}
 					}
-					else {
-						currentColor = currentColor - 1;
-					}
+					else 
+					{
+						StartAnimation();
+					}		
 				}
-				else 
-				{
-					StartAnimation();
+				else {
+					FallingDone();
 				}
-					
+
 				RemoveLine ();
 				updateInitialize = true;
 			}
@@ -215,19 +221,24 @@ public class LineScript : MonoBehaviour {
 
 					controlsEnabled = true;
 
-					if (squareList.Count == 0) {
-						if (currentColor == 0) {
-							currentColor = setColor.Length - 1;
+					if (minimumSquaresInMove <= squareList.Count) {
+						if (squareList.Count == 0) {
+							if (currentColor == 0) {
+								currentColor = setColor.Length - 1;
+							}
+							else {
+								currentColor = currentColor - 1;
+							}
 						}
-						else {
-							currentColor = currentColor - 1;
+						else 
+						{
+							StartAnimation();
 						}
 					}
-					else 
-					{
-						StartAnimation();
+					else {
+						FallingDone();
 					}
-						
+
 					RemoveLine ();
 					updateInitialize = true;
 				}
@@ -611,12 +622,12 @@ public class LineScript : MonoBehaviour {
 		}
 	}
 
-	void DrawLine(GameObject square, GameObject square2, int squareNum, float rotation) 
+	void DrawLine(GameObject square, GameObject square2, int squareNum, float rotation)
 	{
 		circle = Instantiate (circlePrefab, transform) as GameObject;
 		circle.transform.position = square.transform.position;
 		circle.name = "circle " + squareNum;
-		circle.transform.localScale = new Vector3 (square.transform.lossyScale.x*size*10, square.transform.lossyScale.x*size*10, 1);
+		circle.transform.localScale = new Vector3 (square.transform.lossyScale.x * size * 10, square.transform.lossyScale.x * size * 10, 1);
 		circle.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 
 		line = Instantiate (linePrefab, transform) as GameObject;
@@ -626,21 +637,23 @@ public class LineScript : MonoBehaviour {
 
 		foreach (Transform child in line.transform)
 		{
-			if (child.name == "Square") {
+			if (child.name == "Square")
+			{
 				lineChild = child.gameObject;
 			}
 		}	
 
-		localScaleX = (square.transform.lossyScale.x * 10)/9f;
-		localScaleY = (circle.transform.lossyScale.x/50f);
+		localScaleX = (square.transform.lossyScale.x * 10) / 9f;
+		localScaleY = (circle.transform.lossyScale.x / 50f);
 
-		lineChild.transform.localPosition = new Vector2(((square.transform.lossyScale.x/2) * 10)/9f, 0);
+		lineChild.transform.localPosition = new Vector2 (((square.transform.lossyScale.x / 2) * 10) / 9f, 0);
 		lineChild.transform.localScale = new Vector3 (localScaleX, localScaleY, 1);
 		lineChild.GetComponent<SpriteRenderer> ().color = setColor [currentColor];
 
 		lastSquare = squareNum;
 
-		if (!squareList.Contains (squareNum)) {
+		if (!squareList.Contains (squareNum))
+		{
 			squareList.Add (squareNum);
 		}
 
@@ -653,6 +666,120 @@ public class LineScript : MonoBehaviour {
 		}
 	}
 
+	void CheckAvailableMoves() {
+		bool noMoves = false;
+
+		for (int i = 1; i <= squareRows * squareRows; i++)
+		{
+			Color clr = GameObject.Find ("Game/Squares/" + i.ToString ()).GetComponent<SpriteRenderer> ().color;
+
+			if (clr == GameObject.Find ("Game/Squares/" + (i - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+			{
+				int newSquare = i - squareRows;
+
+				if (clr == GameObject.Find ("Game/Squares/" + (newSquare - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+				{
+					noMoves = false;
+				}
+				else
+				if (clr == GameObject.Find ("Game/Squares/" + (newSquare - 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+					{
+						noMoves = false;
+					}
+					else
+					if (clr == GameObject.Find ("Game/Squares/" + (newSquare + 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+						{
+							noMoves = false;
+						}
+						else
+						if (clr == GameObject.Find ("Game/Squares/" + (newSquare + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+							{
+								noMoves = false;
+							}
+			}
+			else
+			if (clr == GameObject.Find ("Game/Squares/" + (i - 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+				{
+					int newSquare = i - 1;
+
+					if (clr == GameObject.Find ("Game/Squares/" + (newSquare - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+					{
+						noMoves = false;
+					}
+					else
+					if (clr == GameObject.Find ("Game/Squares/" + (newSquare - 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+						{
+							noMoves = false;
+						}
+						else
+						if (clr == GameObject.Find ("Game/Squares/" + (newSquare + 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+							{
+								noMoves = false;
+							}
+							else
+							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+								{
+									noMoves = false;
+								}
+				}
+				else
+				if (clr == GameObject.Find ("Game/Squares/" + (i + 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+					{
+						int newSquare = i + 1;
+
+						if (clr == GameObject.Find ("Game/Squares/" + (newSquare - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+						{
+							noMoves = false;
+						}
+						else
+						if (clr == GameObject.Find ("Game/Squares/" + (newSquare - 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+							{
+								noMoves = false;
+							}
+							else
+							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+								{
+									noMoves = false;
+								}
+								else
+								if (clr == GameObject.Find ("Game/Squares/" + (newSquare + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+									{
+										noMoves = false;
+									}
+					}
+					else
+					if (clr == GameObject.Find ("Game/Squares/" + (i + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+						{
+							int newSquare = i + squareRows;
+
+							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+							{
+								noMoves = false;
+							}
+							else
+							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+								{
+									noMoves = false;
+								}
+								else
+								if (clr == GameObject.Find ("Game/Squares/" + (newSquare + 1).ToString ()).GetComponent<SpriteRenderer> ().color)
+									{
+										noMoves = false;
+									}
+									else
+									if (clr == GameObject.Find ("Game/Squares/" + (newSquare + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color)
+										{
+											noMoves = false;
+										}
+						}
+						else
+						{
+							noMoves = false;
+						}
+		}
+	}
+
+	#region animation
 	public void StartAnimation() {
 		controlsEnabled = false;
 
@@ -746,6 +873,8 @@ public class LineScript : MonoBehaviour {
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
 		}
+
+		CheckAroundSquare ();
 	}
 		
 	public void PlaySound() {
@@ -758,86 +887,5 @@ public class LineScript : MonoBehaviour {
 			audioSource.PlayOneShot (snap);
 		}
 	}
-
-	/*public void SwitchColor() {
-		if (animationNumber < squareList.Count) 
-		{
-			if (randomizeColors)
-			{
-				currentColor = UnityEngine.Random.Range (0, setColor.Length);
-			}
-
-			GameObject squareToChange = GameObject.Find ("Game/Squares/" + squareList [animationNumber].ToString ());
-			squareToChange.GetComponent<Animator> ().SetTrigger ("Trigger");
-
-			squareToChange.GetComponent<SquareScript> ().colorNum = currentColor;
-
-			animationNumber = animationNumber + 1;
-
-			if (!randomizeColors)
-			{
-				score = score + 1;
-				scoreText.text = "" + score;
-			}
-
-			if (animationNumber == squareList.Count) {
-				
-			}
-
-			controlsEnabled = false;
-		} 
-
-		else {
-			animationNumber = 0;
-			lastSquare = 0;
-
-			fallDown = true;
-
-			squareList.Clear ();
-
-			controlsEnabled = true;
-			controlSwitch = true;
-		}
-	}*/
-
-	/*void checkBelow(int i, int square) {
-		if (!(Mathf.Ceil((i + squareRows - 0.001F)/squareRows) == squareRows)) {
-			if (squareList.Contains (i + squareRows))
-			{
-				checkBelow (i + squareRows, square);
-			}
-			else if (i != square)
-			{
-				GameObject.Find ("Game/Squares/" + square.ToString ()).SendMessage ("FallDown", ((i-square)/squareRows), SendMessageOptions.DontRequireReceiver);;
-			}
-		}
-
-	}*/
-
-	/*public void ShuffleBoard () {
-		squareList.Clear ();
-
-		for (int i = 0; i < squareRows; i++)
-		{
-			if (i % 2 == 0)
-			{
-				for (int j = 0; j < squareRows; j++) 
-				{
-					squareList.Add (j + 1 + (i*squareRows));
-				}
-			}
-
-			else
-			{
-				for (int k = squareRows; k > 0; k--) 
-				{
-					squareList.Add (k + (i*squareRows));
-				}
-			}
-		}
-
-		randomizeColors = true;
-
-		SwitchColor ();
-	}*/
+	#endregion
 }
