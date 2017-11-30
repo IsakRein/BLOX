@@ -86,6 +86,8 @@ public class SquareScript : MonoBehaviour {
 				lineScript.AddToFallCounter ();
 
 				fallInitialized = false;
+
+				NameSquare ();
 			}
 		}
 
@@ -119,12 +121,20 @@ public class SquareScript : MonoBehaviour {
 		float y = (((((float)squareRows)/2)-0.5f) - transform.localPosition.y);
 
 		gameObject.name = "" + (Mathf.CeilToInt(squareRows * y) + x);
+
+		if (!fallInitialized) {
+			UpdateColorlist ();
+		}	
+
+		lineScript.CheckAvailableMoves ();
 	}
 
+	void UpdateColorlist() {
+		lineScript.AddToColorList (System.Convert.ToInt32 (gameObject.name), colorNum);
+	}
 
 	void OnTouchDown() {
 		isHovering = true;
-
 
 		if (addSquareHasBeenCalled == false && interactable) {
 			int num = System.Convert.ToInt32 (gameObject.name);

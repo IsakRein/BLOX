@@ -10,31 +10,13 @@ public class LineScript : MonoBehaviour
 
 	#region variables
 
-	/// <summary>
-	/// The last square.
-	/// </summary>
 	public int lastSquare = 0;
 
-	/// <summary>
-	/// The square.
-	/// </summary>
 	public GameObject square;
-	/// <summary>
-	/// The square2.
-	/// </summary>
 	public GameObject square2;
-	/// <summary>
-	/// The last ok square.
-	/// </summary>
 	public GameObject lastOkSquare;
 
-	/// <summary>
-	/// The drag line.
-	/// </summary>
 	public GameObject dragLine;
-	/// <summary>
-	/// The drag circle.
-	/// </summary>
 	public GameObject dragCircle;
 
 	private Vector3 point1;
@@ -44,9 +26,6 @@ public class LineScript : MonoBehaviour
 	[Space]
 
 	private int score;
-	/// <summary>
-	/// The score text.
-	/// </summary>
 	public Text scoreText;
 
 	[Space]
@@ -55,96 +34,49 @@ public class LineScript : MonoBehaviour
 	private bool updateInitialize = true;
 	private bool newSquareInitialize = true;
 	private bool isOnMobile = true;
+	private int checkAroundCounter = 0;
 
-	/// <summary>
-	/// The circle prefab.
-	/// </summary>
 	public GameObject circlePrefab;
 	private GameObject circle;
-	/// <summary>
-	/// The line prefab.
-	/// </summary>
 	public GameObject linePrefab;
 	private GameObject line;
 
-	/// <summary>
-	/// The squares.
-	/// </summary>
 	public Game Squares;
-	/// <summary>
-	/// The squares.
-	/// </summary>
 	public GameObject squares;
 	private GameObject lineChild;
 
 	private float localScaleX;
 	private float localScaleY;
 
-	/// <summary>
-	/// The color of the set.
-	/// </summary>
 	public Color[] setColor;
 
 	private int currentSquare;
 	private int currentColor;
 
-	/// <summary>
-	/// The drag line spr.
-	/// </summary>
 	public SpriteRenderer dragLineSpr;
-	/// <summary>
-	/// The drag circle spr.
-	/// </summary>
 	public SpriteRenderer dragCircleSpr;
 
-	/// <summary>
-	/// The square list.
-	/// </summary>
 	public List<int> squareList = new List<int> ();
-	/// <summary>
-	/// The row list.
-	/// </summary>
 	public List<int> rowList = new List<int> ();
 	public List<int> colorList = new List<int> ();
 
-	/// <summary>
-	/// The hits.
-	/// </summary>
 	public AudioClip[] hits;
-	/// <summary>
-	/// The snap.
-	/// </summary>
 	public AudioClip snap;
-	/// <summary>
-	/// The snap2.
-	/// </summary>
 	public AudioClip snap2;
 	private AudioSource audioSource;
 
 	private bool controlsEnabled = true;
 	private bool randomizeColors = false;
-	/// <summary>
-	/// The fall down.
-	/// </summary>
 	public bool fallDown;
 	private bool InitializeFallHasBeenCalled = false;
 
-	/// <summary>
-	/// The size.
-	/// </summary>
 	public float size;
-	/// <summary>
-	/// The minimum squares in move.
-	/// </summary>
 	public int minimumSquaresInMove;
 	private int fallenSquareCounter;
 	private int initializeCounter;
 	private int lastSquareNum;
 	private int squareRows;
 
-	/// <summary>
-	/// The square prefab.
-	/// </summary>
 	public GameObject squarePrefab;
 	private	GameObject instSquare;
 
@@ -170,6 +102,17 @@ public class LineScript : MonoBehaviour
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
 		}
+
+
+		colorList.Clear ();
+		for(int i=0;i<=squareRows*squareRows;i++)
+		{
+			colorList.Add (0);
+		}
+
+		colorList [0] = -1;
+
+		CheckAvailableMoves ();
 	}
 
 	void Update ()
@@ -307,12 +250,6 @@ public class LineScript : MonoBehaviour
 		}
 	}
 
-	/// <summary>
-	/// Adds the square.
-	/// </summary>
-	/// <param name="squareNum">Square number.</param>
-	/// <param name="colorNum">Color number.</param>
-	/// <param name="hoverSwitch">If set to <c>true</c> hover switch.</param>
 	public void AddSquare (int squareNum, int colorNum, bool hoverSwitch)
 	{ 
 		if (controlsEnabled) {
@@ -728,146 +665,130 @@ public class LineScript : MonoBehaviour
 		}
 	}
 
-	void CheckAvailableMoves ()
-	{
-		bool noMoves = true;
+	public void CheckAvailableMoves() {
+		checkAroundCounter = checkAroundCounter + 1;
 
-		for (int i = 1; i <= squareRows * squareRows; i++) {
-			Color clr = GameObject.Find ("Game/Squares/" + i.ToString ()).GetComponent<SpriteRenderer> ().color;
+		if (checkAroundCounter == squareRows*squareRows) {
+			bool movePossible = false;
 
-			if (i-squareRows > 0) {
-				if (clr == GameObject.Find ("Game/Squares/" + (i - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-					int newSquare = i - squareRows;
-
-					if (noMoves) {
-						if (newSquare - squareRows > 0) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare % squareRows != 1) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare % squareRows != 0) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare + squareRows <= squareRows * squareRows) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
+			for (int i = 1; i <= squareRows * squareRows; i++) {
+				if (!movePossible) {
+					if (CheckAroundSquare1 (i)) {
+						movePossible = true;
 					}
 				}
 			}
 
-			if (i % squareRows != 1) {
-				if (clr == GameObject.Find ("Game/Squares/" + (i - 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-					int newSquare = i - 1;
-
-					if (noMoves) {
-						if (newSquare - squareRows > 0) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare % squareRows != 1) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare % squareRows != 0) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare + squareRows <= squareRows * squareRows) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-					}
-				} 
+			if (movePossible) {
+				Debug.Log ("go");
+			} else {
+				Debug.Log ("game over");
 			}
-
-			if (i % squareRows != 0) {
-				if (clr == GameObject.Find ("Game/Squares/" + (i + 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-					int newSquare = i + 1;
-
-					if (noMoves) {
-						if (newSquare - squareRows > 0) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare % squareRows != 1) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare % squareRows != 0) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare + squareRows <= squareRows * squareRows) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-					}
-				} 
-			}
-
-			if (i + squareRows <= squareRows * squareRows) {
-				if (clr == GameObject.Find ("Game/Squares/" + (i + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-					int newSquare = i + squareRows;
-
-					if (noMoves) {
-						if (newSquare - squareRows > 0) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare % squareRows != 1) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare - 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare % squareRows != 0) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + 1).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-						if (newSquare + squareRows <= squareRows * squareRows) {
-							if (clr == GameObject.Find ("Game/Squares/" + (newSquare + squareRows).ToString ()).GetComponent<SpriteRenderer> ().color) {
-								noMoves = false;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if (noMoves == false) {
-			Debug.Log ("There are moves left");
-		} else {
-			Debug.Log ("No moves left");
 		}
 	}
-
-	void AddToColorList () {
 		
+	bool CheckAroundSquare1(int squareNum) {
+		bool movePossible = false;
+
+		if (squareNum - squareRows > 0) {
+			if (colorList [squareNum] == colorList [squareNum - squareRows]) {
+				movePossible = CheckAroundSquare2(squareNum - squareRows, squareNum);
+			}
+		}
+		if (Convert.ToDouble(squareNum) % squareRows != 1) {
+			if (colorList [squareNum] == colorList [squareNum - 1]) {
+				movePossible = CheckAroundSquare2(squareNum - 1, squareNum);
+			}
+		}
+		if (Convert.ToDouble(squareNum) % squareRows != 0) {
+			if (colorList [squareNum] == colorList [squareNum + 1]) {
+				movePossible = CheckAroundSquare2(squareNum + 1, squareNum);
+			}
+		}
+		if (Convert.ToDouble(squareNum) + squareRows <= squareRows * squareRows) {
+			if (colorList [squareNum] == colorList [squareNum + squareRows]) {
+				movePossible = CheckAroundSquare2(squareNum + squareRows, squareNum);
+			}
+		}
+
+		return movePossible;
+	}
+
+	/*
+
+	bool CheckAroundSquare2(int squareNum) {
+		bool movePossible = false;
+
+		if (squareNum - squareRows > 0) {
+			if (colorList [squareNum] == colorList [squareNum - squareRows]) {
+				movePossible = CheckAroundSquare3(squareNum - squareRows);
+			}
+		}
+		if (Convert.ToDouble(squareNum) % squareRows != 1) {
+			if (colorList [squareNum] == colorList [squareNum - 1]) {
+				movePossible = CheckAroundSquare3(squareNum - 1);
+			}
+		}
+		if (Convert.ToDouble(squareNum) % squareRows != 0) {
+			if (colorList [squareNum] == colorList [squareNum + 1]) {
+				movePossible = CheckAroundSquare3(squareNum + 1);
+			}
+		}
+		if (Convert.ToDouble(squareNum) + squareRows <= squareRows * squareRows) {
+			if (colorList [squareNum] == colorList [squareNum + squareRows]) {
+				movePossible = CheckAroundSquare3(squareNum + squareRows);
+			}
+		}
+
+		return movePossible;
+	}
+
+*/
+
+	bool CheckAroundSquare2(int squareNum, int orgSquareNum) {
+		bool movePossible = false;
+
+		if (squareNum - squareRows != orgSquareNum) {
+			if (squareNum - squareRows > 0) {
+				if (colorList [squareNum] == colorList [squareNum - squareRows]) {
+					movePossible = true;
+				}
+			}
+		}
+
+		if (squareNum - 1 != orgSquareNum) {
+			if (Convert.ToDouble (squareNum) % squareRows != 1) {
+				if (colorList [squareNum] == colorList [squareNum - 1]) {
+					movePossible = true;
+				}
+			}
+		}
+
+		if (squareNum + 1 != orgSquareNum) {
+			if (Convert.ToDouble (squareNum) % squareRows != 0) {
+				if (colorList [squareNum] == colorList [squareNum + 1]) {
+					movePossible = true;
+				}
+			}
+		}
+
+		if (squareNum + squareRows != orgSquareNum) {
+			if (Convert.ToDouble (squareNum) + squareRows <= squareRows * squareRows) {
+				if (colorList [squareNum] == colorList [squareNum + squareRows]) {
+					movePossible = true;
+				}
+			}
+		}
+
+		return movePossible;
+	}
+		
+	public void AddToColorList(int index, int value) {
+		colorList[index] = value;
 	}
 
 	#region animation
 
-	/// <summary>
-	/// Starts the animation.
-	/// </summary>
 	public void StartAnimation ()
 	{
 		controlsEnabled = false;
@@ -898,9 +819,6 @@ public class LineScript : MonoBehaviour
 		fallDown = true;
 	}
 
-	/// <summary>
-	/// Initializes the fall.
-	/// </summary>
 	public void InitializeFall ()
 	{
 		initializeCounter = initializeCounter + 1;
@@ -927,10 +845,7 @@ public class LineScript : MonoBehaviour
 			}
 		}
 	}
-
-	/// <summary>
-	/// Adds to fall counter.
-	/// </summary>
+				
 	public void AddToFallCounter ()
 	{
 		fallenSquareCounter = fallenSquareCounter + 1;
@@ -941,9 +856,6 @@ public class LineScript : MonoBehaviour
 		}
 	}
 
-	/// <summary>
-	/// Fallings the done.
-	/// </summary>
 	public void FallingDone ()
 	{
 		controlsEnabled = true;
@@ -951,6 +863,7 @@ public class LineScript : MonoBehaviour
 		squareList.Clear ();
 		fallDown = false;
 		InitializeFallHasBeenCalled = false;
+		checkAroundCounter = 0;
 
 		int m = rowList.Max ();
 		int n = rowList.IndexOf (m) + 1;
@@ -963,13 +876,8 @@ public class LineScript : MonoBehaviour
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
 		}
-
-		CheckAvailableMoves ();
 	}
-
-	/// <summary>
-	/// Playes the sound.
-	/// </summary>
+				
 	public void PlaySound ()
 	{
 		if (randomizeColors) {
