@@ -42,6 +42,7 @@ public class SquareScript : MonoBehaviour {
 
 	private bool fallInitialized = false;
 
+	public bool nameSquareAtStart;
 
 	void Start() {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
@@ -64,7 +65,9 @@ public class SquareScript : MonoBehaviour {
 
 		hoverSwitch = false;
 
-		NameSquare ();
+		if (nameSquareAtStart) {	
+			NameSquare ();
+		}
 
 		squareRows = squareScript.Rows;
 	}
@@ -75,19 +78,19 @@ public class SquareScript : MonoBehaviour {
 			addSquareHasBeenCalled = false;
 		} 
 
-		if (lineScript.fallDown == true && fallCounter > 0 && fallInitialized)
-		{
-			transform.localPosition = Vector3.MoveTowards (transform.localPosition, targetPos, speed / 50);
+		if (fallInitialized) {
+			if (lineScript.fallDown == true && fallCounter > 0) {
+				transform.localPosition = Vector3.MoveTowards (transform.localPosition, targetPos, speed / 50);
 
-			if (targetPos == transform.localPosition)
-			{
-				fallCounter = 0;
+				if (targetPos == transform.localPosition) {
+					fallCounter = 0;
 
-				lineScript.AddToFallCounter ();
+					lineScript.AddToFallCounter ();
 
-				fallInitialized = false;
+					NameSquare ();
 
-				NameSquare ();
+					fallInitialized = false;
+				}
 			}
 		}
 
@@ -122,11 +125,7 @@ public class SquareScript : MonoBehaviour {
 
 		gameObject.name = "" + (Mathf.CeilToInt(squareRows * y) + x);
 
-		if (!fallInitialized) {
-			UpdateColorlist ();
-		}	
-
-		lineScript.CheckAvailableMoves ();
+		UpdateColorlist ();
 	}
 
 	void UpdateColorlist() {
@@ -177,6 +176,10 @@ public class SquareScript : MonoBehaviour {
 
 	void Animate() {
 		animator.SetTrigger("Trigger");
+	}
+
+	void AnimateError() {
+		animator.SetTrigger ("Error");
 	}
 
 	void OnTouchExit() {

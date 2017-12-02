@@ -74,7 +74,6 @@ public class LineScript : MonoBehaviour
 	public int minimumSquaresInMove;
 	private int fallenSquareCounter;
 	private int initializeCounter;
-	private int lastSquareNum;
 	private int squareRows;
 
 	public GameObject squarePrefab;
@@ -111,8 +110,6 @@ public class LineScript : MonoBehaviour
 		}
 
 		colorList [0] = -1;
-
-		CheckAvailableMoves ();
 	}
 
 	void Update ()
@@ -174,6 +171,11 @@ public class LineScript : MonoBehaviour
 						StartAnimation ();
 					}		
 				} else {
+					/*foreach (int square in squareList) {
+						GameObject squareObj = GameObject.Find (square.ToString ());
+						squareObj.SendMessage ("AnimateError", SendMessageOptions.DontRequireReceiver);
+					}*/
+
 					FallingDone ();
 				}
 
@@ -240,6 +242,11 @@ public class LineScript : MonoBehaviour
 							StartAnimation ();
 						}
 					} else {
+						foreach (int square in squareList) {
+							GameObject squareObj = GameObject.Find (square.ToString ());
+							squareObj.SendMessage ("AnimateError", SendMessageOptions.DontRequireReceiver);
+						}
+
 						FallingDone ();
 					}
 
@@ -286,8 +293,6 @@ public class LineScript : MonoBehaviour
 			else if (lastSquare != squareNum && hoverSwitch == false) {	
 				square = GameObject.Find ("Game/Squares/" + squareNum.ToString ());
 				SquareScript squareScript = square.GetComponent<SquareScript> ();
-
-				lastSquareNum = squareNum;
 
 				if (lastSquare > 0) {
 					square2 = GameObject.Find ("Game/Squares/" + lastSquare.ToString ());
@@ -665,8 +670,11 @@ public class LineScript : MonoBehaviour
 		}
 	}
 
+	/*
 	public void CheckAvailableMoves() {
 		checkAroundCounter = checkAroundCounter + 1;
+
+		Debug.Log (checkAroundCounter);
 
 		if (checkAroundCounter == squareRows*squareRows) {
 			bool movePossible = false;
@@ -686,26 +694,27 @@ public class LineScript : MonoBehaviour
 			}
 		}
 	}
+	*/
 		
 	bool CheckAroundSquare1(int squareNum) {
 		bool movePossible = false;
 
-		if (squareNum - squareRows > 0) {
+		if (squareNum - squareRows > 0 && !movePossible) {
 			if (colorList [squareNum] == colorList [squareNum - squareRows]) {
 				movePossible = CheckAroundSquare2(squareNum - squareRows, squareNum);
 			}
 		}
-		if (Convert.ToDouble(squareNum) % squareRows != 1) {
+		if (Convert.ToDouble(squareNum) % squareRows != 1 && !movePossible) {
 			if (colorList [squareNum] == colorList [squareNum - 1]) {
 				movePossible = CheckAroundSquare2(squareNum - 1, squareNum);
 			}
 		}
-		if (Convert.ToDouble(squareNum) % squareRows != 0) {
+		if (Convert.ToDouble(squareNum) % squareRows != 0 && !movePossible) {
 			if (colorList [squareNum] == colorList [squareNum + 1]) {
 				movePossible = CheckAroundSquare2(squareNum + 1, squareNum);
 			}
 		}
-		if (Convert.ToDouble(squareNum) + squareRows <= squareRows * squareRows) {
+		if (Convert.ToDouble(squareNum) + squareRows <= squareRows * squareRows && !movePossible) {
 			if (colorList [squareNum] == colorList [squareNum + squareRows]) {
 				movePossible = CheckAroundSquare2(squareNum + squareRows, squareNum);
 			}
@@ -748,7 +757,7 @@ public class LineScript : MonoBehaviour
 	bool CheckAroundSquare2(int squareNum, int orgSquareNum) {
 		bool movePossible = false;
 
-		if (squareNum - squareRows != orgSquareNum) {
+		if (squareNum - squareRows != orgSquareNum && !movePossible) {
 			if (squareNum - squareRows > 0) {
 				if (colorList [squareNum] == colorList [squareNum - squareRows]) {
 					movePossible = true;
@@ -756,7 +765,7 @@ public class LineScript : MonoBehaviour
 			}
 		}
 
-		if (squareNum - 1 != orgSquareNum) {
+		if (squareNum - 1 != orgSquareNum && !movePossible) {
 			if (Convert.ToDouble (squareNum) % squareRows != 1) {
 				if (colorList [squareNum] == colorList [squareNum - 1]) {
 					movePossible = true;
@@ -764,7 +773,7 @@ public class LineScript : MonoBehaviour
 			}
 		}
 
-		if (squareNum + 1 != orgSquareNum) {
+		if (squareNum + 1 != orgSquareNum && !movePossible) {
 			if (Convert.ToDouble (squareNum) % squareRows != 0) {
 				if (colorList [squareNum] == colorList [squareNum + 1]) {
 					movePossible = true;
@@ -772,7 +781,7 @@ public class LineScript : MonoBehaviour
 			}
 		}
 
-		if (squareNum + squareRows != orgSquareNum) {
+		if (squareNum + squareRows != orgSquareNum && !movePossible) {
 			if (Convert.ToDouble (squareNum) + squareRows <= squareRows * squareRows) {
 				if (colorList [squareNum] == colorList [squareNum + squareRows]) {
 					movePossible = true;
@@ -837,6 +846,8 @@ public class LineScript : MonoBehaviour
 						float yPos = i + (((float)squareRows / 2) + 0.5f); 
 						instSquare.transform.localPosition = new Vector2 (xPos, yPos);
 						instSquare.SendMessage ("AddToFallCounter", rowList [row], SendMessageOptions.DontRequireReceiver);
+						instSquare.GetComponent<SquareScript> ().nameSquareAtStart = false;
+
 					}
 				}
 			}
@@ -860,13 +871,9 @@ public class LineScript : MonoBehaviour
 	{
 		controlsEnabled = true;
 		lastSquare = 0;
-		squareList.Clear ();
 		fallDown = false;
 		InitializeFallHasBeenCalled = false;
 		checkAroundCounter = 0;
-
-		int m = rowList.Max ();
-		int n = rowList.IndexOf (m) + 1;
 
 		foreach (Transform square in squares.transform) {
 			square.SendMessage ("NameSquare", SendMessageOptions.DontRequireReceiver);
@@ -876,6 +883,24 @@ public class LineScript : MonoBehaviour
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
 		}
+
+		bool movePossible = false;
+
+		for (int i = 1; i <= squareRows * squareRows; i++) {
+			if (!movePossible) {
+				if (CheckAroundSquare1 (i)) {
+					movePossible = true;
+				}
+			}
+		}
+
+		if (movePossible) {
+			Debug.Log ("go");
+		} else {
+			Debug.Log ("game over");
+		}
+			
+		squareList.Clear ();
 	}
 				
 	public void PlaySound ()
