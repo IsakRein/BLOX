@@ -42,8 +42,6 @@ public class SquareScript : MonoBehaviour {
 
 	private bool fallInitialized = false;
 
-	public bool nameSquareAtStart;
-
 	void Start() {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
 		animator = gameObject.GetComponent<Animator> ();
@@ -64,10 +62,6 @@ public class SquareScript : MonoBehaviour {
 		isHovering = false;
 
 		hoverSwitch = false;
-
-		if (nameSquareAtStart) {	
-			NameSquare ();
-		}
 
 		squareRows = squareScript.Rows;
 	}
@@ -196,6 +190,8 @@ public class SquareScript : MonoBehaviour {
 	}
 
 	void MakeInteractable () {
+		NameSquare ();
+
 		interactable = true;
 	}
 

@@ -98,11 +98,6 @@ public class LineScript : MonoBehaviour
 			square.gameObject.SetActive (true);
 		}
 
-		for (int i = 0; i < squareRows; i++) {
-			rowList.Add (0);
-		}
-
-
 		colorList.Clear ();
 		for(int i=0;i<=squareRows*squareRows;i++)
 		{
@@ -110,6 +105,10 @@ public class LineScript : MonoBehaviour
 		}
 
 		colorList [0] = -1;
+
+		for (int i = 0; i < squareRows; i++) {
+			rowList.Add (0);
+		}
 	}
 
 	void Update ()
@@ -242,10 +241,10 @@ public class LineScript : MonoBehaviour
 							StartAnimation ();
 						}
 					} else {
-						foreach (int square in squareList) {
+						/*foreach (int square in squareList) {
 							GameObject squareObj = GameObject.Find (square.ToString ());
 							squareObj.SendMessage ("AnimateError", SendMessageOptions.DontRequireReceiver);
-						}
+						}*/
 
 						FallingDone ();
 					}
@@ -846,8 +845,6 @@ public class LineScript : MonoBehaviour
 						float yPos = i + (((float)squareRows / 2) + 0.5f); 
 						instSquare.transform.localPosition = new Vector2 (xPos, yPos);
 						instSquare.SendMessage ("AddToFallCounter", rowList [row], SendMessageOptions.DontRequireReceiver);
-						instSquare.GetComponent<SquareScript> ().nameSquareAtStart = false;
-
 					}
 				}
 			}

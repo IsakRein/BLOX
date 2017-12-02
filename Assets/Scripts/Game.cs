@@ -49,7 +49,6 @@ public class Game : MonoBehaviour {
 				square.transform.localPosition = new Vector2 (xPos, yPos);
 
 				square.GetComponent<Animator> ().SetTrigger ("OnEnable");
-				square.GetComponent<SquareScript> ().nameSquareAtStart = true;
 
 				transform.localScale = new Vector3 (scale, scale);
 			}
