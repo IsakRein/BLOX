@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: b267d499ac3177c4990dd5e28c47d31b
-timeCreated: 1512248549
+guid: 7099b10ab413ad94eb225b46aa6998f5
+timeCreated: 1512254293
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
@@ -35,7 +35,7 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 3
-  spriteExtrude: 0
+  spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
@@ -53,31 +53,7 @@ TextureImporter:
   - buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     textureFormat: 4
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-  - buildTarget: Standalone
-    maxTextureSize: 2048
-    textureFormat: 4
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-  - buildTarget: iPhone
-    maxTextureSize: 2048
-    textureFormat: 4
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-  - buildTarget: Android
-    maxTextureSize: 2048
-    textureFormat: 4
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -86,9 +62,9 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline:
-    - - {x: 2, y: 2}
+    - - {x: -2, y: -2}
       - {x: -2, y: 2}
-      - {x: -2, y: -2}
+      - {x: 2, y: 2}
       - {x: 2, y: -2}
   spritePackingTag: 
   userData: 

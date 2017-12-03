@@ -19,6 +19,10 @@ public class Game : MonoBehaviour {
 
 	public int Rows;
 
+	public Transform circles;
+	public GameObject circlePrefab;
+	GameObject circle;
+
 	void Awake() {
 		Application.targetFrameRate = 60;
 	}
@@ -52,6 +56,23 @@ public class Game : MonoBehaviour {
 
 				transform.localScale = new Vector3 (scale, scale);
 			}
+		}
+
+		GenerateCircles ();
+	}
+
+	public void GenerateCircles() {
+		for (int i = 1; i <= Rows; i++) {
+			circle = Instantiate (circlePrefab, circles) as GameObject; 
+
+			xPos = i - ((Rows + 1f) / 2);
+			yPos = (Rows + 1f) / 2;
+
+			circle.transform.localPosition = new Vector2 (xPos, yPos);
+
+			circle.GetComponentInChildren<Animator> ().SetTrigger ("Entry");
+
+			circles.localScale = new Vector3 (scale, scale);
 		}
 	}
 }

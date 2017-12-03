@@ -42,6 +42,10 @@ public class SquareScript : MonoBehaviour {
 
 	private bool fallInitialized = false;
 
+	public bool isAnimating;
+
+	public float animEditor;
+
 	void Start() {
 		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
 		animator = gameObject.GetComponent<Animator> ();
@@ -51,6 +55,7 @@ public class SquareScript : MonoBehaviour {
 
 		squares = GameObject.Find ("Squares");
 		squareScript = squares.GetComponent<Game>();
+		squareRows = squareScript.Rows;
 
 		setColor = lineScript.setColor;
 
@@ -68,6 +73,12 @@ public class SquareScript : MonoBehaviour {
 
 
 	void Update () {
+
+		if (isAnimating) {
+			transform.localPosition = new Vector2 (transform.localPosition.x + animEditor, transform.localPosition.y);
+
+		}
+
 		if (!isHovering) {
 			addSquareHasBeenCalled = false;
 		} 
@@ -110,20 +121,36 @@ public class SquareScript : MonoBehaviour {
 	}
 
 	void NameSquare() {
-		squares = GameObject.Find ("Squares");
-		squareScript = squares.GetComponent<Game>();
-		squareRows = squareScript.Rows;
-
+		
 		float x = (transform.localPosition.x - (0.5f-(((float)squareRows)/2)))+1;
 		float y = (((((float)squareRows)/2)-0.5f) - transform.localPosition.y);
 
-		gameObject.name = "" + (Mathf.CeilToInt(squareRows * y) + x);
+		gameObject.name = "" + (Mathf.CeilToInt(squareRows * y) + Mathf.Round(x));
+
+		x = Mathf.Round(transform.localPosition.x - 0.5f) + 0.5f;
+		y = Mathf.Round(transform.localPosition.y - 0.5f) + 0.5f;
+
+		transform.localPosition = new Vector2 (x, y);
 
 		UpdateColorlist ();
 	}
 
 	void UpdateColorlist() {
 		lineScript.AddToColorList (System.Convert.ToInt32 (gameObject.name), colorNum);
+	}
+
+	void StartErrorAnimation() {
+		interactable = false;
+
+		isAnimating = true;
+	}
+
+	void EndErrorAnimation() {
+		interactable = true;
+
+		isAnimating = false;
+
+		NameSquare ();
 	}
 
 	void OnTouchDown() {
@@ -199,7 +226,7 @@ public class SquareScript : MonoBehaviour {
 
 		for (int i = int.Parse (name); i > 0; i = i - squareRows)
 		{
-			GameObject.Find ("Game/Squares/" + i.ToString ()).SendMessage ("AddToFallCounter", 1, SendMessageOptions.DontRequireReceiver);
+			GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + i.ToString ()).SendMessage ("AddToFallCounter", 1, SendMessageOptions.DontRequireReceiver);
 		}
 
 		GameObject.Destroy (gameObject);	
