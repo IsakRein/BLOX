@@ -37,7 +37,6 @@ public class LineScript : MonoBehaviour
 	private bool updateInitialize = true;
 	private bool newSquareInitialize = true;
 	private bool isOnMobile = true;
-	private int checkAroundCounter = 0;
 
 	public GameObject circlePrefab;
 	private GameObject circle;
@@ -884,7 +883,6 @@ public class LineScript : MonoBehaviour
 		lastSquare = 0;
 		fallDown = false;
 		InitializeFallHasBeenCalled = false;
-		checkAroundCounter = 0;
 
 		foreach (Transform square in squares.transform) {
 			square.SendMessage ("NameSquare", SendMessageOptions.DontRequireReceiver);
