@@ -4,238 +4,274 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class SquareScript : MonoBehaviour {
+public class SquareScript : MonoBehaviour
+{
 
-	public GameObject squares;
-	public GameObject Line;
+    public GameObject squares;
+    public GameObject Line;
 
-	public Game squareScript;
-	public LineScript lineScript;
+    public Game squareScript;
+    public LineScript lineScript;
 
-	public Color[] setColor;
-	public int colorNum;
+    public Color[] setColor;
+    public int colorNum;
 
-	private SpriteRenderer spriteRenderer;
-	private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private Animator animator;
 
-	private bool isOnMobile = true;
+    private bool isOnMobile = true;
 
-	[Space]
+    [Space]
 
-	public bool hoverSwitch = false;
+    public bool hoverSwitch = false;
 
-	[Space]
+    [Space]
 
-	public bool isHovering = false;
+    public bool isHovering = false;
 
-	public bool addSquareHasBeenCalled = false;
+    public bool addSquareHasBeenCalled = false;
 
-	public bool interactable = false;
+    public bool interactable = false;
 
-	private int squareRows;
+    private int squareRows;
 
-	public int fallCounter;
+    public int fallCounter;
 
-	public float speed = 1f;
+    public float speed = 1f;
 
-	public Vector3 targetPos;
+    public Vector3 targetPos;
 
-	private bool fallInitialized = false;
+    private bool fallInitialized = false;
 
-	public bool isAnimating;
+    public bool isAnimating;
 
-	public float animEditor;
+    public float animEditor;
 
-	void Start() {
-		spriteRenderer = gameObject.GetComponent<SpriteRenderer> ();
-		animator = gameObject.GetComponent<Animator> ();
+    public bool takeColorFromTop = false;
 
-		Line = GameObject.Find ("LineHolder");
-		lineScript = Line.GetComponent<LineScript>();
+    void Start()
+    {
+        spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        animator = gameObject.GetComponent<Animator>();
 
-		squares = GameObject.Find ("Squares");
-		squareScript = squares.GetComponent<Game>();
-		squareRows = squareScript.Rows;
+        Line = GameObject.Find("LineHolder");
+        lineScript = Line.GetComponent<LineScript>();
 
-		setColor = lineScript.setColor;
+        squares = GameObject.Find("Squares");
+        squareScript = squares.GetComponent<Game>();
+        squareRows = squareScript.Rows;
 
-		colorNum = Random.Range (0, setColor.Length);
-		spriteRenderer.color = setColor [colorNum];
+        setColor = lineScript.setColor;
 
-		addSquareHasBeenCalled = false;
+        if (takeColorFromTop)
+        {
 
-		isHovering = false;
+            colorNum = Random.Range(0, setColor.Length);
+            spriteRenderer.color = setColor[colorNum];
+            //GameObject.Find("Game / CanvasBelow / BG1 / BG2 / Circles / " + )
+        }
+        else
+        {
+            colorNum = Random.Range(0, setColor.Length);
+            spriteRenderer.color = setColor[colorNum];
+        }
 
-		hoverSwitch = false;
+        addSquareHasBeenCalled = false;
 
-		squareRows = squareScript.Rows;
-	}
+        isHovering = false;
 
+        hoverSwitch = false;
 
-	void Update () {
+        squareRows = squareScript.Rows;
+    }
 
-		if (isAnimating) {
-			transform.localPosition = new Vector2 (transform.localPosition.x + animEditor, transform.localPosition.y);
+    void Update()
+    {
 
-		}
+        if (isAnimating)
+        {
+            transform.localPosition = new Vector2(transform.localPosition.x + animEditor, transform.localPosition.y);
 
-		if (!isHovering) {
-			addSquareHasBeenCalled = false;
-		} 
+        }
 
-		if (fallInitialized) {
-			if (lineScript.fallDown == true && fallCounter > 0) {
-				transform.localPosition = Vector3.MoveTowards (transform.localPosition, targetPos, speed / 50);
+        if (!isHovering)
+        {
+            addSquareHasBeenCalled = false;
+        }
 
-				if (targetPos == transform.localPosition) {
-					fallCounter = 0;
+        if (fallInitialized)
+        {
+            if (lineScript.fallDown == true && fallCounter > 0)
+            {
+                transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed / 50);
 
-					lineScript.AddToFallCounter ();
+                if (targetPos == transform.localPosition)
+                {
+                    fallCounter = 0;
 
-					NameSquare ();
+                    lineScript.AddToFallCounter();
 
-					fallInitialized = false;
-				}
-			}
-		}
+                    NameSquare();
 
+                    fallInitialized = false;
+                }
+            }
+        }
 
-		#if UNITY_EDITOR
-		isOnMobile = false;
 
-		if (!(Input.GetMouseButton(0) || Input.GetMouseButtonDown(0))) {
-			addSquareHasBeenCalled = false;
-
-			hoverSwitch = false;		
-		}
+#if UNITY_EDITOR
+        isOnMobile = false;
 
-		#endif
-
-		if (isOnMobile) {
-			if (Input.touchCount == 0) {
-				addSquareHasBeenCalled = false;
-
-				hoverSwitch = false;
-			}
-		}
-	}
+        if (!(Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)))
+        {
+            addSquareHasBeenCalled = false;
 
-	void NameSquare() {
-		
-		float x = (transform.localPosition.x - (0.5f-(((float)squareRows)/2)))+1;
-		float y = (((((float)squareRows)/2)-0.5f) - transform.localPosition.y);
+            hoverSwitch = false;
+        }
 
-		gameObject.name = "" + (Mathf.CeilToInt(squareRows * y) + Mathf.Round(x));
+#endif
 
-		x = Mathf.Round(transform.localPosition.x - 0.5f) + 0.5f;
-		y = Mathf.Round(transform.localPosition.y - 0.5f) + 0.5f;
+        if (isOnMobile)
+        {
+            if (Input.touchCount == 0)
+            {
+                addSquareHasBeenCalled = false;
 
-		transform.localPosition = new Vector2 (x, y);
+                hoverSwitch = false;
+            }
+        }
+    }
 
-		UpdateColorlist ();
-	}
+    void NameSquare()
+    {
 
-	void UpdateColorlist() {
-		lineScript.AddToColorList (System.Convert.ToInt32 (gameObject.name), colorNum);
-	}
+        float x = (transform.localPosition.x - (0.5f - (((float)squareRows) / 2))) + 1;
+        float y = (((((float)squareRows) / 2) - 0.5f) - transform.localPosition.y);
 
-	void StartErrorAnimation() {
-		interactable = false;
+        gameObject.name = "" + (Mathf.CeilToInt(squareRows * y) + Mathf.Round(x));
 
-		isAnimating = true;
-	}
+        x = Mathf.Round(transform.localPosition.x - 0.5f) + 0.5f;
+        y = Mathf.Round(transform.localPosition.y - 0.5f) + 0.5f;
 
-	void EndErrorAnimation() {
-		interactable = true;
+        transform.localPosition = new Vector2(x, y);
 
-		isAnimating = false;
+        UpdateColorlist();
+    }
 
-		NameSquare ();
-	}
+    void UpdateColorlist()
+    {
+        lineScript.AddToColorList(System.Convert.ToInt32(gameObject.name), colorNum);
+    }
 
-	void OnTouchDown() {
-		isHovering = true;
+    void StartErrorAnimation()
+    {
+        interactable = false;
 
-		if (addSquareHasBeenCalled == false && interactable) {
-			int num = System.Convert.ToInt32 (gameObject.name);
-			lineScript.AddSquare (num, colorNum, hoverSwitch);
+        isAnimating = true;
+    }
 
-			addSquareHasBeenCalled = true;
-		}
-	}
-	
-	void OnTouchUp() {
-		isHovering = false;
-	}	
+    void EndErrorAnimation()
+    {
+        interactable = true;
 
-	void OnTouchStay() {
-		isHovering = true;
+        isAnimating = false;
 
+        NameSquare();
+    }
 
-		if (addSquareHasBeenCalled == false && interactable) {
-			int num = System.Convert.ToInt32 (gameObject.name);
-			lineScript.AddSquare (num, colorNum, hoverSwitch);
+    void OnTouchDown()
+    {
+        isHovering = true;
 
-			addSquareHasBeenCalled = true;
-		}
-	}
-		
-	void InitializeFall() {
-		if (fallCounter == 0)
-		{
-			lineScript.AddToFallCounter ();
-			fallInitialized = true;
-		}
-		else
-		{
-			targetPos = transform.localPosition;
-			targetPos.y = transform.localPosition.y - fallCounter;
-			interactable = true;
-			fallInitialized = true;
-		}
-	}
+        if (addSquareHasBeenCalled == false && interactable)
+        {
+            int num = System.Convert.ToInt32(gameObject.name);
+            lineScript.AddSquare(num, colorNum, hoverSwitch);
 
-	void Animate() {
-		animator.SetTrigger("Trigger");
-	}
+            addSquareHasBeenCalled = true;
+        }
+    }
 
-	void AnimateError() {
-		animator.SetTrigger ("Error");
-	}
+    void OnTouchUp()
+    {
+        isHovering = false;
+    }
 
-	void OnTouchExit() {
-		isHovering = false;
-	}
+    void OnTouchStay()
+    {
+        isHovering = true;
 
-	void EnableFall() 
-	{
-		lineScript.InitializeFall ();
-	}
 
-	void PlaySound() {
-		lineScript.PlaySound ();
-	}
+        if (addSquareHasBeenCalled == false && interactable)
+        {
+            int num = System.Convert.ToInt32(gameObject.name);
+            lineScript.AddSquare(num, colorNum, hoverSwitch);
 
-	void MakeInteractable () {
-		NameSquare ();
+            addSquareHasBeenCalled = true;
+        }
+    }
 
-		interactable = true;
-	}
+    void InitializeFall()
+    {
+        if (fallCounter == 0)
+        {
+            lineScript.AddToFallCounter();
+            fallInitialized = true;
+        }
+        else
+        {
+            targetPos = transform.localPosition;
+            targetPos.y = transform.localPosition.y - fallCounter;
+            interactable = true;
+            fallInitialized = true;
+        }
+    }
 
-	void DisableGameObject () {
+    void Animate()
+    {
+        animator.SetTrigger("Trigger");
+    }
 
-		for (int i = int.Parse (name); i > 0; i = i - squareRows)
-		{
-			GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + i.ToString ()).SendMessage ("AddToFallCounter", 1, SendMessageOptions.DontRequireReceiver);
-		}
+    void AnimateError()
+    {
+        animator.SetTrigger("Error");
+    }
 
-		GameObject.Destroy (gameObject);	
-	}
+    void OnTouchExit()
+    {
+        isHovering = false;
+    }
 
-	void AddToFallCounter(int howMuch) 
-	{
-		fallCounter = fallCounter + howMuch;
-	}
+    void EnableFall()
+    {
+        lineScript.InitializeFall();
+    }
 
+    void PlaySound()
+    {
+        lineScript.PlaySound();
+    }
 
+    void MakeInteractable()
+    {
+        NameSquare();
+
+        interactable = true;
+    }
+
+    void DisableGameObject()
+    {
+
+        for (int i = int.Parse(name); i > 0; i = i - squareRows)
+        {
+            GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + i.ToString()).SendMessage("AddToFallCounter", 1, SendMessageOptions.DontRequireReceiver);
+        }
+
+        GameObject.Destroy(gameObject);
+    }
+
+    void AddToFallCounter(int howMuch)
+    {
+        fallCounter = fallCounter + howMuch;
+    }
 }

@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Game : MonoBehaviour {
 
-	[SerializeField]
-	private float totalWidth;
+	public float totalWidth;
 
 	public GameObject squarePrefab;
 	GameObject square;
@@ -40,7 +39,6 @@ public class Game : MonoBehaviour {
 			GameObject.Destroy(child.gameObject);
 		}
 
-		//scale = 12*(Mathf.Pow((3.67f * Rows), -1.0f));
 		scale = totalWidth/Rows;
 
 		for (int i = 1; i <= Rows; i++) {
@@ -67,6 +65,8 @@ public class Game : MonoBehaviour {
 
 			xPos = i - ((Rows + 1f) / 2);
 			yPos = (Rows + 1f) / 2;
+
+            circle.name = "" + i;
 
 			circle.transform.localPosition = new Vector2 (xPos, yPos);
 

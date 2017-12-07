@@ -45,6 +45,7 @@ public class LineScript : MonoBehaviour
 
 	public Game Squares;
 	public GameObject squares;
+    public Transform circles;
 	private GameObject lineChild;
 
 	private float localScaleX;
@@ -554,7 +555,7 @@ public class LineScript : MonoBehaviour
 		#endregion
 
 			#region regret
-			else if ((lastSquare == squareNum) && hoverSwitch) {
+			/*else if ((lastSquare == squareNum) && hoverSwitch) {
 				square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareNum.ToString ());
 				square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
 
@@ -589,7 +590,8 @@ public class LineScript : MonoBehaviour
 				squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
 				newSquareInitialize = true;
-			} else if (squareList.Count > 1 && hoverSwitch) {
+			} */
+            else if (squareList.Count > 1 && hoverSwitch) {
 				if ((squareNum == squareList [squareList.Count - 2])) {
 					GameObject square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
 					square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
@@ -858,7 +860,16 @@ public class LineScript : MonoBehaviour
 						float yPos = i + (((float)squareRows / 2) + 0.5f); 
 						instSquare.transform.localPosition = new Vector2 (xPos, yPos);
 						instSquare.SendMessage ("AddToFallCounter", rowList [row], SendMessageOptions.DontRequireReceiver);
-					}
+					
+                        if (i == 0)
+                        {
+                            instSquare.GetComponent<SquareScript>().takeColorFromTop = true;
+                        }
+
+                        else {
+                            instSquare.GetComponent<SquareScript>().takeColorFromTop = false;
+                        }
+                    }
 				}
 			}
 			foreach (Transform child in squares.transform) {
@@ -888,6 +899,15 @@ public class LineScript : MonoBehaviour
 			square.SendMessage ("NameSquare", SendMessageOptions.DontRequireReceiver);
 		}
 
+        foreach (Transform circle in circles)
+        {
+            if ((rowList[Int32.Parse(circle.name) - 1]) > 0)
+            {
+                circle.GetChild(0).SendMessage("NewColor");
+            }
+
+        }
+
 		rowList.Clear ();
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
@@ -908,8 +928,8 @@ public class LineScript : MonoBehaviour
 		} else {
 			Debug.Log ("game over");
 		}
-			
-		squareList.Clear ();
+
+        squareList.Clear ();
 	}
 				
 	public void PlaySound ()
