@@ -158,36 +158,33 @@ public class LineScript : MonoBehaviour
 				dragLine.transform.localScale = new Vector3 (direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 50f, 1);
 			}
 		} else if (Input.GetMouseButtonUp (0)) {
-			if (updateInitialize == false) {
-				dragLine.SetActive (false);
-				dragCircle.SetActive (false);
+            if (updateInitialize == false)
+            {
+                dragLine.SetActive(false);
+                dragCircle.SetActive(false);
 
-				controlsEnabled = true;
+                controlsEnabled = true;
 
-				if (minimumSquaresInMove <= squareList.Count) {
-					if (squareList.Count == 0) {
-						if (currentColor == 0) {
-							currentColor = setColor.Length - 1;
-						} else {
-							currentColor = currentColor - 1;
-						}
-					} else {
-						StartAnimation ();
-					}		
-				} else {
-					foreach (int square in squareList) {
-						GameObject squareObj = GameObject.Find (square.ToString ());
-						squareObj.SendMessage ("AnimateError", SendMessageOptions.DontRequireReceiver);
-					}
+                if (minimumSquaresInMove <= squareList.Count)
+                {
+                    StartAnimation();
+                }
+                else
+                {
+                    foreach (int square in squareList)
+                    {
+                        GameObject squareObj = GameObject.Find(square.ToString());
+                        squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
+                    }
 
-					audioSource.PlayOneShot (error);
+                    audioSource.PlayOneShot(error);
 
-					FallingDone ();
-				}
+                    FallingDone();
+                }
 
-				RemoveLine ();
-				updateInitialize = true;
-			}
+                RemoveLine();
+                updateInitialize = true;
+            }
 		}
 			
 		#endif
@@ -231,36 +228,33 @@ public class LineScript : MonoBehaviour
 				}
 
 			} else if (Input.touchCount == 0) {
-				if (updateInitialize == false) {
-					dragLine.SetActive (false);
-					dragCircle.SetActive (false);
+                if (updateInitialize == false)
+                {
+                    dragLine.SetActive(false);
+                    dragCircle.SetActive(false);
 
-					controlsEnabled = true;
+                    controlsEnabled = true;
 
-					if (minimumSquaresInMove <= squareList.Count) {
-						if (squareList.Count == 0) {
-							if (currentColor == 0) {
-								currentColor = setColor.Length - 1;
-							} else {
-								currentColor = currentColor - 1;
-							}
-						} else {
-							StartAnimation ();
-						}
-					} else {
-						foreach (int square in squareList) {
-							GameObject squareObj = GameObject.Find (square.ToString ());
-							squareObj.SendMessage ("AnimateError", SendMessageOptions.DontRequireReceiver);
-						}
+                    if (squareList.Count >= minimumSquaresInMove)
+                    {
+                        StartAnimation();
+                    }
+                    else
+                    {
+                        foreach (int square in squareList)
+                        {
+                            GameObject squareObj = GameObject.Find(square.ToString());
+                            squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
+                        }
 
-						audioSource.PlayOneShot (error);
+                        audioSource.PlayOneShot(error);
 
-						FallingDone ();
-					}
+                        FallingDone();
+                    }
 
-					RemoveLine ();
-					updateInitialize = true;
-				}
+                    RemoveLine();
+                    updateInitialize = true;
+                }
 			}
 		}
 	}
@@ -555,7 +549,7 @@ public class LineScript : MonoBehaviour
 		#endregion
 
 			#region regret
-			/*else if ((lastSquare == squareNum) && hoverSwitch) {
+			/* else if ((lastSquare == squareNum) && hoverSwitch) {
 				square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareNum.ToString ());
 				square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
 
@@ -812,8 +806,8 @@ public class LineScript : MonoBehaviour
 		controlsEnabled = false;
 
 		foreach (int square in squareList) {
-			GameObject squareObj = GameObject.Find (square.ToString ());
-			squareObj.SendMessage ("Animate", SendMessageOptions.DontRequireReceiver);
+            GameObject squareObj = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + square.ToString ());
+			squareObj.SendMessage ("Animate");
 		}
 
 		score = score + squareList.Count;
@@ -846,9 +840,20 @@ public class LineScript : MonoBehaviour
 	{
 		initializeCounter = initializeCounter + 1;
 
+        Debug.Log(initializeCounter);
+
 		if (InitializeFallHasBeenCalled == false && initializeCounter == squareList.Count) {
 			InitializeFallHasBeenCalled = true;
 			initializeCounter = 0;
+
+            foreach (Transform circle in circles)
+            {
+                if ((rowList[Int32.Parse(circle.name) - 1]) > 0)
+                {
+                    circle.GetChild(0).SendMessage("NewColor");
+                }
+
+            }
 
 			for (int row = 0; row < squareRows; row++) {
 				if (rowList [row] != 0) {
@@ -860,7 +865,8 @@ public class LineScript : MonoBehaviour
 						float yPos = i + (((float)squareRows / 2) + 0.5f); 
 						instSquare.transform.localPosition = new Vector2 (xPos, yPos);
 						instSquare.SendMessage ("AddToFallCounter", rowList [row], SendMessageOptions.DontRequireReceiver);
-					
+                        instSquare.GetComponent<SquareScript>().rowNum = row;
+
                         if (i == 0)
                         {
                             instSquare.GetComponent<SquareScript>().takeColorFromTop = true;
@@ -882,6 +888,8 @@ public class LineScript : MonoBehaviour
 	{
 		fallenSquareCounter = fallenSquareCounter + 1;
 
+        Debug.Log(fallenSquareCounter);
+
 		if (fallenSquareCounter == squareRows * squareRows) {
 			FallingDone ();
 			fallenSquareCounter = 0;
@@ -895,17 +903,9 @@ public class LineScript : MonoBehaviour
 		fallDown = false;
 		InitializeFallHasBeenCalled = false;
 
-		foreach (Transform square in squares.transform) {
-			square.SendMessage ("NameSquare", SendMessageOptions.DontRequireReceiver);
-		}
-
-        foreach (Transform circle in circles)
+        foreach (Transform square in squares.transform)
         {
-            if ((rowList[Int32.Parse(circle.name) - 1]) > 0)
-            {
-                circle.GetChild(0).SendMessage("NewColor");
-            }
-
+            square.SendMessage("NameSquare", SendMessageOptions.DontRequireReceiver);
         }
 
 		rowList.Clear ();

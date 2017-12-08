@@ -49,6 +49,8 @@ public class SquareScript : MonoBehaviour
 
     public bool takeColorFromTop = false;
 
+    public int rowNum;
+
     void Start()
     {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
@@ -65,10 +67,9 @@ public class SquareScript : MonoBehaviour
 
         if (takeColorFromTop)
         {
-
-            colorNum = Random.Range(0, setColor.Length);
+            GameObject square = GameObject.Find("Game / CanvasBelow / BG1 / BG2 / Circles / " + rowNum);
+            colorNum = square.GetComponent<NextSquareScript>().colorNum;
             spriteRenderer.color = setColor[colorNum];
-            //GameObject.Find("Game / CanvasBelow / BG1 / BG2 / Circles / " + )
         }
         else
         {
@@ -87,7 +88,6 @@ public class SquareScript : MonoBehaviour
 
     void Update()
     {
-
         if (isAnimating)
         {
             transform.localPosition = new Vector2(transform.localPosition.x + animEditor, transform.localPosition.y);
@@ -264,7 +264,7 @@ public class SquareScript : MonoBehaviour
 
         for (int i = int.Parse(name); i > 0; i = i - squareRows)
         {
-            GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + i.ToString()).SendMessage("AddToFallCounter", 1, SendMessageOptions.DontRequireReceiver);
+            GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + i.ToString()).SendMessage("AddToFallCounter", 1);
         }
 
         GameObject.Destroy(gameObject);
