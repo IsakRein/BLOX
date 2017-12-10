@@ -173,7 +173,7 @@ public class LineScript : MonoBehaviour
                 {
                     foreach (int square in squareList)
                     {
-                        GameObject squareObj = GameObject.Find(square.ToString());
+						GameObject squareObj = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + square.ToString());
                         squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
                     }
 
@@ -840,20 +840,9 @@ public class LineScript : MonoBehaviour
 	{
 		initializeCounter = initializeCounter + 1;
 
-        Debug.Log(initializeCounter);
-
 		if (InitializeFallHasBeenCalled == false && initializeCounter == squareList.Count) {
 			InitializeFallHasBeenCalled = true;
 			initializeCounter = 0;
-
-            foreach (Transform circle in circles)
-            {
-                if ((rowList[Int32.Parse(circle.name) - 1]) > 0)
-                {
-                    circle.GetChild(0).SendMessage("NewColor");
-                }
-
-            }
 
 			for (int row = 0; row < squareRows; row++) {
 				if (rowList [row] != 0) {
@@ -865,7 +854,7 @@ public class LineScript : MonoBehaviour
 						float yPos = i + (((float)squareRows / 2) + 0.5f); 
 						instSquare.transform.localPosition = new Vector2 (xPos, yPos);
 						instSquare.SendMessage ("AddToFallCounter", rowList [row], SendMessageOptions.DontRequireReceiver);
-                        instSquare.GetComponent<SquareScript>().rowNum = row;
+                        instSquare.GetComponent<SquareScript>().rowNum = row + 1;
 
                         if (i == 0)
                         {
@@ -887,8 +876,6 @@ public class LineScript : MonoBehaviour
 	public void AddToFallCounter ()
 	{
 		fallenSquareCounter = fallenSquareCounter + 1;
-
-        Debug.Log(fallenSquareCounter);
 
 		if (fallenSquareCounter == squareRows * squareRows) {
 			FallingDone ();
