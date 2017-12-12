@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class DarkBackground : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private void Start()
+    {
+    }
+
+    void end () {
+        gameObject.SetActive(false);
+    }
 }
