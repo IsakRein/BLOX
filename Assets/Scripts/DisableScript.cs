@@ -1,35 +1,39 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class DarkBackground : MonoBehaviour {
+public class DisableScript : MonoBehaviour {
 
     public Canvas canvas;
-    public Canvas canvas2;
     private bool changeCanvas;
+    public Image image;
     public LineScript LineScript;
 
-    private void Start()
-    {
+    void Start() {
         changeCanvas = false;
     }
 
-    void StartAnim () {
-        LineScript.controlsEnabled = false;
-    }
-
-    void EndAnim () {
-        if (changeCanvas) {
+    void Disable() {
+        if (changeCanvas)
+        {
             canvas.planeDistance = 100;
-            canvas2.planeDistance = 100;
             changeCanvas = false;
         }
-        else {
+        else
+        {
             canvas.planeDistance = 101;
-            canvas2.planeDistance = 101;
             changeCanvas = true;
         }
 
+        LineScript.controlsEnabled = true;
+
         gameObject.SetActive(false);
+
+        gameObject.SetActive(false);
+    }
+
+    void EnableImage () {
+        image.enabled = true;
     }
 }

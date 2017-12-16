@@ -70,7 +70,7 @@ public class LineScript : MonoBehaviour
 
 	private AudioSource audioSource;
 
-	private bool controlsEnabled = true;
+    public bool controlsEnabled = true;
 	private bool randomizeColors = false;
 	public bool fallDown;
 	private bool InitializeFallHasBeenCalled = false;
