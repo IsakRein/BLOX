@@ -29,7 +29,5 @@ public class DarkBackground : MonoBehaviour {
             canvas2.planeDistance = 101;
             changeCanvas = true;
         }
-
-        gameObject.SetActive(false);
     }
 }
