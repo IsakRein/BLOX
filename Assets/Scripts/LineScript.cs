@@ -8,87 +8,101 @@ using System.Linq;
 public class LineScript : MonoBehaviour
 {
 
-	#region variables
+    #region variables
 
-	public int lastSquare = 0;
+    public int lastSquare = 0;
 
-	public GameObject square;
-	public GameObject square2;
-	public GameObject lastOkSquare;
+    public GameObject square;
+    public GameObject square2;
+    public GameObject lastOkSquare;
 
-	public GameObject dragLine;
-	public GameObject dragCircle;
+    public GameObject dragLine;
+    public GameObject dragCircle;
 
-	private Vector3 point1;
-	private Vector3 point2;
+    private Vector3 point1;
+    private Vector3 point2;
 
-	[Space]
-	[Space]
+    [Space]
+    [Space]
 
-	public int score;
-	public Text scoreText;
+    public int score;
+    public Text scoreText;
 
-	public int highScore;
-	public Text highScoreText;
+    public int highScore;
+    public Text highScoreText;
 
-	[Space]
-	[Space]
+    [Space]
+    [Space]
 
-	private bool updateInitialize = true;
-	private bool newSquareInitialize = true;
-	private bool isOnMobile = true;
+    private bool updateInitialize = true;
+    private bool newSquareInitialize = true;
 
-	public GameObject circlePrefab;
-	private GameObject circle;
-	public GameObject linePrefab;
-	private GameObject line;
+    //0=editor; 1=ios; 2=android
+    private int platformInt;
 
-	public Game Squares;
-	public GameObject squares;
+    public GameObject circlePrefab;
+    private GameObject circle;
+    public GameObject linePrefab;
+    private GameObject line;
+
+    public Game Squares;
+    public GameObject squares;
     public Transform circles;
-	private GameObject lineChild;
+    private GameObject lineChild;
 
-	private float localScaleX;
-	private float localScaleY;
+    private float localScaleX;
+    private float localScaleY;
 
-	public Color[] setColor;
+    public Color[] setColor;
 
-	private int currentSquare;
-	private int currentColor;
+    private int currentSquare;
+    private int currentColor;
 
-	public SpriteRenderer dragLineSpr;
-	public SpriteRenderer dragCircleSpr;
+    public SpriteRenderer dragLineSpr;
+    public SpriteRenderer dragCircleSpr;
 
-	public List<int> squareList = new List<int> ();
-	public List<int> rowList = new List<int> ();
-	public List<int> colorList = new List<int> ();
+    public List<int> squareList = new List<int>();
+    public List<int> rowList = new List<int>();
+    public List<int> colorList = new List<int>();
 
-	public AudioClip[] hits;
-	public AudioClip snap;
-	public AudioClip snap2;
-	public AudioClip error;
+    public AudioClip[] hits;
+    public AudioClip snap;
+    public AudioClip snap2;
+    public AudioClip error;
 
-	private AudioSource audioSource;
+    private AudioSource audioSource;
 
     public bool controlsEnabled = true;
-	private bool randomizeColors = false;
-	public bool fallDown;
-	private bool InitializeFallHasBeenCalled = false;
+    private bool randomizeColors = false;
+    public bool fallDown;
+    private bool InitializeFallHasBeenCalled = false;
 
-	public float size;
-	public int minimumSquaresInMove;
-	private int fallenSquareCounter;
-	private int initializeCounter;
-	private int squareRows;
+    public float size;
+    public int minimumSquaresInMove;
+    private int fallenSquareCounter;
+    private int initializeCounter;
+    private int squareRows;
 
-	public GameObject squarePrefab;
-	private	GameObject instSquare;
+    public GameObject squarePrefab;
+    private GameObject instSquare;
 
-	#endregion
+    #endregion
 
-	void Start ()
-	{
-		audioSource = GetComponent<AudioSource> ();
+    void Start()
+    {
+        #if UNITY_EDITOR
+
+        #endif
+        #if UNITY_IOS
+
+
+        #endif
+        #if UNITY_ANDROID
+
+        #endif
+
+
+        audioSource = GetComponent<AudioSource> ();
 
 		controlsEnabled = true;
 
@@ -118,78 +132,83 @@ public class LineScript : MonoBehaviour
 
 	void Update ()
 	{
-		#if UNITY_EDITOR
-		isOnMobile = false;
-
-		if ((Input.GetMouseButton (0) || Input.GetMouseButtonDown (0)) && controlsEnabled) {
-			if (lastSquare != 0) {
-				if (updateInitialize == true) {
-					square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString ());
-
-					dragLine.SetActive (true);
-					dragCircle.SetActive (true);
-
-					dragCircle.transform.localScale = new Vector3 (square2.transform.lossyScale.x * size * 10, square2.transform.lossyScale.x * size * 10, 1);
-
-					updateInitialize = false;
-				}
-
-				if (newSquareInitialize == true) {
-					dragCircleSpr.color = setColor [currentColor];
-					dragLineSpr.color = setColor [currentColor];
-
-					lastOkSquare = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString ());
-
-					newSquareInitialize = false;
-				}
-					
-				point1 = lastOkSquare.transform.position;
-				point2 = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-				point2 [2] = 0;
-
-				dragCircle.transform.position = point2; 
-				dragLine.transform.position = point1;
-
-				float rot_z = Mathf.Atan2 (point2.y - point1.y, point2.x - point1.x) * Mathf.Rad2Deg;
-				dragLine.transform.rotation = Quaternion.Euler (0f, 0f, rot_z);
-
-				dragLine.transform.position = point1;
-				Vector2 direction = point2 - point1;
-				dragLine.transform.localScale = new Vector3 (direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 50f, 1);
-			}
-		} else if (Input.GetMouseButtonUp (0)) {
-            if (updateInitialize == false)
+        if (platformInt == 0) {
+            if ((Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)) && controlsEnabled)
             {
-                dragLine.SetActive(false);
-                dragCircle.SetActive(false);
-
-                controlsEnabled = true;
-
-                if (minimumSquaresInMove <= squareList.Count)
+                if (lastSquare != 0)
                 {
-                    StartAnimation();
-                }
-                else
-                {
-                    foreach (int square in squareList)
+                    if (updateInitialize == true)
                     {
-						GameObject squareObj = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + square.ToString());
-                        squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
+                        square2 = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString());
+
+                        dragLine.SetActive(true);
+                        dragCircle.SetActive(true);
+
+                        dragCircle.transform.localScale = new Vector3(square2.transform.lossyScale.x * size * 10, square2.transform.lossyScale.x * size * 10, 1);
+
+                        updateInitialize = false;
                     }
 
-                    audioSource.PlayOneShot(error);
+                    if (newSquareInitialize == true)
+                    {
+                        dragCircleSpr.color = setColor[currentColor];
+                        dragLineSpr.color = setColor[currentColor];
 
-                    FallingDone();
+                        lastOkSquare = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString());
+
+                        newSquareInitialize = false;
+                    }
+
+                    point1 = lastOkSquare.transform.position;
+                    point2 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    point2[2] = 0;
+
+                    dragCircle.transform.position = point2;
+                    dragLine.transform.position = point1;
+
+                    float rot_z = Mathf.Atan2(point2.y - point1.y, point2.x - point1.x) * Mathf.Rad2Deg;
+                    dragLine.transform.rotation = Quaternion.Euler(0f, 0f, rot_z);
+
+                    dragLine.transform.position = point1;
+                    Vector2 direction = point2 - point1;
+                    dragLine.transform.localScale = new Vector3(direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 50f, 1);
                 }
-
-                RemoveLine();
-                updateInitialize = true;
             }
-		}
-			
-		#endif
+            else if (Input.GetMouseButtonUp(0))
+            {
+                if (updateInitialize == false)
+                {
+                    dragLine.SetActive(false);
+                    dragCircle.SetActive(false);
 
-		if (isOnMobile) {
+                    controlsEnabled = true;
+
+                    if (minimumSquaresInMove <= squareList.Count)
+                    {
+                        StartAnimation();
+                        VibSuccess();
+
+                    }
+                    else
+                    {
+                        foreach (int square in squareList)
+                        {
+                            GameObject squareObj = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + square.ToString());
+                            squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
+                        }
+
+                        audioSource.PlayOneShot(error);
+
+                        FallingDone();
+                    }
+
+                    RemoveLine();
+                    updateInitialize = true;
+                }
+            }  
+        }
+
+        if (platformInt > 0) {
 			if (Input.touchCount > 0 && controlsEnabled) {
 				if (lastSquare != 0) {
 					if (updateInitialize == true) {
@@ -235,19 +254,22 @@ public class LineScript : MonoBehaviour
 
                     controlsEnabled = true;
 
-                    if (squareList.Count >= minimumSquaresInMove)
+                    if (minimumSquaresInMove <= squareList.Count)
                     {
                         StartAnimation();
+                        VibSuccess();
+
                     }
                     else
                     {
                         foreach (int square in squareList)
                         {
-                            GameObject squareObj = GameObject.Find(square.ToString());
+                            GameObject squareObj = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + square.ToString());
                             squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
                         }
 
                         audioSource.PlayOneShot(error);
+                        VibError();
 
                         FallingDone();
                     }
@@ -262,7 +284,7 @@ public class LineScript : MonoBehaviour
 	public void AddSquare (int squareNum, int colorNum, bool hoverSwitch)
 	{ 
 		if (controlsEnabled) {
-			#region same square
+#region same square
 			if (lastSquare == 0) {
 				square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareNum.ToString ());
 				SquareScript squareScript = square.GetComponent<SquareScript> ();
@@ -283,15 +305,16 @@ public class LineScript : MonoBehaviour
 				squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
 				audioSource.PlayOneShot (hits [0]);
+                VibMove();
 
 				lastSquare = squareNum;
 				squareList.Add (squareNum);
 
 				newSquareInitialize = true;
 			} 
-			#endregion
+#endregion
 
-			#region next squares
+#region next squares
 			else if (lastSquare != squareNum && hoverSwitch == false) {	
 				square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareNum.ToString ());
 				SquareScript squareScript = square.GetComponent<SquareScript> ();
@@ -301,9 +324,9 @@ public class LineScript : MonoBehaviour
 				}
 
 				if (square2.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color && !squareList.Contains (squareNum)) {
-					#region squares close
+#region squares close
 
-					#region up
+#region up
 					if (squareNum == lastSquare - squareRows) {
 						DrawLine (square, square2, squareNum, 90);
 
@@ -311,13 +334,17 @@ public class LineScript : MonoBehaviour
 
 						if (squareList.Count < hits.Length) {
 							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                            VibMove();
+
 						} else {
 							audioSource.PlayOneShot (hits [hits.Length - 1]);
+                            VibMove();
+
 						}	
 					} 
-					#endregion
+#endregion
 
-					#region left
+#region left
 					else if (squareNum == lastSquare - 1 && (squareNum % squareRows != 0)) {
 						DrawLine (square, square2, squareNum, 180);
 
@@ -325,13 +352,17 @@ public class LineScript : MonoBehaviour
 
 						if (squareList.Count < hits.Length) {
 							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                            VibMove();
+
 						} else {
 							audioSource.PlayOneShot (hits [hits.Length - 1]);
+                            VibMove();
+
 						}		
 					}
-					#endregion
+#endregion
 
-					#region right
+#region right
 					else if (squareNum == lastSquare + 1 && ((squareNum - 1) % squareRows != 0)) {
 						DrawLine (square, square2, squareNum, 0);
 
@@ -339,13 +370,17 @@ public class LineScript : MonoBehaviour
 
 						if (squareList.Count < hits.Length) {
 							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                            VibMove();
+
 						} else {
 							audioSource.PlayOneShot (hits [hits.Length - 1]);
+                            VibMove();
+
 						}	
 					} 
-					#endregion
+#endregion
 
-					#region down
+#region down
 					else if (squareNum == lastSquare + squareRows) {
 						DrawLine (square, square2, squareNum, 270);
 
@@ -353,20 +388,24 @@ public class LineScript : MonoBehaviour
 
 						if (squareList.Count < hits.Length) {
 							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                            VibMove();
+
 						} else {
 							audioSource.PlayOneShot (hits [hits.Length - 1]);
+                            VibMove();
+
 						}	
 					}
-					#endregion
+#endregion
 
-					#endregion
+#endregion
 
-					#region squares far
+#region squares far
 
-					#region up and down
+#region up and down
 					else if (squareNum % squareRows == lastSquare % squareRows) {
 
-						#region up
+#region up
 						if (squareNum < lastSquare) {
 							bool draw = true;
 							for (int i = 0; i < ((Mathf.Abs (squareNum - lastSquare)) / squareRows); i++) {
@@ -401,14 +440,18 @@ public class LineScript : MonoBehaviour
 									
 								if (squareList.Count < hits.Length) {
 									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                                    VibMove();
+
 								} else {
 									audioSource.PlayOneShot (hits [hits.Length - 1]);
+                                    VibMove();
+
 								}
 							}				
 						}
-						#endregion
+#endregion
 
-						#region down
+#region down
 						else if (squareNum > lastSquare) {
 							bool draw = true;
 							for (int i = 0; i < ((Mathf.Abs (lastSquare - squareNum)) / squareRows); i++) {
@@ -442,20 +485,24 @@ public class LineScript : MonoBehaviour
 
 								if (squareList.Count < hits.Length) {
 									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                                    VibMove();
+
 								} else {
 									audioSource.PlayOneShot (hits [hits.Length - 1]);
+                                    VibMove();
+
 								}
 							}		
 						}
-						#endregion
+#endregion
 					
 					}
-					#endregion
+#endregion
 
-					#region left and right
+#region left and right
 					else if (Mathf.Ceil ((squareNum - 0.001F) / squareRows) == Mathf.Ceil ((lastSquare - 0.001F) / squareRows)) {
 
-						#region left
+#region left
 						if (squareNum < lastSquare) {
 							bool draw = true;
 							for (int i = 0; i < (Mathf.Abs (squareNum - lastSquare)); i++) {
@@ -490,14 +537,18 @@ public class LineScript : MonoBehaviour
 									
 								if (squareList.Count < hits.Length) {
 									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                                    VibMove();
+
 								} else {
 									audioSource.PlayOneShot (hits [hits.Length - 1]);
+                                    VibMove();
+
 								}
 							}				
 						}
-						#endregion
+#endregion
 
-						#region right
+#region right
 						else if (squareNum > lastSquare) {
 							bool draw = true;
 							for (int i = 0; i < (Mathf.Abs (lastSquare - squareNum)); i++) {
@@ -532,23 +583,27 @@ public class LineScript : MonoBehaviour
 
 								if (squareList.Count < hits.Length) {
 									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                                    VibMove();
+
 								} else {
 									audioSource.PlayOneShot (hits [hits.Length - 1]);
+                                    VibMove();
+
 								}
 							}		
 						}
-						#endregion
+#endregion
 
 					}
-					#endregion
+#endregion
 
-					#endregion
+#endregion
 				}
 
 			}
-		#endregion
+#endregion
 
-			#region regret
+#region regret
 			/* else if ((lastSquare == squareNum) && hoverSwitch) {
 				square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareNum.ToString ());
 				square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
@@ -605,8 +660,12 @@ public class LineScript : MonoBehaviour
 
 					if (squareList.Count < hits.Length) {
 						audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                        VibMove();
+
 					} else {
 						audioSource.PlayOneShot (hits [hits.Length - 1]);
+                        VibMove();
+
 					}
 
 					if (squareList.Count == 1) {
@@ -627,7 +686,7 @@ public class LineScript : MonoBehaviour
 					newSquareInitialize = true;
 				}
 			}
-			#endregion
+#endregion
 		}
 	}
 
@@ -799,7 +858,7 @@ public class LineScript : MonoBehaviour
 		colorList[index] = value;
 	}
 
-	#region animation
+#region animation
 
 	public void StartAnimation ()
 	{
@@ -928,5 +987,36 @@ public class LineScript : MonoBehaviour
 		}
 	}
 
-	#endregion
+    void VibMove() {
+        if (platformInt == 1) {
+            iOSHapticFeedback.Instance.Trigger((iOSHapticFeedback.iOSFeedbackType)2);  
+        }
+        else if (platformInt == 2) {
+            Vibration.Vibrate(15);
+        }    
+    }
+
+    void VibSuccess() {
+        if (platformInt == 1)
+        {
+            iOSHapticFeedback.Instance.Trigger((iOSHapticFeedback.iOSFeedbackType)4);
+        }
+        else if (platformInt == 2)
+        {
+            Vibration.Vibrate(15);
+        }
+    }
+
+    void VibError() {
+        if (platformInt == 1)
+        {
+            iOSHapticFeedback.Instance.Trigger((iOSHapticFeedback.iOSFeedbackType)6);
+        }
+        else if (platformInt == 2)
+        {
+            Vibration.Vibrate(15);
+        }
+    }
+
+#endregion
 }
