@@ -90,17 +90,19 @@ public class LineScript : MonoBehaviour
 
     void Start()
     {
+
         #if UNITY_EDITOR
+        platformInt = 0;
+#endif
+        #if UNITY_IOS && !UNITY_EDITOR
+        platformInt = 1;
 
-        #endif
-        #if UNITY_IOS
+#endif
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        platformInt = 2;
+#endif
 
-
-        #endif
-        #if UNITY_ANDROID
-
-        #endif
-
+        Debug.Log(platformInt);
 
         audioSource = GetComponent<AudioSource> ();
 
@@ -171,7 +173,7 @@ public class LineScript : MonoBehaviour
 
                     dragLine.transform.position = point1;
                     Vector2 direction = point2 - point1;
-                    dragLine.transform.localScale = new Vector3(direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 50f, 1);
+                    dragLine.transform.localScale = new Vector3(direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 75f, 1);
                 }
             }
             else if (Input.GetMouseButtonUp(0))
@@ -243,7 +245,7 @@ public class LineScript : MonoBehaviour
 
 					dragLine.transform.position = point1;
 					Vector2 direction = point2 - point1;
-					dragLine.transform.localScale = new Vector3 (direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 50f, 1);
+					dragLine.transform.localScale = new Vector3 (direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 75f, 1);
 				}
 
 			} else if (Input.touchCount == 0) {
@@ -710,7 +712,7 @@ public class LineScript : MonoBehaviour
 		}	
 
 		localScaleX = (square.transform.lossyScale.x * 10) / 9f;
-		localScaleY = (circle.transform.lossyScale.x / 50f);
+		localScaleY = (circle.transform.lossyScale.x / 75f);
 
 		lineChild.transform.localPosition = new Vector2 (((square.transform.lossyScale.x / 2)) / 0.85f, 0);
 		lineChild.transform.localScale = new Vector3 (localScaleX, localScaleY, 1);

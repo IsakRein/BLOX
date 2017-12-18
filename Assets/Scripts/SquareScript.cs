@@ -51,6 +51,8 @@ public class SquareScript : MonoBehaviour
 
     public int rowNum;
 
+    private Vector3 velocity;
+
     void Start()
     {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
@@ -105,7 +107,8 @@ public class SquareScript : MonoBehaviour
         {
             if (lineScript.fallDown == true && fallCounter > 0)
             {
-                transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed / 50);
+                transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPos, ref velocity, 0.1f);
+                //transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed / 50);
 
                 if (targetPos == transform.localPosition)
                 {
