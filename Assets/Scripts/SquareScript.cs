@@ -69,7 +69,7 @@ public class SquareScript : MonoBehaviour
 
         if (takeColorFromTop)
         {
-			GameObject square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Circles/" + rowNum.ToString ());
+			GameObject square = GameObject.Find ("Game/GameCanvas/BG1/BG2/Circles/" + rowNum.ToString ());
 			colorNum = square.transform.GetChild(0).GetComponent<NextSquareScript>().colorNum;
 			square.transform.GetChild(0).SendMessage("NewColor");
 
@@ -107,8 +107,8 @@ public class SquareScript : MonoBehaviour
         {
             if (lineScript.fallDown == true && fallCounter > 0)
             {
-                transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPos, ref velocity, 0.1f);
-                //transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed / 50);
+                //transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPos, ref velocity, 0.1f);
+                transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed / 50);
 
                 if (targetPos == transform.localPosition)
                 {
@@ -273,7 +273,7 @@ public class SquareScript : MonoBehaviour
 
 		for (int i = iValue; i > 0; i = i - squareRows)
         {
-            GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + i.ToString()).SendMessage("AddToFallCounter", 1);
+            GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + i.ToString()).SendMessage("AddToFallCounter", 1);
         }
 
         GameObject.Destroy(gameObject);

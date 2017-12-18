@@ -111,6 +111,11 @@ public class LineScript : MonoBehaviour
 		score = 0;
 		scoreText.text = "" + score;
 
+		if (score >= highScore) {
+			highScore = score;
+			highScoreText.text = "<color=#B7A921ff>★</color>" + score;
+		}
+
 		randomizeColors = false;
 
 		squareRows = Squares.Rows;	
@@ -141,7 +146,7 @@ public class LineScript : MonoBehaviour
                 {
                     if (updateInitialize == true)
                     {
-                        square2 = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString());
+                        square2 = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString());
 
                         dragLine.SetActive(true);
                         dragCircle.SetActive(true);
@@ -156,7 +161,7 @@ public class LineScript : MonoBehaviour
                         dragCircleSpr.color = setColor[currentColor];
                         dragLineSpr.color = setColor[currentColor];
 
-                        lastOkSquare = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString());
+                        lastOkSquare = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString());
 
                         newSquareInitialize = false;
                     }
@@ -195,7 +200,7 @@ public class LineScript : MonoBehaviour
                     {
                         foreach (int square in squareList)
                         {
-                            GameObject squareObj = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + square.ToString());
+                            GameObject squareObj = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + square.ToString());
                             squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
                         }
 
@@ -214,7 +219,7 @@ public class LineScript : MonoBehaviour
 			if (Input.touchCount > 0 && controlsEnabled) {
 				if (lastSquare != 0) {
 					if (updateInitialize == true) {
-						square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString ());
+						square2 = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString ());
 
 						dragLine.SetActive (true);
 						dragCircle.SetActive (true);
@@ -228,7 +233,7 @@ public class LineScript : MonoBehaviour
 						dragCircleSpr.color = setColor [currentColor];
 						dragLineSpr.color = setColor [currentColor];
 
-						lastOkSquare = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString ());
+						lastOkSquare = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString ());
 
 						newSquareInitialize = false;
 					}
@@ -266,7 +271,7 @@ public class LineScript : MonoBehaviour
                     {
                         foreach (int square in squareList)
                         {
-                            GameObject squareObj = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + square.ToString());
+                            GameObject squareObj = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + square.ToString());
                             squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
                         }
 
@@ -288,7 +293,7 @@ public class LineScript : MonoBehaviour
 		if (controlsEnabled) {
 #region same square
 			if (lastSquare == 0) {
-				square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareNum.ToString ());
+				square = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareNum.ToString ());
 				SquareScript squareScript = square.GetComponent<SquareScript> ();
 
 				circle = Instantiate (circlePrefab, transform) as GameObject;
@@ -318,11 +323,11 @@ public class LineScript : MonoBehaviour
 
 #region next squares
 			else if (lastSquare != squareNum && hoverSwitch == false) {	
-				square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareNum.ToString ());
+				square = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareNum.ToString ());
 				SquareScript squareScript = square.GetComponent<SquareScript> ();
 
 				if (lastSquare > 0) {
-					square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + lastSquare.ToString ());
+					square2 = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString ());
 				}
 
 				if (square2.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color && !squareList.Contains (squareNum)) {
@@ -413,7 +418,7 @@ public class LineScript : MonoBehaviour
 							for (int i = 0; i < ((Mathf.Abs (squareNum - lastSquare)) / squareRows); i++) {
 								if (draw) {
 									int tempSquareNum = lastSquare - ((i + 1) * squareRows);
-									GameObject tempSquare = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + (tempSquareNum).ToString ());
+									GameObject tempSquare = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + (tempSquareNum).ToString ());
 									if ((tempSquare.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) && !squareList.Contains (tempSquareNum)) {
 										draw = true;
 									} else {
@@ -430,8 +435,8 @@ public class LineScript : MonoBehaviour
 									int squareCloseNum = currentLastSquare - ((i) * squareRows);
 									int squareFarNum = currentLastSquare - ((i + 1) * squareRows);
 
-									GameObject SquareClose = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareCloseNum.ToString ());
-									GameObject SquareFar = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareFarNum.ToString ());
+									GameObject SquareClose = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareCloseNum.ToString ());
+									GameObject SquareFar = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareFarNum.ToString ());
 									DrawLine (SquareFar, SquareClose, squareFarNum, 90);
 
 									SquareScript squareScript2 = SquareFar.GetComponent<SquareScript> ();
@@ -459,7 +464,7 @@ public class LineScript : MonoBehaviour
 							for (int i = 0; i < ((Mathf.Abs (lastSquare - squareNum)) / squareRows); i++) {
 								if (draw) {
 									int tempSquareNum = lastSquare + ((i + 1) * squareRows);
-									GameObject tempSquare = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + (tempSquareNum).ToString ());
+									GameObject tempSquare = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + (tempSquareNum).ToString ());
 									if ((tempSquare.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) && !squareList.Contains (tempSquareNum)) {
 										draw = true;
 									} else {
@@ -476,8 +481,8 @@ public class LineScript : MonoBehaviour
 									int squareCloseNum = currentLastSquare + ((i) * squareRows);
 									int squareFarNum = currentLastSquare + ((i + 1) * squareRows);
 
-									GameObject SquareClose = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareCloseNum.ToString ());
-									GameObject SquareFar = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareFarNum.ToString ());
+									GameObject SquareClose = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareCloseNum.ToString ());
+									GameObject SquareFar = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareFarNum.ToString ());
 									DrawLine (SquareFar, SquareClose, squareFarNum, 270);
 
 									SquareScript squareScript2 = SquareFar.GetComponent<SquareScript> ();
@@ -510,7 +515,7 @@ public class LineScript : MonoBehaviour
 							for (int i = 0; i < (Mathf.Abs (squareNum - lastSquare)); i++) {
 								if (draw) {
 									int tempSquareNum = lastSquare - (i + 1);
-									GameObject tempSquare = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + (tempSquareNum).ToString ());
+									GameObject tempSquare = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + (tempSquareNum).ToString ());
 									if ((tempSquare.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) && !squareList.Contains (tempSquareNum)) {
 										draw = true;
 									} else {
@@ -527,8 +532,8 @@ public class LineScript : MonoBehaviour
 									int squareCloseNum = currentLastSquare - i;
 									int squareFarNum = currentLastSquare - (i + 1);
 
-									GameObject SquareClose = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareCloseNum.ToString ());
-									GameObject SquareFar = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareFarNum.ToString ());
+									GameObject SquareClose = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareCloseNum.ToString ());
+									GameObject SquareFar = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareFarNum.ToString ());
 									DrawLine (SquareFar, SquareClose, squareFarNum, 180);
 
 									SquareScript squareScript2 = SquareFar.GetComponent<SquareScript> ();
@@ -556,7 +561,7 @@ public class LineScript : MonoBehaviour
 							for (int i = 0; i < (Mathf.Abs (lastSquare - squareNum)); i++) {
 								if (draw) {
 									int tempSquareNum = lastSquare + (i + 1);
-									GameObject tempSquare = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + (tempSquareNum).ToString ());
+									GameObject tempSquare = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + (tempSquareNum).ToString ());
 									if ((tempSquare.GetComponent<SpriteRenderer> ().color == square.GetComponent<SpriteRenderer> ().color) && !squareList.Contains (tempSquareNum)) {
 										draw = true;
 									} else {
@@ -573,8 +578,8 @@ public class LineScript : MonoBehaviour
 									int squareCloseNum = currentLastSquare + (i);
 									int squareFarNum = currentLastSquare + (i + 1);
 
-									GameObject SquareClose = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareCloseNum.ToString ());
-									GameObject SquareFar = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareFarNum.ToString ());
+									GameObject SquareClose = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareCloseNum.ToString ());
+									GameObject SquareFar = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareFarNum.ToString ());
 									DrawLine (SquareFar, SquareClose, squareFarNum, 0);
 
 									SquareScript squareScript2 = SquareFar.GetComponent<SquareScript> ();
@@ -607,8 +612,8 @@ public class LineScript : MonoBehaviour
 
 #region regret
 			/* else if ((lastSquare == squareNum) && hoverSwitch) {
-				square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareNum.ToString ());
-				square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
+				square = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareNum.ToString ());
+				square2 = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
 
 				SquareScript squareScript = square.GetComponent<SquareScript> ();
 
@@ -644,8 +649,8 @@ public class LineScript : MonoBehaviour
 			} */
             else if (squareList.Count > 1 && hoverSwitch) {
 				if ((squareNum == squareList [squareList.Count - 2])) {
-					GameObject square = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
-					square2 = GameObject.Find ("Game/CanvasBelow/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
+					GameObject square = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
+					square2 = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareList [squareList.Count - 1].ToString ());
 
 					SquareScript squareScript = square.GetComponent<SquareScript> ();
 
@@ -867,7 +872,7 @@ public class LineScript : MonoBehaviour
 		controlsEnabled = false;
 
 		foreach (int square in squareList) {
-            GameObject squareObj = GameObject.Find("Game/CanvasBelow/BG1/BG2/Squares/" + square.ToString ());
+            GameObject squareObj = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + square.ToString ());
 			squareObj.SendMessage ("Animate");
 		}
 
@@ -876,7 +881,7 @@ public class LineScript : MonoBehaviour
 
 		if (score >= highScore) {
 			highScore = score;
-			highScoreText.text = "" + score;
+			highScoreText.text = "<color=#B7A921ff>★</color>" + score;
 		}
 
 		foreach (int square in squareList) {
