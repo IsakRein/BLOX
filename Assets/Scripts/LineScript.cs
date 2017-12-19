@@ -276,7 +276,10 @@ public class LineScript : MonoBehaviour
                         }
 
                         audioSource.PlayOneShot(error);
-                        VibError();
+                        
+						if (squareList.Count > 0) {
+							VibError ();
+						}
 
                         FallingDone();
                     }
@@ -286,6 +289,10 @@ public class LineScript : MonoBehaviour
                 }
 			}
 		}
+	}
+		
+	public void ControlChange() {
+		controlsEnabled = !controlsEnabled;
 	}
 
 	public void AddSquare (int squareNum, int colorNum, bool hoverSwitch)
