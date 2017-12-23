@@ -68,7 +68,6 @@ public class LineScript : MonoBehaviour
     public AudioClip[] hits;
     public AudioClip snap;
     public AudioClip snap2;
-    public AudioClip error;
 
     private AudioSource audioSource;
 
@@ -203,9 +202,6 @@ public class LineScript : MonoBehaviour
                             GameObject squareObj = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + square.ToString());
                             squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
                         }
-
-                        audioSource.PlayOneShot(error);
-
                         FallingDone();
                     }
 
@@ -275,8 +271,9 @@ public class LineScript : MonoBehaviour
                             squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
                         }
 
-                        audioSource.PlayOneShot(error);
-                        VibError();
+                        if (squareList.Count > 0) {
+                            VibError(); 
+                        }
 
                         FallingDone();
                     }
