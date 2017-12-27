@@ -35,5 +35,7 @@ public class NextSquareScript : MonoBehaviour {
         Color color = spriteRenderer.color;
         color.a = 0.5f;
         spriteRenderer.color = color;
+
+
     }
 }

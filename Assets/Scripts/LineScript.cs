@@ -271,17 +271,13 @@ public class LineScript : MonoBehaviour
                             squareObj.SendMessage("AnimateError", SendMessageOptions.DontRequireReceiver);
                         }
 
-<<<<<<< HEAD
                         if (squareList.Count > 0) {
                             VibError(); 
                         }
-=======
-                        audioSource.PlayOneShot(error);
-                        
+
 						if (squareList.Count > 0) {
 							VibError ();
 						}
->>>>>>> 26dc3128c59b361a3c5b1363c7c039f6931dc5ad
 
                         FallingDone();
                     }
