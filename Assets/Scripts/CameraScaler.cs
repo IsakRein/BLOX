@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraScaler : MonoBehaviour {
     public Camera cam;
@@ -9,11 +10,19 @@ public class CameraScaler : MonoBehaviour {
     public float scaleValue;
     public float yValue;
 
-	void Start () {
+	private CanvasScaler canvas;
+
+	void Start() {
+		canvas = gameObject.GetComponent<CanvasScaler> ();
+	}
+
+	void Update () {
         if ((float)cam.pixelWidth / (float)cam.pixelHeight > 401f / 663f)
         {
             float scale = (scaleValue / ((float)cam.scaledPixelWidth / (float)cam.scaledPixelHeight)) * 1.1f;
             float yPos = yValue * ((float)cam.scaledPixelWidth / (float)cam.scaledPixelHeight);
+
+			canvas.matchWidthOrHeight = 1;
 
             gameObject.transform.localScale = new Vector3(scale, scale, 1);
 
