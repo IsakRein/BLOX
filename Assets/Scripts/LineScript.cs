@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using TMPro;
 
 public class LineScript : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class LineScript : MonoBehaviour
     [Space]
 
     public int score;
-    public Text scoreText;
+	public TextMeshProUGUI scoreText;
 
     public int highScore;
     public Text highScoreText;
@@ -108,7 +109,7 @@ public class LineScript : MonoBehaviour
 		controlsEnabled = true;
 
 		score = 0;
-		scoreText.text = "" + score;
+		scoreText.SetText("" + score);
 
 		if (score >= highScore) {
 			highScore = score;
