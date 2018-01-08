@@ -29,9 +29,7 @@ public class DisableScript : MonoBehaviour {
         LineScript.controlsEnabled = true;
 
         gameObject.SetActive(false);
-
-        gameObject.SetActive(false);
-    }
+	}
 
     void EnableImage () {
         image.enabled = true;
