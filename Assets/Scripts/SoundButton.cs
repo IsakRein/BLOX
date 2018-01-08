@@ -15,21 +15,41 @@ public class SoundButton : MonoBehaviour {
 
 	public Image backSpr;
 
+    public AudioClip aClip;
+    private AudioSource audioSource;
+
 	void Start() {
-		OnClick ();
-	}	
+        audioSource = gameObject.GetComponent<AudioSource>();
+
+        if (Manager.soundEnabled) {
+            colorSwitch = false;
+        }
+        else {
+            colorSwitch = true;
+        }
+
+        OnClick();
+    }	
 
 	void OnClick() {
 		colorSwitch = !colorSwitch;
 
 		if (colorSwitch) {
+            Manager.soundEnabled = true;
+
+            Manager.SaveSoundSettings();
+
 			soundOn.SetActive (true);
 			soundOff.SetActive (false);
 
 			backSpr.color = backColor1;
 
-			Vibrate ();
+			PlaySound ();
 		} else {
+            Manager.soundEnabled = false;
+
+            Manager.SaveSoundSettings();
+
 			soundOn.SetActive (false);
 			soundOff.SetActive (true);
 
@@ -37,7 +57,7 @@ public class SoundButton : MonoBehaviour {
 		}
 	}
 
-	void Vibrate() {
-		Handheld.Vibrate ();
-	}
+	void PlaySound() {
+        audioSource.PlayOneShot(aClip);
+    }
 }

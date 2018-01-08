@@ -8,7 +8,6 @@ using TMPro;
 
 public class LineScript : MonoBehaviour
 {
-
     #region variables
 
     public int lastSquare = 0;
@@ -29,7 +28,6 @@ public class LineScript : MonoBehaviour
     public int score;
 	public TextMeshProUGUI scoreText;
 
-    public int highScore;
     public Text highScoreText;
 
     [Space]
@@ -65,6 +63,7 @@ public class LineScript : MonoBehaviour
     public List<int> squareList = new List<int>();
     public List<int> rowList = new List<int>();
     public List<int> colorList = new List<int>();
+    public List<int> circleList = new List<int>();
 
     public AudioClip[] hits;
     public AudioClip snap;
@@ -90,31 +89,31 @@ public class LineScript : MonoBehaviour
 
     void Start()
     {
-
         #if UNITY_EDITOR
         platformInt = 0;
-#endif
+        #endif
+
         #if UNITY_IOS && !UNITY_EDITOR
         platformInt = 1;
+        #endif
 
-#endif
         #if UNITY_ANDROID && !UNITY_EDITOR
         platformInt = 2;
-#endif
-
-        Debug.Log(platformInt);
+        #endif
 
         audioSource = GetComponent<AudioSource> ();
-
+      
 		controlsEnabled = true;
 
-		score = 0;
+        if (Manager.loadColors) {
+            score = Manager.previousScore;
+        }
+        else {
+            score = 0;
+        }
 		scoreText.SetText("" + score);
 
-		if (score >= highScore) {
-			highScore = score;
-			highScoreText.text = "<color=#B7A921ff>★</color>" + score;
-		}
+        highScoreText.text = "<color=#B7A921ff>★</color>" + Manager.highScore;
 
 		randomizeColors = false;
 
@@ -131,6 +130,14 @@ public class LineScript : MonoBehaviour
 		}
 
 		colorList [0] = -1;
+
+        circleList.Clear();
+        for (int i = 0; i <= squareRows; i++)
+        {
+            circleList.Add(0);
+        }
+
+        circleList[0] = -1;
 
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
@@ -289,7 +296,7 @@ public class LineScript : MonoBehaviour
 			}
 		}
 	}
-		
+
 	public void ControlChange() {
 		controlsEnabled = !controlsEnabled;
 	}
@@ -317,7 +324,9 @@ public class LineScript : MonoBehaviour
 
 				squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
-				audioSource.PlayOneShot (hits [0]);
+                if (Manager.soundEnabled) {
+                    audioSource.PlayOneShot(hits[0]);
+                }
                 VibMove();
 
 				lastSquare = squareNum;
@@ -346,11 +355,17 @@ public class LineScript : MonoBehaviour
 						squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
 						if (squareList.Count < hits.Length) {
-							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                            if (Manager.soundEnabled)
+                            {
+                                audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                            }
                             VibMove();
 
 						} else {
-							audioSource.PlayOneShot (hits [hits.Length - 1]);
+                            if (Manager.soundEnabled)
+                            {
+                                audioSource.PlayOneShot(hits[hits.Length - 1]);
+                            }
                             VibMove();
 
 						}	
@@ -364,11 +379,17 @@ public class LineScript : MonoBehaviour
 						squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
 						if (squareList.Count < hits.Length) {
-							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                            if (Manager.soundEnabled)
+                            {
+                                audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                            }
                             VibMove();
 
 						} else {
-							audioSource.PlayOneShot (hits [hits.Length - 1]);
+                            if (Manager.soundEnabled)
+                            {
+                                audioSource.PlayOneShot(hits[hits.Length - 1]);
+                            }
                             VibMove();
 
 						}		
@@ -382,11 +403,17 @@ public class LineScript : MonoBehaviour
 						squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
 						if (squareList.Count < hits.Length) {
-							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                            if (Manager.soundEnabled)
+                            {
+                                audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                            }
                             VibMove();
 
 						} else {
-							audioSource.PlayOneShot (hits [hits.Length - 1]);
+                            if (Manager.soundEnabled)
+                            {
+                                audioSource.PlayOneShot(hits[hits.Length - 1]);
+                            }
                             VibMove();
 
 						}	
@@ -400,11 +427,17 @@ public class LineScript : MonoBehaviour
 						squareScript.hoverSwitch = !squareScript.hoverSwitch;
 
 						if (squareList.Count < hits.Length) {
-							audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                            if (Manager.soundEnabled)
+                            {
+                                audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                            }
                             VibMove();
 
 						} else {
-							audioSource.PlayOneShot (hits [hits.Length - 1]);
+                            if (Manager.soundEnabled)
+                            {
+                                audioSource.PlayOneShot(hits[hits.Length - 1]);
+                            }
                             VibMove();
 
 						}	
@@ -452,11 +485,17 @@ public class LineScript : MonoBehaviour
 								}
 									
 								if (squareList.Count < hits.Length) {
-									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                                    if (Manager.soundEnabled)
+                                    {
+                                        audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                                    }
                                     VibMove();
 
 								} else {
-									audioSource.PlayOneShot (hits [hits.Length - 1]);
+                                    if (Manager.soundEnabled)
+                                    {
+                                        audioSource.PlayOneShot(hits[hits.Length - 1]);
+                                    }
                                     VibMove();
 
 								}
@@ -497,11 +536,17 @@ public class LineScript : MonoBehaviour
 								}
 
 								if (squareList.Count < hits.Length) {
-									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                                    if (Manager.soundEnabled)
+                                    {
+                                        audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                                    }
                                     VibMove();
 
 								} else {
-									audioSource.PlayOneShot (hits [hits.Length - 1]);
+                                    if (Manager.soundEnabled)
+                                    {
+                                        audioSource.PlayOneShot(hits[hits.Length - 1]);
+                                    }
                                     VibMove();
 
 								}
@@ -549,11 +594,17 @@ public class LineScript : MonoBehaviour
 								}
 									
 								if (squareList.Count < hits.Length) {
-									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                                    if (Manager.soundEnabled)
+                                    {
+                                        audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                                    }
                                     VibMove();
 
 								} else {
-									audioSource.PlayOneShot (hits [hits.Length - 1]);
+                                    if (Manager.soundEnabled)
+                                    {
+                                        audioSource.PlayOneShot(hits[hits.Length - 1]);
+                                    }
                                     VibMove();
 
 								}
@@ -595,11 +646,17 @@ public class LineScript : MonoBehaviour
 								}
 
 								if (squareList.Count < hits.Length) {
-									audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                                    if (Manager.soundEnabled)
+                                    {
+                                        audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                                    }
                                     VibMove();
 
 								} else {
-									audioSource.PlayOneShot (hits [hits.Length - 1]);
+                                    if (Manager.soundEnabled)
+                                    {
+                                        audioSource.PlayOneShot(hits[hits.Length - 1]);
+                                    }
                                     VibMove();
 
 								}
@@ -672,11 +729,17 @@ public class LineScript : MonoBehaviour
 					} 
 
 					if (squareList.Count < hits.Length) {
-						audioSource.PlayOneShot (hits [squareList.Count - 1]);	
+                        if (Manager.soundEnabled)
+                        {
+                            audioSource.PlayOneShot(hits[squareList.Count - 1]);
+                        }
                         VibMove();
 
 					} else {
-						audioSource.PlayOneShot (hits [hits.Length - 1]);
+                        if (Manager.soundEnabled)
+                        {
+                            audioSource.PlayOneShot(hits[hits.Length - 1]);
+                        }
                         VibMove();
 
 					}
@@ -744,32 +807,6 @@ public class LineScript : MonoBehaviour
 			GameObject.Destroy (child.gameObject);
 		}
 	}
-
-	/*
-	public void CheckAvailableMoves() {
-		checkAroundCounter = checkAroundCounter + 1;
-
-		Debug.Log (checkAroundCounter);
-
-		if (checkAroundCounter == squareRows*squareRows) {
-			bool movePossible = false;
-
-			for (int i = 1; i <= squareRows * squareRows; i++) {
-				if (!movePossible) {
-					if (CheckAroundSquare1 (i)) {
-						movePossible = true;
-					}
-				}
-			}
-
-			if (movePossible) {
-				Debug.Log ("go");
-			} else {
-				Debug.Log ("game over");
-			}
-		}
-	}
-	*/
 		
 	bool CheckAroundSquare1(int squareNum) {
 		bool movePossible = false;
@@ -797,37 +834,6 @@ public class LineScript : MonoBehaviour
 
 		return movePossible;
 	}
-
-	/*
-
-	bool CheckAroundSquare2(int squareNum) {
-		bool movePossible = false;
-
-		if (squareNum - squareRows > 0) {
-			if (colorList [squareNum] == colorList [squareNum - squareRows]) {
-				movePossible = CheckAroundSquare3(squareNum - squareRows);
-			}
-		}
-		if (Convert.ToDouble(squareNum) % squareRows != 1) {
-			if (colorList [squareNum] == colorList [squareNum - 1]) {
-				movePossible = CheckAroundSquare3(squareNum - 1);
-			}
-		}
-		if (Convert.ToDouble(squareNum) % squareRows != 0) {
-			if (colorList [squareNum] == colorList [squareNum + 1]) {
-				movePossible = CheckAroundSquare3(squareNum + 1);
-			}
-		}
-		if (Convert.ToDouble(squareNum) + squareRows <= squareRows * squareRows) {
-			if (colorList [squareNum] == colorList [squareNum + squareRows]) {
-				movePossible = CheckAroundSquare3(squareNum + squareRows);
-			}
-		}
-
-		return movePossible;
-	}
-
-*/
 
 	bool CheckAroundSquare2(int squareNum, int orgSquareNum) {
 		bool movePossible = false;
@@ -871,6 +877,11 @@ public class LineScript : MonoBehaviour
 		colorList[index] = value;
 	}
 
+    public void AddToCircleList(int index, int value)
+    {
+        circleList[index] = value;
+    }
+
 #region animation
 
 	public void StartAnimation ()
@@ -885,8 +896,8 @@ public class LineScript : MonoBehaviour
 		score = score + squareList.Count;
 		scoreText.text = "" + score;
 
-		if (score >= highScore) {
-			highScore = score;
+        if (score >= Manager.highScore) {
+            Manager.highScore = score;
 			highScoreText.text = "<color=#B7A921ff>★</color>" + score;
 		}
 
@@ -957,7 +968,7 @@ public class LineScript : MonoBehaviour
 
 	public void FallingDone ()
 	{
-		controlsEnabled = true;
+        controlsEnabled = true;
 		lastSquare = 0;
 		fallDown = false;
 		InitializeFallHasBeenCalled = false;
@@ -983,51 +994,78 @@ public class LineScript : MonoBehaviour
 		}
 
 		if (movePossible) {
-			Debug.Log ("go");
-		} else {
-			Debug.Log ("game over");
-		}
+            //go
+        } else {
+            //gameover
+        }
+
+        Manager.colorList = colorList;
+        Manager.circleList = circleList;
+        Manager.previousScore = score;
+
+        SaveScore();
+        Manager.SaveScene();
 
         squareList.Clear ();
-	}
+    }
+
+    public void SaveScore() {
+        if (Manager.highScore == score) {
+            Manager.SaveScore();
+        }
+    }
 				
 	public void PlaySound ()
 	{
 		if (randomizeColors) {
-			audioSource.PlayOneShot (snap2);
+            if (Manager.soundEnabled)
+            {
+                audioSource.PlayOneShot(snap2);
+            }
 		} else {
-			audioSource.PlayOneShot (snap);
+            if (Manager.soundEnabled)
+            {
+                audioSource.PlayOneShot(snap);
+            }
 		}
 	}
 
     void VibMove() {
-        if (platformInt == 1) {
+        if (Manager.vibEnabled) {
+            if (platformInt == 1) {
             iOSHapticFeedback.Instance.Trigger((iOSHapticFeedback.iOSFeedbackType)2);  
+            }
+            else if (platformInt == 2) {
+                Vibration.Vibrate(15);
+            }    
         }
-        else if (platformInt == 2) {
-            Vibration.Vibrate(15);
-        }    
     }
 
     void VibSuccess() {
-        if (platformInt == 1)
+        if (Manager.vibEnabled)
         {
-            iOSHapticFeedback.Instance.Trigger((iOSHapticFeedback.iOSFeedbackType)4);
-        }
-        else if (platformInt == 2)
-        {
-            Vibration.Vibrate(15);
+            if (platformInt == 1)
+            {
+                iOSHapticFeedback.Instance.Trigger((iOSHapticFeedback.iOSFeedbackType)4);
+            }
+            else if (platformInt == 2)
+            {
+                Vibration.Vibrate(15);
+            }
         }
     }
 
     void VibError() {
-        if (platformInt == 1)
+        if (Manager.vibEnabled)
         {
-            iOSHapticFeedback.Instance.Trigger((iOSHapticFeedback.iOSFeedbackType)6);
-        }
-        else if (platformInt == 2)
-        {
-            Vibration.Vibrate(15);
+            if (platformInt == 1)
+            {
+                iOSHapticFeedback.Instance.Trigger((iOSHapticFeedback.iOSFeedbackType)6);
+            }
+            else if (platformInt == 2)
+            {
+                Vibration.Vibrate(15);
+            }
         }
     }
 

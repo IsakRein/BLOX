@@ -6,7 +6,6 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class SquareScript : MonoBehaviour
 {
-
     public GameObject squares;
     public GameObject Line;
 
@@ -21,6 +20,8 @@ public class SquareScript : MonoBehaviour
 
     private bool isOnMobile = true;
 
+    public int number;
+
     [Space]
 
     public bool hoverSwitch = false;
@@ -28,30 +29,20 @@ public class SquareScript : MonoBehaviour
     [Space]
 
     public bool isHovering = false;
-
     public bool addSquareHasBeenCalled = false;
-
     public bool interactable = false;
-
     private int squareRows;
-
     public int fallCounter;
-
     public float speed = 1f;
-
     public Vector3 targetPos;
-
     private bool fallInitialized = false;
-
     public bool isAnimating;
-
     public float animEditor;
-
     public bool takeColorFromTop = false;
-
     public int rowNum;
-
     private Vector3 velocity;
+
+    public bool loadColors;
 
     void Start()
     {
@@ -67,7 +58,12 @@ public class SquareScript : MonoBehaviour
 
         setColor = lineScript.setColor;
 
-        if (takeColorFromTop)
+        if (loadColors) {
+            colorNum = Manager.colorList[number];
+            spriteRenderer.color = setColor[colorNum];
+        }
+
+        else if (takeColorFromTop)
         {
 			GameObject square = GameObject.Find ("Game/GameCanvas/BG1/BG2/Circles/" + rowNum.ToString ());
 			colorNum = square.transform.GetChild(0).GetComponent<NextSquareScript>().colorNum;
@@ -147,9 +143,15 @@ public class SquareScript : MonoBehaviour
         }
     }
 
+    public void LoadColor(int newColorNum) 
+    {
+        colorNum = newColorNum;
+
+        spriteRenderer.color = setColor[colorNum];
+    }
+
     void NameSquare()
     {
-
         float x = (transform.localPosition.x - (0.5f - (((float)squareRows) / 2))) + 1;
         float y = (((((float)squareRows) / 2) - 0.5f) - transform.localPosition.y);
 

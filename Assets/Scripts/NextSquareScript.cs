@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,8 +12,11 @@ public class NextSquareScript : MonoBehaviour {
 
     public Color[] setColor;
     public int colorNum;
+    public int num;
 
     private SpriteRenderer spriteRenderer;
+
+    public bool loadColors;
 
 	void Start () {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
@@ -25,17 +29,32 @@ public class NextSquareScript : MonoBehaviour {
 
         setColor = lineScript.setColor;
 
-        NewColor();
+        if (loadColors) {
+            colorNum = Manager.circleList[num];
+
+            lineScript.AddToCircleList(num, colorNum);
+
+            spriteRenderer.color = setColor[colorNum];
+
+            Color color = spriteRenderer.color;
+            color.a = 0.5f;
+            spriteRenderer.color = color;
+        }
+
+        else {
+            NewColor();
+        }
 	}
 	
     void NewColor() {
         colorNum = Random.Range(0, setColor.Length);
+
+        lineScript.AddToCircleList(num, colorNum);
+
         spriteRenderer.color = setColor[colorNum];
 
         Color color = spriteRenderer.color;
         color.a = 0.5f;
         spriteRenderer.color = color;
-
-
     }
 }

@@ -20,11 +20,7 @@ public class Game : MonoBehaviour {
 
 	public Transform circles;
 	public GameObject circlePrefab;
-	GameObject circle;
-
-	void Awake() {
-		Application.targetFrameRate = 60;
-	}
+    GameObject circle;
 
 	void Start () {
 		foreach (Transform child in transform) {
@@ -32,6 +28,8 @@ public class Game : MonoBehaviour {
 		}
 
 		GenerateGrid ();
+
+        Manager.loadColors = true;
 	}
 
 	public void GenerateGrid() {
@@ -50,7 +48,11 @@ public class Game : MonoBehaviour {
 				xPos = j - ((Rows + 1f) / 2); 
 				square.transform.localPosition = new Vector2 (xPos, yPos);
 
-				square.GetComponent<Animator> ().SetTrigger ("OnEnable");
+                SquareScript squareScript = square.GetComponent<SquareScript>();
+                squareScript.loadColors = Manager.loadColors;
+                squareScript.number = (i-1)*Rows + j;
+
+                square.GetComponent<Animator>().SetTrigger("OnEnable");
 
 				transform.localScale = new Vector3 (scale, scale);
 			}
@@ -67,6 +69,12 @@ public class Game : MonoBehaviour {
 			yPos = (Rows + 1f) / 2;
 
             circle.name = "" + i;
+
+            NextSquareScript nextSquareScript = circle.GetComponentInChildren<NextSquareScript>();
+
+            nextSquareScript.num = i;
+
+            nextSquareScript.loadColors = Manager.loadColors;
 
 			circle.transform.localPosition = new Vector2 (xPos, yPos);
 
