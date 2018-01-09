@@ -85,6 +85,17 @@ public class LineScript : MonoBehaviour
     public GameObject squarePrefab;
     private GameObject instSquare;
 
+    public GameObject background;
+    public Animator backgroundAnimator;
+
+    public GameObject cont;
+    public GameObject watchVideoToContinue;
+    public GameObject payToContinue;
+
+    public TextMeshProUGUI payToContinueText1;
+    public TextMeshProUGUI payToContinueText2;
+    public int payToContinuePrice;
+
     #endregion
 
     void Start()
@@ -296,6 +307,24 @@ public class LineScript : MonoBehaviour
 			}
 		}
 	}
+
+    void GameOver()
+    {
+        background.SetActive(true);
+        background.GetComponent<Canvas>().sortingOrder = 500;
+        backgroundAnimator.SetTrigger("STARTNOB");
+
+        cont.SetActive(true);
+        cont.GetComponent<Animator>().SetTrigger("STARTW");
+    }
+
+    void WatchVideoToContinue() {
+        
+    }
+
+    void PayToContinue() {
+        
+    }
 
 	public void ControlChange() {
 		controlsEnabled = !controlsEnabled;
@@ -966,37 +995,40 @@ public class LineScript : MonoBehaviour
 		}
 	}
 
-	public void FallingDone ()
-	{
+    public void FallingDone()
+    {
         controlsEnabled = true;
-		lastSquare = 0;
-		fallDown = false;
-		InitializeFallHasBeenCalled = false;
+        lastSquare = 0;
+        fallDown = false;
+        InitializeFallHasBeenCalled = false;
 
         foreach (Transform square in squares.transform)
         {
             square.SendMessage("NameSquare", SendMessageOptions.DontRequireReceiver);
         }
 
-		rowList.Clear ();
-		for (int i = 0; i < squareRows; i++) {
-			rowList.Add (0);
-		}
+        rowList.Clear();
+        for (int i = 0; i < squareRows; i++)
+        {
+            rowList.Add(0);
+        }
 
-		bool movePossible = false;
+        bool movePossible = false;
 
-		for (int i = 1; i <= squareRows * squareRows; i++) {
-			if (!movePossible) {
-				if (CheckAroundSquare1 (i)) {
-					movePossible = true;
-				}
-			}
-		}
+        for (int i = 1; i <= squareRows * squareRows; i++)
+        {
+            if (!movePossible)
+            {
+                if (CheckAroundSquare1(i))
+                {
+                    movePossible = true;
+                }
+            }
+        }
 
-		if (movePossible) {
-            //go
-        } else {
-            //gameover
+        if (!movePossible)
+        {
+            GameOver();
         }
 
         Manager.colorList = colorList;
@@ -1006,7 +1038,7 @@ public class LineScript : MonoBehaviour
         SaveScore();
         Manager.SaveScene();
 
-        squareList.Clear ();
+        squareList.Clear();
     }
 
     public void SaveScore() {
