@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 [ExecuteInEditMode]
 public class SquareScript : MonoBehaviour
@@ -40,9 +41,14 @@ public class SquareScript : MonoBehaviour
     public float animEditor;
     public bool takeColorFromTop = false;
     public int rowNum;
-    private Vector3 velocity;
 
     public bool loadColors;
+
+    public GameObject countDownPrefab;
+    GameObject countDown;
+
+    public int countDownStart = 10;
+    public int countDownCounter;
 
     void Start()
     {
@@ -57,6 +63,8 @@ public class SquareScript : MonoBehaviour
         squareRows = squareScript.Rows;
 
         setColor = lineScript.setColor;
+
+        countDownCounter = countDownStart;
 
         if (loadColors) {
             colorNum = Manager.colorList[number];
@@ -73,8 +81,19 @@ public class SquareScript : MonoBehaviour
         }
         else
         {
-            colorNum = Random.Range(0, setColor.Length);
+            colorNum = Random.Range(0, setColor.Length-1);
             spriteRenderer.color = setColor[colorNum];
+        }
+
+        if (colorNum == setColor.Length-1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+
+            countDownPrefab = (GameObject)Resources.Load("Prefabs/CountDown", typeof(GameObject));
+
+            countDown = Instantiate(countDownPrefab, transform);
+
+            countDown.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
         }
 
         addSquareHasBeenCalled = false;
@@ -147,10 +166,12 @@ public class SquareScript : MonoBehaviour
     {
         colorNum = newColorNum;
 
+        Animate();
+
         spriteRenderer.color = setColor[colorNum];
     }
 
-    void NameSquare()
+    public void NameSquare()
     {
         float x = (transform.localPosition.x - (0.5f - (((float)squareRows) / 2))) + 1;
         float y = (((((float)squareRows) / 2) - 0.5f) - transform.localPosition.y);
@@ -163,6 +184,19 @@ public class SquareScript : MonoBehaviour
         transform.localPosition = new Vector2(x, y);
 
         UpdateColorlist();
+    }
+
+    public void UpdateCountDown() {
+        if (colorNum == setColor.Length-1) {
+            countDownCounter = countDownCounter - 1;
+
+            if (countDownCounter == 0) {
+                AddToFallCounter(1);
+                animator.SetTrigger("Trigger");
+            }
+
+            GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
+        }
     }
 
     void UpdateColorlist()
@@ -241,7 +275,6 @@ public class SquareScript : MonoBehaviour
 
     void AnimateError()
     {
-		Debug.Log (gameObject.name);
         animator.SetTrigger("Error");
     }
 

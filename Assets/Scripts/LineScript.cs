@@ -91,10 +91,16 @@ public class LineScript : MonoBehaviour
     public GameObject cont;
     public GameObject watchVideoToContinue;
     public GameObject payToContinue;
+    public GameObject payToContinueButton;
+    public GameObject noThanksLow;
+    public GameObject noThanksHigh;
 
     public TextMeshProUGUI payToContinueText1;
     public TextMeshProUGUI payToContinueText2;
     public int payToContinuePrice;
+
+    public Sprite deadSquare;
+    public Sprite regularSquare;
 
     #endregion
 
@@ -129,6 +135,10 @@ public class LineScript : MonoBehaviour
 		randomizeColors = false;
 
 		squareRows = Squares.Rows;	
+
+        if (!Manager.loadColors) {
+            SaveScore();
+        }
 
 		foreach (Transform square in squares.transform) {
 			square.gameObject.SetActive (true);
@@ -315,15 +325,24 @@ public class LineScript : MonoBehaviour
         backgroundAnimator.SetTrigger("STARTNOB");
 
         cont.SetActive(true);
+
+        //if watch
+        WatchVideoToContinue();
+    }
+
+    public void WatchVideoToContinue() {
+        payToContinueButton.SetActive(true);
+        watchVideoToContinue.SetActive(true);
+        noThanksLow.SetActive(true);
         cont.GetComponent<Animator>().SetTrigger("STARTW");
     }
 
-    void WatchVideoToContinue() {
+    public void PayToContinue() {
         
     }
 
-    void PayToContinue() {
-        
+    public void GameReallyOver() {
+        Manager.loadColors = false;
     }
 
 	public void ControlChange() {
@@ -332,7 +351,7 @@ public class LineScript : MonoBehaviour
 
 	public void AddSquare (int squareNum, int colorNum, bool hoverSwitch)
 	{ 
-		if (controlsEnabled) {
+        if (controlsEnabled && (colorNum != setColor.Length-1)) {
 #region same square
 			if (lastSquare == 0) {
 				square = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + squareNum.ToString ());
@@ -343,7 +362,7 @@ public class LineScript : MonoBehaviour
 				circle.name = "circle " + squareNum;
 				circle.transform.localScale = new Vector3 (square.transform.lossyScale.x * size * 10, square.transform.lossyScale.x * size * 10, 1);
 
-				if (colorNum == setColor.Length - 1) {
+				if (colorNum == setColor.Length - 2) {
 					currentColor = 0;
 				} else {
 					currentColor = colorNum + 1;
@@ -840,26 +859,37 @@ public class LineScript : MonoBehaviour
 	bool CheckAroundSquare1(int squareNum) {
 		bool movePossible = false;
 
-		if (squareNum - squareRows > 0 && !movePossible) {
-			if (colorList [squareNum] == colorList [squareNum - squareRows]) {
-				movePossible = CheckAroundSquare2(squareNum - squareRows, squareNum);
-			}
-		}
-		if (Convert.ToDouble(squareNum) % squareRows != 1 && !movePossible) {
-			if (colorList [squareNum] == colorList [squareNum - 1]) {
-				movePossible = CheckAroundSquare2(squareNum - 1, squareNum);
-			}
-		}
-		if (Convert.ToDouble(squareNum) % squareRows != 0 && !movePossible) {
-			if (colorList [squareNum] == colorList [squareNum + 1]) {
-				movePossible = CheckAroundSquare2(squareNum + 1, squareNum);
-			}
-		}
-		if (Convert.ToDouble(squareNum) + squareRows <= squareRows * squareRows && !movePossible) {
-			if (colorList [squareNum] == colorList [squareNum + squareRows]) {
-				movePossible = CheckAroundSquare2(squareNum + squareRows, squareNum);
-			}
-		}
+        if (colorList[squareNum] != setColor.Length - 1)
+        {
+            if (squareNum - squareRows > 0 && !movePossible)
+            {
+                if (colorList[squareNum] == colorList[squareNum - squareRows])
+                {
+                    movePossible = CheckAroundSquare2(squareNum - squareRows, squareNum);
+                }
+            }
+            if (Convert.ToDouble(squareNum) % squareRows != 1 && !movePossible)
+            {
+                if (colorList[squareNum] == colorList[squareNum - 1])
+                {
+                    movePossible = CheckAroundSquare2(squareNum - 1, squareNum);
+                }
+            }
+            if (Convert.ToDouble(squareNum) % squareRows != 0 && !movePossible)
+            {
+                if (colorList[squareNum] == colorList[squareNum + 1])
+                {
+                    movePossible = CheckAroundSquare2(squareNum + 1, squareNum);
+                }
+            }
+            if (Convert.ToDouble(squareNum) + squareRows <= squareRows * squareRows && !movePossible)
+            {
+                if (colorList[squareNum] == colorList[squareNum + squareRows])
+                {
+                    movePossible = CheckAroundSquare2(squareNum + squareRows, squareNum);
+                }
+            }
+        }
 
 		return movePossible;
 	}
@@ -916,6 +946,13 @@ public class LineScript : MonoBehaviour
 	public void StartAnimation ()
 	{
 		controlsEnabled = false;
+
+        foreach (Transform square in squares.transform)
+        {
+            SquareScript squareScript = square.GetComponent<SquareScript>();
+
+            squareScript.UpdateCountDown();
+        }
 
 		foreach (int square in squareList) {
             GameObject squareObj = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + square.ToString ());
@@ -1002,9 +1039,12 @@ public class LineScript : MonoBehaviour
         fallDown = false;
         InitializeFallHasBeenCalled = false;
 
+
         foreach (Transform square in squares.transform)
         {
-            square.SendMessage("NameSquare", SendMessageOptions.DontRequireReceiver);
+            SquareScript squareScript = square.GetComponent<SquareScript>();
+
+            squareScript.NameSquare();
         }
 
         rowList.Clear();

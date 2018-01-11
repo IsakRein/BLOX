@@ -44,6 +44,14 @@ public class NextSquareScript : MonoBehaviour {
         else {
             NewColor();
         }
+
+        if (colorNum == setColor.Length-1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+        }
+        else {
+            spriteRenderer.sprite = lineScript.regularSquare;
+        }
 	}
 	
     void NewColor() {
@@ -56,5 +64,10 @@ public class NextSquareScript : MonoBehaviour {
         Color color = spriteRenderer.color;
         color.a = 0.5f;
         spriteRenderer.color = color;
+
+        if (colorNum == setColor.Length - 1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+        }
     }
 }

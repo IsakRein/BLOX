@@ -19,9 +19,6 @@ public class LoadScene : MonoBehaviour
     public void ReloadScene(string scene) {
         if (scene == "Game") {
             Manager.loadColors = false;
-
-            LineScript lineScript = GameObject.Find("LineHolder").GetComponent<LineScript>();
-            lineScript.SaveScore();
         }
 
         SceneManager.LoadScene(scene);
