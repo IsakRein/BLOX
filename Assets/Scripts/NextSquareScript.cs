@@ -69,5 +69,9 @@ public class NextSquareScript : MonoBehaviour {
         {
             spriteRenderer.sprite = lineScript.deadSquare;
         }
+        else
+        {
+            spriteRenderer.sprite = lineScript.regularSquare;
+        }
     }
 }

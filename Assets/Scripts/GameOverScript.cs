@@ -9,6 +9,9 @@ public class GameOverScript : MonoBehaviour {
     public TextMeshProUGUI commentText;
 
     void Start () {
+
+        Manager.loadColors = false;
+
         scoreText.SetText(Manager.previousScore.ToString());
 
         GenerateText();
@@ -46,10 +49,10 @@ public class GameOverScript : MonoBehaviour {
         }
         else if (Manager.previousScore < 2000)
         {
-            message = "Fantastic!";
+            message = "Now you're hitting the charts!";
         }
         else {
-            message = "Now you're hitting the charts!";
+            message = "Great but you should consider getting a life...";
         }
 
         commentText.SetText(message);

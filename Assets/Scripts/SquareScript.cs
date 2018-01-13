@@ -47,7 +47,7 @@ public class SquareScript : MonoBehaviour
     public GameObject countDownPrefab;
     GameObject countDown;
 
-    public int countDownStart = 10;
+    public int countDownStart = 5;
     public int countDownCounter;
 
     void Start()
@@ -176,7 +176,9 @@ public class SquareScript : MonoBehaviour
         float x = (transform.localPosition.x - (0.5f - (((float)squareRows) / 2))) + 1;
         float y = (((((float)squareRows) / 2) - 0.5f) - transform.localPosition.y);
 
-        gameObject.name = "" + (Mathf.CeilToInt(squareRows * y) + Mathf.Round(x));
+        number = (int)(Mathf.CeilToInt(squareRows * y) + Mathf.Round(x));
+
+        gameObject.name = "" + number;
 
         x = Mathf.Round(transform.localPosition.x - 0.5f) + 0.5f;
         y = Mathf.Round(transform.localPosition.y - 0.5f) + 0.5f;
@@ -191,8 +193,8 @@ public class SquareScript : MonoBehaviour
             countDownCounter = countDownCounter - 1;
 
             if (countDownCounter == 0) {
-                AddToFallCounter(1);
                 animator.SetTrigger("Trigger");
+                lineScript.squareList.Add(number);
             }
 
             GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
