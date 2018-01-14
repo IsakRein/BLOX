@@ -69,7 +69,6 @@ public class Manager : MonoBehaviour {
         if (PlayerPrefs.HasKey("previousScore")) {
             previousScore = PlayerPrefs.GetInt("previousScore");
         }
-
     }
 
     void Start()

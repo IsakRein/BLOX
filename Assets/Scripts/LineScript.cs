@@ -952,50 +952,45 @@ public class LineScript : MonoBehaviour
         foreach (Transform square in squares.transform)
         {
             SquareScript squareScript = square.GetComponent<SquareScript>();
-
             squareScript.UpdateCountDown();
         }
 
-        StartAllAnimation();
+		foreach (int square in squareList)
+		{
+			GameObject squareObj = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + square.ToString());
+			squareObj.SendMessage("Animate");
+		}
+
+		score = score + squareList.Count;
+		scoreText.text = "" + score;
+
+		if (score >= Manager.highScore)
+		{
+			Manager.highScore = score;
+			highScoreText.text = "<color=#B7A921ff>★</color>" + score;
+		}
+
+		foreach (int square in squareList)
+		{
+			int currentSquareRow = 0;
+
+			if (square % squareRows == 0)
+			{
+				currentSquareRow = squareRows;
+			}
+			else
+			{
+				currentSquareRow = square % squareRows;
+			}
+
+			int value = rowList[currentSquareRow - 1] + 1;
+
+			rowList.RemoveAt(currentSquareRow - 1);
+			rowList.Insert(currentSquareRow - 1, value);
+		}
+
+		fallDown = true;
 	}
-
-    public void StartAllAnimation() {
-        foreach (int square in squareList)
-        {
-            GameObject squareObj = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + square.ToString());
-            squareObj.SendMessage("Animate");
-        }
-
-        score = score + squareList.Count;
-        scoreText.text = "" + score;
-
-        if (score >= Manager.highScore)
-        {
-            Manager.highScore = score;
-            highScoreText.text = "<color=#B7A921ff>★</color>" + score;
-        }
-
-        foreach (int square in squareList)
-        {
-            int currentSquareRow = 0;
-
-            if (square % squareRows == 0)
-            {
-                currentSquareRow = squareRows;
-            }
-            else
-            {
-                currentSquareRow = square % squareRows;
-            }
-
-            int value = rowList[currentSquareRow - 1] + 1;
-
-            rowList.RemoveAt(currentSquareRow - 1);
-            rowList.Insert(currentSquareRow - 1, value);
-        }
-
-        fallDown = true;
-    }
 
 	public void InitializeFall ()
 	{
