@@ -63,6 +63,7 @@ public class LineScript : MonoBehaviour
     public List<int> squareList = new List<int>();
     public List<int> rowList = new List<int>();
     public List<int> colorList = new List<int>();
+    public List<int> deadSquareCounterList = new List<int>(); 
     public List<int> circleList = new List<int>();
 
     public AudioClip[] hits;
@@ -102,6 +103,8 @@ public class LineScript : MonoBehaviour
     public Sprite deadSquare;
     public Sprite regularSquare;
 
+    public float deadOdds;
+
     #endregion
 
     void Start()
@@ -130,6 +133,8 @@ public class LineScript : MonoBehaviour
         }
 		scoreText.SetText("" + score);
 
+        UpdateDeadOdds();
+
         highScoreText.text = "<color=#B7A921ff>★</color>" + Manager.highScore;
 
 		randomizeColors = false;
@@ -152,6 +157,16 @@ public class LineScript : MonoBehaviour
 
 		colorList [0] = -1;
 
+
+        deadSquareCounterList.Clear();
+        for (int i = 0; i <= squareRows * squareRows; i++)
+        {
+            deadSquareCounterList.Add(0);
+        }
+
+        deadSquareCounterList[0] = -1;
+
+
         circleList.Clear();
         for (int i = 0; i <= squareRows; i++)
         {
@@ -160,11 +175,47 @@ public class LineScript : MonoBehaviour
 
         circleList[0] = -1;
 
+
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
 		}
 
-        FallingDone();
+        controlsEnabled = true;
+        lastSquare = 0;
+        fallDown = false;
+        InitializeFallHasBeenCalled = false;
+
+
+        foreach (Transform square in squares.transform)
+        {
+            SquareScript squareScript = square.GetComponent<SquareScript>();
+
+            squareScript.NameSquare();
+        }
+
+        rowList.Clear();
+        for (int i = 0; i < squareRows; i++)
+        {
+            rowList.Add(0);
+        }
+
+        bool movePossible = false;
+
+        for (int i = 1; i <= squareRows * squareRows; i++)
+        {
+            if (!movePossible)
+            {
+                if (CheckAroundSquare1(i))
+                {
+                    movePossible = true;
+                }
+            }
+        }
+
+        if (!movePossible)
+        {
+            GameOver();
+        }
 	}
 
 	void Update ()
@@ -938,10 +989,46 @@ public class LineScript : MonoBehaviour
 		colorList[index] = value;
 	}
 
+    public void AddToDeadSquareCounterList (int index, int value) {
+        deadSquareCounterList[index] = value;
+    }
+
     public void AddToCircleList(int index, int value)
     {
         circleList[index] = value;
     }
+
+    void UpdateDeadOdds() {
+        if (score < 50) {
+            deadOdds = 0.2f;
+        } 
+        else if (score < 200) {
+            deadOdds = 0.1f;
+        }
+        else if (score < 300)
+        {
+            deadOdds = 0.15f;
+        }
+        else if (score < 400)
+        {
+            deadOdds = 0.2f;
+        }
+        else if (score < 500)
+        {
+            deadOdds = 0.25f;
+        }
+        else if (score < 600)
+        {
+            deadOdds = 0.3f;
+        }
+        else if (score < 800)
+        {
+            deadOdds = 0.35f;
+        }
+        else {
+            deadOdds = 0.4f;
+        }
+    } 
 
     #region animation
 
@@ -952,7 +1039,8 @@ public class LineScript : MonoBehaviour
         foreach (Transform square in squares.transform)
         {
             SquareScript squareScript = square.GetComponent<SquareScript>();
-            squareScript.UpdateCountDown();
+
+            squareScript.SetCountDown();
         }
 
 		foreach (int square in squareList)
@@ -1041,17 +1129,18 @@ public class LineScript : MonoBehaviour
 
     public void FallingDone()
     {
+        UpdateDeadOdds();
+
         controlsEnabled = true;
         lastSquare = 0;
         fallDown = false;
         InitializeFallHasBeenCalled = false;
 
-
         foreach (Transform square in squares.transform)
         {
             SquareScript squareScript = square.GetComponent<SquareScript>();
 
-            squareScript.NameSquare();
+            squareScript.UpdateCountDown();
         }
 
         rowList.Clear();
@@ -1079,6 +1168,7 @@ public class LineScript : MonoBehaviour
         }
 
         Manager.colorList = colorList;
+        Manager.deadSquareCounterList = deadSquareCounterList;
         Manager.circleList = circleList;
         Manager.previousScore = score;
 

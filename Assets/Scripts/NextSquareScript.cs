@@ -55,7 +55,13 @@ public class NextSquareScript : MonoBehaviour {
 	}
 	
     void NewColor() {
-        colorNum = Random.Range(0, setColor.Length);
+        colorNum = Random.Range(0, setColor.Length-1);
+
+        float rolledDie = Random.Range(0.00f, 1.00f);
+
+        if (rolledDie <= lineScript.deadOdds) {
+            colorNum = setColor.Length-1;
+        }
 
         lineScript.AddToCircleList(num, colorNum);
 

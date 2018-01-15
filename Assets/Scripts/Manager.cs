@@ -14,6 +14,7 @@ public class Manager : MonoBehaviour {
     public static bool vibEnabled;
 
     public static List<int> colorList = new List<int>(); 
+    public static List<int> deadSquareCounterList = new List<int>(); 
     public static List<int> circleList = new List<int>();
 
     public List<int> circleList2 = new List<int>();
@@ -37,7 +38,6 @@ public class Manager : MonoBehaviour {
 
         if (PlayerPrefs.HasKey("colorList_1"))
         {
-
             loadColors = true;
 
             colorList.Clear();
@@ -48,6 +48,16 @@ public class Manager : MonoBehaviour {
             for (int i = 1; i < colorList.Count; i++)
             {
                 colorList[i] = PlayerPrefs.GetInt("colorList_" + i);
+            }
+
+            deadSquareCounterList.Clear();
+            for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+            {
+                deadSquareCounterList.Add(0);
+            }
+            for (int i = 1; i < colorList.Count; i++)
+            {
+                deadSquareCounterList[i] = PlayerPrefs.GetInt("deadSquareCounter_" + i);
             }
 
             circleList.Clear();
@@ -104,6 +114,15 @@ public class Manager : MonoBehaviour {
         }
     }
 
+    private void Update()
+    {
+        for (int i = 1; i < 37; i++) {
+            Debug.Log(PlayerPrefs.GetInt("deadSquareCounter_" + i));
+        }
+
+        circleList2 = deadSquareCounterList;
+    }
+
     public static void SaveScore()
     {
         PlayerPrefs.SetInt("highScore", highScore);
@@ -117,6 +136,8 @@ public class Manager : MonoBehaviour {
         for (int i = 1; i < colorList.Count; i++)
         {
             PlayerPrefs.SetInt("colorList_" + i, colorList[i]);
+            PlayerPrefs.SetInt("deadSquareCounter_" + i, deadSquareCounterList[i]);
+           
         }
 
         for (int i = 1; i < circleList.Count; i++)

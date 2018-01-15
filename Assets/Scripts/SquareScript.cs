@@ -47,8 +47,10 @@ public class SquareScript : MonoBehaviour
     public GameObject countDownPrefab;
     GameObject countDown;
 
-    public int countDownStart = 5;
+    public int countDownStart = 10;
     public int countDownCounter;
+
+    private bool firstFall;
 
     void Start()
     {
@@ -64,11 +66,11 @@ public class SquareScript : MonoBehaviour
 
         setColor = lineScript.setColor;
 
-        countDownCounter = countDownStart;
-
         if (loadColors) {
             colorNum = Manager.colorList[number];
             spriteRenderer.color = setColor[colorNum];
+
+            firstFall = false;
         }
 
         else if (takeColorFromTop)
@@ -77,15 +79,23 @@ public class SquareScript : MonoBehaviour
 			colorNum = square.transform.GetChild(0).GetComponent<NextSquareScript>().colorNum;
 			square.transform.GetChild(0).SendMessage("NewColor");
 
+            countDownCounter = countDownStart;
+
             spriteRenderer.color = setColor[colorNum];
+
+            firstFall = true;
         }
         else
         {
             colorNum = Random.Range(0, setColor.Length-1);
             spriteRenderer.color = setColor[colorNum];
+
+            countDownCounter = countDownStart;
+
+            firstFall = true;
         }
 
-        if (colorNum == setColor.Length-1)
+        if (colorNum == setColor.Length - 1)
         {
             spriteRenderer.sprite = lineScript.deadSquare;
 
@@ -94,6 +104,11 @@ public class SquareScript : MonoBehaviour
             countDown = Instantiate(countDownPrefab, transform);
 
             countDown.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+
+            if (loadColors) {
+                countDownCounter = Manager.deadSquareCounterList[number];
+                GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
+            }
         }
 
         addSquareHasBeenCalled = false;
@@ -103,6 +118,7 @@ public class SquareScript : MonoBehaviour
         hoverSwitch = false;
 
         squareRows = squareScript.Rows;
+
     }
 
     void Update()
@@ -110,7 +126,6 @@ public class SquareScript : MonoBehaviour
         if (isAnimating)
         {
             transform.localPosition = new Vector2(transform.localPosition.x + animEditor, transform.localPosition.y);
-
         }
 
         if (!isHovering)
@@ -127,6 +142,10 @@ public class SquareScript : MonoBehaviour
 
                 if (targetPos == transform.localPosition)
                 {
+                    if (firstFall) {
+                        UpdateCountDown();
+                    }
+
                     fallCounter = 0;
 
                     lineScript.AddToFallCounter();
@@ -134,6 +153,8 @@ public class SquareScript : MonoBehaviour
                     NameSquare();
 
                     fallInitialized = false;
+
+                    firstFall = false;
                 }
             }
         }
@@ -188,16 +209,29 @@ public class SquareScript : MonoBehaviour
         UpdateColorlist();
     }
 
-    public void UpdateCountDown() {
-        if (colorNum == setColor.Length-1) {
+    public void SetCountDown () {
+        if (colorNum == setColor.Length - 1)
+        {
             countDownCounter = countDownCounter - 1;
 
-            if (countDownCounter == 0) {
+            if (countDownCounter == 0)
+            {
                 animator.SetTrigger("Trigger");
                 lineScript.squareList.Add(number);
             }
 
             GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
+        }
+    }
+
+    public void UpdateCountDown() {
+        NameSquare();
+        
+        if (colorNum == setColor.Length-1) {
+            lineScript.AddToDeadSquareCounterList(number, countDownCounter); 
+        }
+        else {
+            lineScript.AddToDeadSquareCounterList(number, 0); 
         }
     }
 

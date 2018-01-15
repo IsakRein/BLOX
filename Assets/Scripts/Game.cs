@@ -55,7 +55,7 @@ public class Game : MonoBehaviour {
                 square.GetComponent<Animator>().SetTrigger("OnEnable");
 
 				transform.localScale = new Vector3 (scale, scale);
-			}
+            }
 		}
 
 		GenerateCircles ();
