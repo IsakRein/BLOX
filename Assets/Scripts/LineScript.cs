@@ -394,9 +394,6 @@ public class LineScript : MonoBehaviour
         
     }
 
-    public void GameReallyOver() {
-        Manager.loadColors = false;
-    }
 
 	public void ControlChange() {
 		controlsEnabled = !controlsEnabled;

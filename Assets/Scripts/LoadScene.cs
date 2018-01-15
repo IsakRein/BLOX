@@ -17,9 +17,9 @@ public class LoadScene : MonoBehaviour
     }
 
     public void ReloadScene(string scene) {
-        if (scene == "Game") {
-            Manager.loadColors = false;
-        }
+		if (scene == "Game" || scene == "Gameover") {
+			Manager.NextTimeLoadNewLevel ();
+		}
 
         SceneManager.LoadScene(scene);
     }

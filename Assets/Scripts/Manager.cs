@@ -36,40 +36,42 @@ public class Manager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
 
-        if (PlayerPrefs.HasKey("colorList_1"))
-        {
-            loadColors = true;
+		if (PlayerPrefs.HasKey ("LoadColors")) {
+			if (PlayerPrefs.GetInt ("LoadColors") == 0) {
+				if (PlayerPrefs.HasKey ("colorList_1")) {
+					loadColors = true;
 
-            colorList.Clear();
-            for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
-            {
-                colorList.Add(-1);
-            }
-            for (int i = 1; i < colorList.Count; i++)
-            {
-                colorList[i] = PlayerPrefs.GetInt("colorList_" + i);
-            }
+					colorList.Clear ();
+					for (int i = 0; i < PlayerPrefs.GetInt ("colorListCount"); i++) {
+						colorList.Add (-1);
+					}
+					for (int i = 1; i < colorList.Count; i++) {
+						colorList [i] = PlayerPrefs.GetInt ("colorList_" + i);
+					}
 
-            deadSquareCounterList.Clear();
-            for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
-            {
-                deadSquareCounterList.Add(0);
-            }
-            for (int i = 1; i < colorList.Count; i++)
-            {
-                deadSquareCounterList[i] = PlayerPrefs.GetInt("deadSquareCounter_" + i);
-            }
+					deadSquareCounterList.Clear ();
+					for (int i = 0; i < PlayerPrefs.GetInt ("colorListCount"); i++) {
+						deadSquareCounterList.Add (0);
+					}
+					for (int i = 1; i < colorList.Count; i++) {
+						deadSquareCounterList [i] = PlayerPrefs.GetInt ("deadSquareCounter_" + i);
+					}
 
-            circleList.Clear();
-            for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
-            {
-                circleList.Add(-1);
-            }
-            for (int i = 1; i < PlayerPrefs.GetInt("circleListCount"); i++)
-            {
-                circleList[i] = PlayerPrefs.GetInt("circleList_" + i);
-            }
-        }
+					circleList.Clear ();
+					for (int i = 0; i < PlayerPrefs.GetInt ("circleListCount"); i++) {
+						circleList.Add (-1);
+					}
+					for (int i = 1; i < PlayerPrefs.GetInt ("circleListCount"); i++) {
+						circleList [i] = PlayerPrefs.GetInt ("circleList_" + i);
+					}
+				} else {
+					loadColors = false;
+				}
+				PlayerPrefs.SetInt ("LoadColors", 0);
+			}
+		}
+
+        
 
         else 
         {
@@ -169,5 +171,9 @@ public class Manager : MonoBehaviour {
             PlayerPrefs.SetInt("vibEnabled", 0);
         }
     }
+
+	public static void NextTimeLoadNewLevel() {
+		PlayerPrefs.SetInt ("LoadColors", 1);
+	}
 }
 
