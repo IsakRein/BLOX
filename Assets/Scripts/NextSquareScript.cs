@@ -54,6 +54,21 @@ public class NextSquareScript : MonoBehaviour {
         }
 	}
 	
+    public void LoadPreviousColor()
+    {
+        colorNum = Manager.previousCircleList[num];
+        spriteRenderer.color = setColor[colorNum];
+
+        if (colorNum == setColor.Length - 1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+        }
+        else
+        {
+            spriteRenderer.sprite = lineScript.regularSquare;
+        }
+    }
+
     void NewColor() {
         colorNum = Random.Range(0, setColor.Length-1);
 
@@ -65,6 +80,23 @@ public class NextSquareScript : MonoBehaviour {
 
         lineScript.AddToCircleList(num, colorNum);
 
+        spriteRenderer.color = setColor[colorNum];
+
+        Color color = spriteRenderer.color;
+        color.a = 0.5f;
+        spriteRenderer.color = color;
+
+        if (colorNum == setColor.Length - 1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+        }
+        else
+        {
+            spriteRenderer.sprite = lineScript.regularSquare;
+        }
+    }
+
+    void SetColornum() {
         spriteRenderer.color = setColor[colorNum];
 
         Color color = spriteRenderer.color;

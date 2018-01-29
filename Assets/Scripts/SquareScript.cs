@@ -118,7 +118,6 @@ public class SquareScript : MonoBehaviour
         hoverSwitch = false;
 
         squareRows = squareScript.Rows;
-
     }
 
     void Update()
@@ -180,6 +179,19 @@ public class SquareScript : MonoBehaviour
 
                 hoverSwitch = false;
             }
+        }
+    }
+
+    public void LoadPreviousColor() {
+        colorNum = Manager.previousColorList[number];
+        spriteRenderer.color = setColor[colorNum];
+
+        if (colorNum == setColor.Length - 1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+
+            countDownCounter = Manager.deadSquareCounterList[number] + 1;
+            GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
         }
     }
 

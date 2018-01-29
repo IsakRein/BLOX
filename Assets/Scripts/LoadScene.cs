@@ -5,6 +5,11 @@ public class LoadScene : MonoBehaviour
 {
     public void Load(string scene)
     {
+        if (scene == "Gameover") {
+            Manager.NextTimeDontLoadLevel();
+            Manager.loadColors = false;
+        }
+
         Manager.sceneOrder.Add(SceneManager.GetActiveScene().name);
 
         SceneManager.LoadScene(scene);
@@ -17,8 +22,8 @@ public class LoadScene : MonoBehaviour
     }
 
     public void ReloadScene(string scene) {
-		if (scene == "Game" || scene == "Gameover") {
-			Manager.NextTimeLoadNewLevel ();
+		if (scene == "Game") {
+            Manager.loadColors = false;
 		}
 
         SceneManager.LoadScene(scene);

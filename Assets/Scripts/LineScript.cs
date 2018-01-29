@@ -63,8 +63,10 @@ public class LineScript : MonoBehaviour
     public List<int> squareList = new List<int>();
     public List<int> rowList = new List<int>();
     public List<int> colorList = new List<int>();
+    public List<int> previousColorList = new List<int>();
     public List<int> deadSquareCounterList = new List<int>(); 
     public List<int> circleList = new List<int>();
+    public List<int> previousCircleList = new List<int>();
 
     public AudioClip[] hits;
     public AudioClip snap;
@@ -154,8 +156,15 @@ public class LineScript : MonoBehaviour
 		{
 			colorList.Add (0);
 		}
-
 		colorList [0] = -1;
+
+
+        previousColorList.Clear();
+        for (int i = 0; i <= squareRows * squareRows; i++)
+        {
+            previousColorList.Add(0);
+        }
+        previousColorList[0] = -1;
 
 
         deadSquareCounterList.Clear();
@@ -163,7 +172,6 @@ public class LineScript : MonoBehaviour
         {
             deadSquareCounterList.Add(0);
         }
-
         deadSquareCounterList[0] = -1;
 
 
@@ -172,8 +180,15 @@ public class LineScript : MonoBehaviour
         {
             circleList.Add(0);
         }
-
         circleList[0] = -1;
+
+
+        previousCircleList.Clear();
+        for (int i = 0; i <= squareRows; i++)
+        {
+            previousCircleList.Add(0);
+        }
+        previousCircleList[0] = -1;
 
 
 		for (int i = 0; i < squareRows; i++) {
@@ -185,36 +200,10 @@ public class LineScript : MonoBehaviour
         fallDown = false;
         InitializeFallHasBeenCalled = false;
 
-
-        foreach (Transform square in squares.transform)
-        {
-            SquareScript squareScript = square.GetComponent<SquareScript>();
-
-            squareScript.NameSquare();
-        }
-
         rowList.Clear();
         for (int i = 0; i < squareRows; i++)
         {
             rowList.Add(0);
-        }
-
-        bool movePossible = false;
-
-        for (int i = 1; i <= squareRows * squareRows; i++)
-        {
-            if (!movePossible)
-            {
-                if (CheckAroundSquare1(i))
-                {
-                    movePossible = true;
-                }
-            }
-        }
-
-        if (!movePossible)
-        {
-            GameOver();
         }
 	}
 
@@ -275,7 +264,6 @@ public class LineScript : MonoBehaviour
                     {
                         StartAnimation();
                         VibSuccess();
-
                     }
                     else
                     {
@@ -373,27 +361,65 @@ public class LineScript : MonoBehaviour
 
     void GameOver()
     {
+        Manager.loadColors = false;
+        Manager.NextTimeDontLoadLevel();
+
         background.SetActive(true);
         background.GetComponent<Canvas>().sortingOrder = 500;
         backgroundAnimator.SetTrigger("STARTNOB");
 
         cont.SetActive(true);
 
-        //if watch
-        WatchVideoToContinue();
-    }
-
-    public void WatchVideoToContinue() {
+        //if watch (if person has payed for removal of ads)
         payToContinueButton.SetActive(true);
         watchVideoToContinue.SetActive(true);
         noThanksLow.SetActive(true);
-        cont.GetComponent<Animator>().SetTrigger("STARTW");
+        cont.GetComponent<Animator>().SetTrigger("STARTW");    
+    }
+
+    public void PowerUpRedo() {
+        Debug.Log("PowerUpRedo");
+        if (previousColorList[0] == 1) {
+            Debug.Log("previousColorList[0] == 1");
+
+            foreach (Transform square in squares.transform)
+            {
+                square.GetComponent<SquareScript>().LoadPreviousColor();
+            }
+            foreach (Transform circle in circles.transform) {
+                circle.GetComponent<NextSquareScript>().LoadPreviousColor();
+            }
+        }
+    }
+
+    public void WatchVideoToContinue() {
+        //view ad
+
+        //then
+        ContinueAfterLoss();
     }
 
     public void PayToContinue() {
-        
+        //charge gems (and change multiplier)
+
+        //then
+        ContinueAfterLoss();
     }
 
+    public void ContinueAfterLoss() {
+        for (int i = 1; i <= squareRows * 4; i++) {
+            squareList.Add(i);
+        } 
+
+        Manager.NextTimeLoadLevel();
+
+        cont.SetActive(false);
+
+        background.GetComponent<Canvas>().sortingOrder = 40;
+        background.SetActive(false);
+
+        StartAnimation();
+    }
 
 	public void ControlChange() {
 		controlsEnabled = !controlsEnabled;
@@ -982,8 +1008,11 @@ public class LineScript : MonoBehaviour
 		return movePossible;
 	}
 		
-	public void AddToColorList(int index, int value) {
-		colorList[index] = value;
+	public void AddToColorList(int index, int value) {  
+        previousColorList[0] = 1;
+        previousColorList[index] = colorList[index];
+
+        colorList[index] = value;
 	}
 
     public void AddToDeadSquareCounterList (int index, int value) {
@@ -992,6 +1021,8 @@ public class LineScript : MonoBehaviour
 
     public void AddToCircleList(int index, int value)
     {
+        previousCircleList[index] = circleList[index];
+
         circleList[index] = value;
     }
 
@@ -1165,6 +1196,8 @@ public class LineScript : MonoBehaviour
         }
 
         Manager.colorList = colorList;
+        Manager.previousColorList = previousColorList;
+
         Manager.deadSquareCounterList = deadSquareCounterList;
         Manager.circleList = circleList;
         Manager.previousScore = score;

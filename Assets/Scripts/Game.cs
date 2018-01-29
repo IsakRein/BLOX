@@ -22,7 +22,7 @@ public class Game : MonoBehaviour {
 	public GameObject circlePrefab;
     GameObject circle;
 
-	void Start () {
+	void Awake () {
 		foreach (Transform child in transform) {
 			GameObject.Destroy(child.gameObject);
 		}

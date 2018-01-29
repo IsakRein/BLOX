@@ -14,8 +14,10 @@ public class Manager : MonoBehaviour {
     public static bool vibEnabled;
 
     public static List<int> colorList = new List<int>(); 
+    public static List<int> previousColorList = new List<int>();
     public static List<int> deadSquareCounterList = new List<int>(); 
     public static List<int> circleList = new List<int>();
+    public static List<int> previousCircleList = new List<int>();
 
     public List<int> circleList2 = new List<int>();
 
@@ -37,9 +39,18 @@ public class Manager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
 		if (PlayerPrefs.HasKey ("LoadColors")) {
-			if (PlayerPrefs.GetInt ("LoadColors") == 0) {
-				if (PlayerPrefs.HasKey ("colorList_1")) {
-					loadColors = true;
+
+            Debug.Log("Has Key Loadcolors");
+			
+            if (PlayerPrefs.GetInt ("LoadColors") == 1) {
+
+                Debug.Log("Loadcolors = 1");
+
+                if (PlayerPrefs.HasKey ("colorList_1")) {
+					
+                    Debug.Log("Has Key colorlist_1");
+
+                    loadColors = true;
 
 					colorList.Clear ();
 					for (int i = 0; i < PlayerPrefs.GetInt ("colorListCount"); i++) {
@@ -64,19 +75,57 @@ public class Manager : MonoBehaviour {
 					for (int i = 1; i < PlayerPrefs.GetInt ("circleListCount"); i++) {
 						circleList [i] = PlayerPrefs.GetInt ("circleList_" + i);
 					}
-				} else {
-					loadColors = false;
-				}
-				PlayerPrefs.SetInt ("LoadColors", 0);
-			}
-		}
 
-        
+                    if (PlayerPrefs.HasKey("previousColorList_1")) {
+                        Debug.Log("Has previousColorList");
+
+                        previousColorList.Clear();
+                        for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                        {
+                            previousColorList.Add(-1);
+                        }
+                        for (int i = 1; i < colorList.Count; i++)
+                        {
+                            previousColorList[i] = PlayerPrefs.GetInt("previousColorList_" + i);
+                        }
+
+                        previousCircleList.Clear();
+                        for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                        {
+                            previousCircleList.Add(0);
+                        }
+                        for (int i = 1; i < previousCircleList.Count; i++)
+                        {
+                            previousCircleList[i] = PlayerPrefs.GetInt("previousCircleList_" + i);
+                        }
+                    }
+
+                    else {
+                        previousColorList = colorList;
+                        previousCircleList = circleList;
+                    }
+
+				} else {
+                    Debug.Log("does not have colorlist_1");
+
+                    loadColors = false;
+				}
+            }
+            else {
+                Debug.Log("Loadcolors = 0");
+
+                loadColors = false;
+            }
+		}
 
         else 
         {
+            Debug.Log("Does not have key Loadcolors");
+
             loadColors = false;
         }
+
+        NextTimeLoadLevel();
 
         if (PlayerPrefs.HasKey("previousScore")) {
             previousScore = PlayerPrefs.GetInt("previousScore");
@@ -114,15 +163,6 @@ public class Manager : MonoBehaviour {
         else {
             highScore = 0;
         }
-    }
-
-    private void Update()
-    {
-        for (int i = 1; i < 37; i++) {
-            Debug.Log(PlayerPrefs.GetInt("deadSquareCounter_" + i));
-        }
-
-        circleList2 = deadSquareCounterList;
     }
 
     public static void SaveScore()
@@ -172,8 +212,13 @@ public class Manager : MonoBehaviour {
         }
     }
 
-	public static void NextTimeLoadNewLevel() {
+	public static void NextTimeLoadLevel() {
 		PlayerPrefs.SetInt ("LoadColors", 1);
 	}
+
+    public static void NextTimeDontLoadLevel()
+    {
+        PlayerPrefs.SetInt("LoadColors", 0);
+    }
 }
 
