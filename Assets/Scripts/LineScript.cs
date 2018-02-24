@@ -63,10 +63,8 @@ public class LineScript : MonoBehaviour
     public List<int> squareList = new List<int>();
     public List<int> rowList = new List<int>();
     public List<int> colorList = new List<int>();
-    public List<int> previousColorList = new List<int>();
     public List<int> deadSquareCounterList = new List<int>(); 
     public List<int> circleList = new List<int>();
-    public List<int> previousCircleList = new List<int>();
 
     public AudioClip[] hits;
     public AudioClip snap;
@@ -128,11 +126,16 @@ public class LineScript : MonoBehaviour
 		controlsEnabled = true;
 
         if (Manager.loadColors) {
+            Debug.Log("LineScript thinks loadcolors is true");
+
             score = Manager.previousScore;
         }
         else {
+            Debug.Log("LineScript thinks loadcolors is false");
+
             score = 0;
         }
+
 		scoreText.SetText("" + score);
 
         UpdateDeadOdds();
@@ -158,15 +161,6 @@ public class LineScript : MonoBehaviour
 		}
 		colorList [0] = -1;
 
-
-        previousColorList.Clear();
-        for (int i = 0; i <= squareRows * squareRows; i++)
-        {
-            previousColorList.Add(0);
-        }
-        previousColorList[0] = -1;
-
-
         deadSquareCounterList.Clear();
         for (int i = 0; i <= squareRows * squareRows; i++)
         {
@@ -182,15 +176,6 @@ public class LineScript : MonoBehaviour
         }
         circleList[0] = -1;
 
-
-        previousCircleList.Clear();
-        for (int i = 0; i <= squareRows; i++)
-        {
-            previousCircleList.Add(0);
-        }
-        previousCircleList[0] = -1;
-
-
 		for (int i = 0; i < squareRows; i++) {
 			rowList.Add (0);
 		}
@@ -204,6 +189,26 @@ public class LineScript : MonoBehaviour
         for (int i = 0; i < squareRows; i++)
         {
             rowList.Add(0);
+        }
+
+        Manager.loadColors = true;
+
+        bool movePossible = false;
+
+        for (int i = 1; i <= squareRows * squareRows; i++)
+        {
+            if (!movePossible)
+            {
+                if (CheckAroundSquare1(i))
+                {
+                    movePossible = true;
+                }
+            }
+        }
+
+        if (!movePossible)
+        {
+            GameOver();
         }
 	}
 
@@ -374,22 +379,15 @@ public class LineScript : MonoBehaviour
         payToContinueButton.SetActive(true);
         watchVideoToContinue.SetActive(true);
         noThanksLow.SetActive(true);
+
+        payToContinue.SetActive(false);
+        noThanksHigh.SetActive(false);
+
         cont.GetComponent<Animator>().SetTrigger("STARTW");    
     }
 
     public void PowerUpRedo() {
-        Debug.Log("PowerUpRedo");
-        if (previousColorList[0] == 1) {
-            Debug.Log("previousColorList[0] == 1");
-
-            foreach (Transform square in squares.transform)
-            {
-                square.GetComponent<SquareScript>().LoadPreviousColor();
-            }
-            foreach (Transform circle in circles.transform) {
-                circle.GetComponent<NextSquareScript>().LoadPreviousColor();
-            }
-        }
+        
     }
 
     public void WatchVideoToContinue() {
@@ -409,7 +407,11 @@ public class LineScript : MonoBehaviour
     public void ContinueAfterLoss() {
         for (int i = 1; i <= squareRows * 4; i++) {
             squareList.Add(i);
-        } 
+        }
+
+        for (int i = 0; i < squareRows; i++) {
+            rowList[i] = 0;
+        }
 
         Manager.NextTimeLoadLevel();
 
@@ -1009,10 +1011,11 @@ public class LineScript : MonoBehaviour
 	}
 		
 	public void AddToColorList(int index, int value) {  
-        previousColorList[0] = 1;
-        previousColorList[index] = colorList[index];
-
         colorList[index] = value;
+        Manager.colorList[index] = value;
+
+        Manager.SaveScene();
+        Manager.previousScore = score;
 	}
 
     public void AddToDeadSquareCounterList (int index, int value) {
@@ -1021,9 +1024,11 @@ public class LineScript : MonoBehaviour
 
     public void AddToCircleList(int index, int value)
     {
-        previousCircleList[index] = circleList[index];
-
         circleList[index] = value;
+        Manager.circleList[index] = value;
+
+        Manager.SaveScene();
+        Manager.previousScore = score;
     }
 
     void UpdateDeadOdds() {
@@ -1196,8 +1201,6 @@ public class LineScript : MonoBehaviour
         }
 
         Manager.colorList = colorList;
-        Manager.previousColorList = previousColorList;
-
         Manager.deadSquareCounterList = deadSquareCounterList;
         Manager.circleList = circleList;
         Manager.previousScore = score;

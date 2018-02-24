@@ -24,7 +24,7 @@ public class LoadScene : MonoBehaviour
     public void ReloadScene(string scene) {
 		if (scene == "Game") {
             Manager.loadColors = false;
-		}
+  		}
 
         SceneManager.LoadScene(scene);
     }

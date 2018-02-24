@@ -182,19 +182,6 @@ public class SquareScript : MonoBehaviour
         }
     }
 
-    public void LoadPreviousColor() {
-        colorNum = Manager.previousColorList[number];
-        spriteRenderer.color = setColor[colorNum];
-
-        if (colorNum == setColor.Length - 1)
-        {
-            spriteRenderer.sprite = lineScript.deadSquare;
-
-            countDownCounter = Manager.deadSquareCounterList[number] + 1;
-            GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
-        }
-    }
-
     public void LoadColor(int newColorNum) 
     {
         colorNum = newColorNum;

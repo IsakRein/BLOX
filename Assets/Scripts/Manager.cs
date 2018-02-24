@@ -14,10 +14,8 @@ public class Manager : MonoBehaviour {
     public static bool vibEnabled;
 
     public static List<int> colorList = new List<int>(); 
-    public static List<int> previousColorList = new List<int>();
     public static List<int> deadSquareCounterList = new List<int>(); 
     public static List<int> circleList = new List<int>();
-    public static List<int> previousCircleList = new List<int>();
 
     public List<int> circleList2 = new List<int>();
 
@@ -72,49 +70,70 @@ public class Manager : MonoBehaviour {
 					for (int i = 0; i < PlayerPrefs.GetInt ("circleListCount"); i++) {
 						circleList.Add (-1);
 					}
-					for (int i = 1; i < PlayerPrefs.GetInt ("circleListCount"); i++) {
-						circleList [i] = PlayerPrefs.GetInt ("circleList_" + i);
-					}
-
-                    if (PlayerPrefs.HasKey("previousColorList_1")) {
-                        Debug.Log("Has previousColorList");
-
-                        previousColorList.Clear();
-                        for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
-                        {
-                            previousColorList.Add(-1);
-                        }
-                        for (int i = 1; i < colorList.Count; i++)
-                        {
-                            previousColorList[i] = PlayerPrefs.GetInt("previousColorList_" + i);
-                        }
-
-                        previousCircleList.Clear();
-                        for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
-                        {
-                            previousCircleList.Add(0);
-                        }
-                        for (int i = 1; i < previousCircleList.Count; i++)
-                        {
-                            previousCircleList[i] = PlayerPrefs.GetInt("previousCircleList_" + i);
-                        }
-                    }
-
-                    else {
-                        previousColorList = colorList;
-                        previousCircleList = circleList;
+                    for (int i = 1; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                    {
+                        circleList[i] = PlayerPrefs.GetInt("circleList_" + i);
                     }
 
 				} else {
                     Debug.Log("does not have colorlist_1");
 
                     loadColors = false;
+
+                    colorList.Clear();
+                    for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                    {
+                        colorList.Add(-1);
+                    }
+
+                    deadSquareCounterList.Clear();
+                    for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                    {
+                        deadSquareCounterList.Add(0);
+                    }
+
+                    circleList.Clear();
+                    for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                    {
+                        circleList.Add(-1);
+                    }
 				}
             }
+
             else {
                 Debug.Log("Loadcolors = 0");
 
                 loadColors = false;
+                
+                colorList.Clear();
+                for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                {
+                    colorList.Add(-1);
+                }
+                for (int i = 1; i < colorList.Count; i++)
+                {
+                    colorList[i] = PlayerPrefs.GetInt("colorList_" + i);
+                }
+
+                deadSquareCounterList.Clear();
+                for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                {
+                    deadSquareCounterList.Add(0);
+                }
+                for (int i = 1; i < colorList.Count; i++)
+                {
+                    deadSquareCounterList[i] = PlayerPrefs.GetInt("deadSquareCounter_" + i);
+                }
+
+                circleList.Clear();
+                for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                {
+                    circleList.Add(-1);
+                }
+                for (int i = 1; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                {
+                    circleList[i] = PlayerPrefs.GetInt("circleList_" + i);
+                }
             }
 		}
 

@@ -28,9 +28,7 @@ public class Game : MonoBehaviour {
 		}
 
 		GenerateGrid ();
-
-        Manager.loadColors = true;
-	}
+    }
 
 	public void GenerateGrid() {
 		foreach (Transform child in transform) {

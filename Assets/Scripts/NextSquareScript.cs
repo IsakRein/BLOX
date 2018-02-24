@@ -53,21 +53,6 @@ public class NextSquareScript : MonoBehaviour {
             spriteRenderer.sprite = lineScript.regularSquare;
         }
 	}
-	
-    public void LoadPreviousColor()
-    {
-        colorNum = Manager.previousCircleList[num];
-        spriteRenderer.color = setColor[colorNum];
-
-        if (colorNum == setColor.Length - 1)
-        {
-            spriteRenderer.sprite = lineScript.deadSquare;
-        }
-        else
-        {
-            spriteRenderer.sprite = lineScript.regularSquare;
-        }
-    }
 
     void NewColor() {
         colorNum = Random.Range(0, setColor.Length-1);
