@@ -17,10 +17,22 @@ public class Manager : MonoBehaviour {
     public static List<int> deadSquareCounterList = new List<int>(); 
     public static List<int> circleList = new List<int>();
 
+    public static bool thereIsPrevious;
+    public static List<int> previousColorList = new List<int>();
+    public static List<int> previousDeadSquareCounterList = new List<int>(); 
+    public static List<int> previousCircleList = new List<int>();
+
     public List<int> circleList2 = new List<int>();
+    public int publicPrevPrevScore;
 
     public static bool loadColors;
     public static int previousScore;
+    public static int previousPreviousScore;
+
+    private void Update()
+    {
+        circleList2 = previousDeadSquareCounterList;
+    }
 
     void Awake()
     {
@@ -36,18 +48,9 @@ public class Manager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
 
-		if (PlayerPrefs.HasKey ("LoadColors")) {
-
-            Debug.Log("Has Key Loadcolors");
-			
+		if (PlayerPrefs.HasKey ("LoadColors")) {			
             if (PlayerPrefs.GetInt ("LoadColors") == 1) {
-
-                Debug.Log("Loadcolors = 1");
-
                 if (PlayerPrefs.HasKey ("colorList_1")) {
-					
-                    Debug.Log("Has Key colorlist_1");
-
                     loadColors = true;
 
 					colorList.Clear ();
@@ -75,9 +78,9 @@ public class Manager : MonoBehaviour {
                         circleList[i] = PlayerPrefs.GetInt("circleList_" + i);
                     }
 
-				} else {
-                    Debug.Log("does not have colorlist_1");
+				} 
 
+                else {
                     loadColors = false;
 
                     colorList.Clear();
@@ -98,13 +101,53 @@ public class Manager : MonoBehaviour {
                         circleList.Add(-1);
                     }
 				}
+
+                if (PlayerPrefs.HasKey("previousColorList_1")) {
+
+                    previousColorList.Clear();
+                    for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                    {
+                        previousColorList.Add(-1);
+                    }
+                    for (int i = 1; i < colorList.Count; i++)
+                    {
+                        previousColorList[i] = PlayerPrefs.GetInt("previousColorList_" + i);
+                    }
+
+                    previousCircleList.Clear();
+                    for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                    {
+                        previousCircleList.Add(-1);
+                    }
+                    for (int i = 1; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                    {
+                        previousCircleList[i] = PlayerPrefs.GetInt("previousCircleList_" + i);
+                    }
+
+                    previousDeadSquareCounterList.Clear();
+                    for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                    {
+                        previousDeadSquareCounterList.Add(-1);
+                    }
+                    for (int i = 1; i < colorList.Count; i++)
+                    {
+                        previousDeadSquareCounterList[i] = PlayerPrefs.GetInt("previousDeadSquareCounterList_" + i);
+                    }
+
+
+                    previousPreviousScore = PlayerPrefs.GetInt("previousPreviousScore");
+                }
+
+                else {
+                    previousColorList = new List<int>(colorList);
+                    previousCircleList = new List<int>(circleList);
+                    previousDeadSquareCounterList = new List<int>(deadSquareCounterList);
+                }
             }
 
             else {
-                Debug.Log("Loadcolors = 0");
-
                 loadColors = false;
-                
+
                 colorList.Clear();
                 for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
                 {
@@ -139,9 +182,19 @@ public class Manager : MonoBehaviour {
 
         else 
         {
-            Debug.Log("Does not have key Loadcolors");
-
             loadColors = false;
+        }
+
+        if (PlayerPrefs.HasKey("thereIsPrevious")) {
+            if (PlayerPrefs.GetInt("thereIsPrevious") == 1) {
+                thereIsPrevious = true;
+            }
+            else {
+                thereIsPrevious = false;
+            }
+        }
+        else {
+            thereIsPrevious = false;
         }
 
         NextTimeLoadLevel();
@@ -207,6 +260,25 @@ public class Manager : MonoBehaviour {
         }
 
         PlayerPrefs.SetInt("previousScore", previousScore);
+
+
+        //previous
+        for (int i = 1; i < colorList.Count; i++)
+        {
+            PlayerPrefs.SetInt("previousColorList_" + i, previousColorList[i]);
+        }
+
+        for (int i = 1; i < circleList.Count; i++)
+        {
+            PlayerPrefs.SetInt("previousCircleList_" + i, previousCircleList[i]);
+        }
+
+        for (int i = 1; i < colorList.Count; i++)
+        {
+            PlayerPrefs.SetInt("previousDeadSquareCounterList_" + i, previousDeadSquareCounterList[i]);
+        }
+
+        PlayerPrefs.SetInt("previousPreviousScore", previousPreviousScore);
     }
 
     public static void SaveSoundSettings()
@@ -233,11 +305,13 @@ public class Manager : MonoBehaviour {
 
 	public static void NextTimeLoadLevel() {
 		PlayerPrefs.SetInt ("LoadColors", 1);
+        PlayerPrefs.SetInt ("thereIsPrevious", 1);
 	}
 
     public static void NextTimeDontLoadLevel()
     {
         PlayerPrefs.SetInt("LoadColors", 0);
+        PlayerPrefs.SetInt("thereIsPrevious", 0);
     }
 }
 

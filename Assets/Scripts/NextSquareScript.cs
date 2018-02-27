@@ -97,4 +97,31 @@ public class NextSquareScript : MonoBehaviour {
             spriteRenderer.sprite = lineScript.regularSquare;
         }
     }
+
+    public void LoadPreviousColor()
+    {
+        colorNum = Manager.previousCircleList[num];
+        spriteRenderer.color = setColor[colorNum];
+
+        if (colorNum == setColor.Length - 1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+        }
+
+        else
+        {
+            spriteRenderer.sprite = lineScript.regularSquare;
+        }
+
+        Color color = spriteRenderer.color;
+        color.a = 0.5f;
+        spriteRenderer.color = color;
+
+        UpdateCirclelist();
+    }
+
+    void UpdateCirclelist()
+    {
+        lineScript.AddToCircleList(num, colorNum);
+    }
 }

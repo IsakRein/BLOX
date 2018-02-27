@@ -105,6 +105,14 @@ public class LineScript : MonoBehaviour
 
     public float deadOdds;
 
+    [Space]
+    [Space]
+    [Space]
+
+    public int StartAnimationCounter;
+
+    public List<int> colorList2 = new List<int>();
+ 
     #endregion
 
     void Start()
@@ -126,13 +134,9 @@ public class LineScript : MonoBehaviour
 		controlsEnabled = true;
 
         if (Manager.loadColors) {
-            Debug.Log("LineScript thinks loadcolors is true");
-
             score = Manager.previousScore;
         }
         else {
-            Debug.Log("LineScript thinks loadcolors is false");
-
             score = 0;
         }
 
@@ -157,14 +161,14 @@ public class LineScript : MonoBehaviour
 		colorList.Clear ();
 		for(int i=0;i<=squareRows*squareRows;i++)
 		{
-			colorList.Add (0);
+			colorList.Add (-1);
 		}
 		colorList [0] = -1;
 
         deadSquareCounterList.Clear();
         for (int i = 0; i <= squareRows * squareRows; i++)
         {
-            deadSquareCounterList.Add(0);
+            deadSquareCounterList.Add(-1);
         }
         deadSquareCounterList[0] = -1;
 
@@ -172,7 +176,7 @@ public class LineScript : MonoBehaviour
         circleList.Clear();
         for (int i = 0; i <= squareRows; i++)
         {
-            circleList.Add(0);
+            circleList.Add(-1);
         }
         circleList[0] = -1;
 
@@ -209,6 +213,15 @@ public class LineScript : MonoBehaviour
         if (!movePossible)
         {
             GameOver();
+        }
+
+        if (!Manager.thereIsPrevious)
+        {
+            Manager.previousColorList = new List<int>(Manager.colorList);
+            Manager.previousCircleList = new List<int>(Manager.circleList);
+            Manager.previousDeadSquareCounterList = new List<int>(Manager.deadSquareCounterList);
+
+            Manager.previousPreviousScore = score;
         }
 	}
 
@@ -369,6 +382,8 @@ public class LineScript : MonoBehaviour
         Manager.loadColors = false;
         Manager.NextTimeDontLoadLevel();
 
+        Manager.thereIsPrevious = false;
+
         background.SetActive(true);
         background.GetComponent<Canvas>().sortingOrder = 500;
         backgroundAnimator.SetTrigger("STARTNOB");
@@ -387,7 +402,35 @@ public class LineScript : MonoBehaviour
     }
 
     public void PowerUpRedo() {
-        
+        if (Manager.thereIsPrevious) {
+            foreach (Transform square in squares.transform)
+            {
+                SquareScript squareScript = square.GetComponent<SquareScript>();
+
+                squareScript.LoadPreviousColor();
+            }
+
+            foreach (Transform circle in circles.transform)
+            {
+                NextSquareScript nextSquareScript = circle.GetComponentInChildren<NextSquareScript>();
+
+                nextSquareScript.LoadPreviousColor();
+            }
+
+            score = Manager.previousPreviousScore;
+            scoreText.SetText("" + score);
+
+            Manager.thereIsPrevious = false;
+        }
+
+        Manager.previousColorList = new List<int>(colorList);
+        Manager.previousCircleList = new List<int>(circleList);
+        Manager.previousDeadSquareCounterList = new List<int>(deadSquareCounterList);
+
+        Manager.previousScore = score;
+        Manager.previousPreviousScore = score;
+
+        Manager.SaveScene();
     }
 
     public void WatchVideoToContinue() {
@@ -1010,7 +1053,7 @@ public class LineScript : MonoBehaviour
 		return movePossible;
 	}
 		
-	public void AddToColorList(int index, int value) {  
+	public void AddToColorList(int index, int value) {
         colorList[index] = value;
         Manager.colorList[index] = value;
 
@@ -1020,6 +1063,7 @@ public class LineScript : MonoBehaviour
 
     public void AddToDeadSquareCounterList (int index, int value) {
         deadSquareCounterList[index] = value;
+        Manager.deadSquareCounterList[index] = value;
     }
 
     public void AddToCircleList(int index, int value)
@@ -1068,6 +1112,14 @@ public class LineScript : MonoBehaviour
 	public void StartAnimation ()
 	{
 		controlsEnabled = false;
+
+        Manager.previousColorList = new List<int>(colorList);
+        Manager.previousCircleList = new List<int>(circleList);
+        Manager.previousDeadSquareCounterList = new List<int>(deadSquareCounterList);
+
+        Manager.previousPreviousScore = score;
+
+        Manager.thereIsPrevious = true;
 
         foreach (Transform square in squares.transform)
         {

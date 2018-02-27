@@ -191,6 +191,40 @@ public class SquareScript : MonoBehaviour
         spriteRenderer.color = setColor[colorNum];
     }
 
+    public void LoadPreviousColor () 
+    {       
+        colorNum = Manager.previousColorList[number];
+        spriteRenderer.color = setColor[colorNum];
+
+        foreach (Transform child in transform)
+        {
+            if (child.name == "CountDown(Clone)")
+            {
+                GameObject.Destroy(child.gameObject);
+            }
+        }
+
+        if (colorNum == setColor.Length - 1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+            countDownPrefab = (GameObject)Resources.Load("Prefabs/CountDown", typeof(GameObject));
+            countDown = Instantiate(countDownPrefab, transform);
+            countDown.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+
+            countDownCounter = Manager.previousDeadSquareCounterList[number];
+
+            GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
+        }
+
+        else
+        {
+            spriteRenderer.sprite = lineScript.regularSquare;
+        }
+
+        UpdateCountDown();
+        UpdateColorlist();
+    }
+
     public void NameSquare()
     {
         float x = (transform.localPosition.x - (0.5f - (((float)squareRows) / 2))) + 1;
@@ -225,7 +259,7 @@ public class SquareScript : MonoBehaviour
 
     public void UpdateCountDown() {
         NameSquare();
-        
+
         if (colorNum == setColor.Length-1) {
             lineScript.AddToDeadSquareCounterList(number, countDownCounter); 
         }
@@ -236,7 +270,8 @@ public class SquareScript : MonoBehaviour
 
     void UpdateColorlist()
     {
-        lineScript.AddToColorList(System.Convert.ToInt32(gameObject.name), colorNum);
+        lineScript.AddToColorList(number, colorNum);
+        lineScript.AddToDeadSquareCounterList(number, colorNum);
     }
 
     void StartErrorAnimation()
