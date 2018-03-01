@@ -105,6 +105,10 @@ public class LineScript : MonoBehaviour
 
     public float deadOdds;
 
+    public bool addToScore;
+    private bool hammerToggle;
+    private bool removeToggle;
+
     [Space]
     [Space]
     [Space]
@@ -433,6 +437,62 @@ public class LineScript : MonoBehaviour
         Manager.SaveScene();
     }
 
+    public void PowerUpHammer() 
+    {
+        if (hammerToggle) {
+            EndHammer();
+
+            hammerToggle = false;
+        }
+        else {
+            foreach (Transform square in squares.transform)
+            {
+                square.GetComponent<Animator>().SetTrigger("Hammer");
+                square.GetComponent<SquareScript>().hammerOn = true;
+            }
+
+            hammerToggle = true;
+        }
+    }
+
+    public void EndHammer() {
+        foreach (Transform square in squares.transform)
+        {
+            square.GetComponent<Animator>().SetTrigger("HammerEND");
+            square.GetComponent<SquareScript>().hammerOn = false;
+        }
+        hammerToggle = false;
+    }
+
+    public void PowerUpRemove() {
+        if (removeToggle)
+        {
+            EndRemove();
+
+            removeToggle = false;
+        }
+        else
+        {
+            foreach (Transform square in squares.transform)
+            {
+                square.GetComponent<Animator>().SetTrigger("Hammer");
+                square.GetComponent<SquareScript>().removeOn = true;
+            }
+
+            hammerToggle = true;
+        }
+    }
+
+    public void EndRemove()
+    {
+        foreach (Transform square in squares.transform)
+        {
+            square.GetComponent<Animator>().SetTrigger("HammerEND");
+            square.GetComponent<SquareScript>().removeOn = false;
+        }
+        hammerToggle = false;
+    }
+
     public void WatchVideoToContinue() {
         //view ad
 
@@ -448,6 +508,8 @@ public class LineScript : MonoBehaviour
     }
 
     public void ContinueAfterLoss() {
+        addToScore = false;
+
         for (int i = 1; i <= squareRows * 4; i++) {
             squareList.Add(i);
         }
@@ -463,6 +525,12 @@ public class LineScript : MonoBehaviour
         background.GetComponent<Canvas>().sortingOrder = 40;
         background.SetActive(false);
 
+        StartAnimation();
+    }
+
+    public void FallOne(int squareToFall) {
+        squareList.Add(squareToFall);
+        Manager.NextTimeLoadLevel();
         StartAnimation();
     }
 
@@ -1134,8 +1202,12 @@ public class LineScript : MonoBehaviour
 			squareObj.SendMessage("Animate");
 		}
 
-		score = score + squareList.Count;
-		scoreText.text = "" + score;
+        if (addToScore) {
+            score = score + squareList.Count;
+            scoreText.text = "" + score; 
+        }
+
+        addToScore = true;
 
 		if (score >= Manager.highScore)
 		{

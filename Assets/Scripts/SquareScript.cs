@@ -52,6 +52,9 @@ public class SquareScript : MonoBehaviour
 
     private bool firstFall;
 
+    public bool hammerOn;
+    public bool removeOn;
+
     void Start()
     {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
@@ -213,7 +216,8 @@ public class SquareScript : MonoBehaviour
 
             countDownCounter = Manager.previousDeadSquareCounterList[number];
 
-            GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
+            Debug.Log("SETTING TEXT");
+            countDown.GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
         }
 
         else
@@ -221,7 +225,15 @@ public class SquareScript : MonoBehaviour
             spriteRenderer.sprite = lineScript.regularSquare;
         }
 
-        UpdateCountDown();
+        if (colorNum == setColor.Length - 1)
+        {
+            lineScript.AddToDeadSquareCounterList(number, countDownCounter);
+        }
+        else
+        {
+            lineScript.AddToDeadSquareCounterList(number, 0);
+        }
+
         UpdateColorlist();
     }
 
@@ -271,7 +283,6 @@ public class SquareScript : MonoBehaviour
     void UpdateColorlist()
     {
         lineScript.AddToColorList(number, colorNum);
-        lineScript.AddToDeadSquareCounterList(number, colorNum);
     }
 
     void StartErrorAnimation()
@@ -292,15 +303,7 @@ public class SquareScript : MonoBehaviour
 
     void OnTouchDown()
     {
-        isHovering = true;
-
-        if (addSquareHasBeenCalled == false && interactable)
-        {
-            int num = System.Convert.ToInt32(gameObject.name);
-            lineScript.AddSquare(num, colorNum, hoverSwitch);
-
-            addSquareHasBeenCalled = true;
-        }
+        OnTouchStay();
     }
 
     void OnTouchUp()
@@ -312,13 +315,24 @@ public class SquareScript : MonoBehaviour
     {
         isHovering = true;
 
+        if (hammerOn) {
+            lineScript.EndHammer();
+            lineScript.FallOne(number);
+        }
 
-        if (addSquareHasBeenCalled == false && interactable)
-        {
-            int num = System.Convert.ToInt32(gameObject.name);
-            lineScript.AddSquare(num, colorNum, hoverSwitch);
+        else if (removeOn) {
+            lineScript.EndRemove();
+            lineScript.FallOneColor(colorNumß); 
+        }
 
-            addSquareHasBeenCalled = true;
+        else {
+            if (addSquareHasBeenCalled == false && interactable)
+            {
+                int num = System.Convert.ToInt32(gameObject.name);
+                lineScript.AddSquare(num, colorNum, hoverSwitch);
+
+                addSquareHasBeenCalled = true;
+            }
         }
     }
 

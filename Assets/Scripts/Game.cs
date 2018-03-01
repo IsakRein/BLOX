@@ -60,8 +60,15 @@ public class Game : MonoBehaviour {
 	}
 
 	public void GenerateCircles() {
-		for (int i = 1; i <= Rows; i++) {
-			circle = Instantiate (circlePrefab, circles) as GameObject; 
+        foreach (Transform child in circles)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+
+        for (int i = 1; i <= Rows; i++) {
+            Debug.Log("Generating a circle");
+
+            circle = Instantiate (circlePrefab, circles) as GameObject; 
 
 			xPos = i - ((Rows + 1f) / 2);
 			yPos = (Rows + 1f) / 2;
