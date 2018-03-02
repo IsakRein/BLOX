@@ -534,6 +534,24 @@ public class LineScript : MonoBehaviour
         StartAnimation();
     }
 
+    public void FallOneColor(int colorToFall)
+    {
+        for (int i = 0; i < colorList.Count(); i++)
+        {
+            if (colorList[i] == colorToFall)
+            {
+                squareList.Add(i);
+            }
+        }
+
+        foreach (int c in colorList) {
+            
+        }
+
+        Manager.NextTimeLoadLevel();
+        StartAnimation();
+    }
+
 	public void ControlChange() {
 		controlsEnabled = !controlsEnabled;
 	}
@@ -1228,10 +1246,7 @@ public class LineScript : MonoBehaviour
 				currentSquareRow = square % squareRows;
 			}
 
-			int value = rowList[currentSquareRow - 1] + 1;
-
-			rowList.RemoveAt(currentSquareRow - 1);
-			rowList.Insert(currentSquareRow - 1, value);
+            rowList[currentSquareRow - 1] = rowList[currentSquareRow - 1] + 1;
 		}
 
 		fallDown = true;

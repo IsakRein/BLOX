@@ -322,7 +322,7 @@ public class SquareScript : MonoBehaviour
 
         else if (removeOn) {
             lineScript.EndRemove();
-            lineScript.FallOneColor(colorNumß); 
+            lineScript.FallOneColor(colorNum); 
         }
 
         else {
