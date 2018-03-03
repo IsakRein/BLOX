@@ -148,6 +148,11 @@ public class SquareScript : MonoBehaviour
                         UpdateCountDown();
                     }
 
+                    if (hammerOn)
+                    {
+                        lineScript.ActivateHammerAnimation();
+                    }
+
                     fallCounter = 0;
 
                     lineScript.AddToFallCounter();
@@ -309,30 +314,33 @@ public class SquareScript : MonoBehaviour
     void OnTouchUp()
     {
         isHovering = false;
+        hammerOn = true;
     }
 
     void OnTouchStay()
     {
         isHovering = true;
 
-        if (hammerOn) {
-            lineScript.EndHammer();
-            lineScript.FallOne(number);
-        }
+        if (addSquareHasBeenCalled == false && interactable)
+        {
+            if (hammerOn) {
+                animator.SetTrigger("HammerEND");
+            
+                lineScript.FallOne(number);
+                hammerOn = false;
+            }
 
-        else if (removeOn) {
-            lineScript.EndRemove();
-            lineScript.FallOneColor(colorNum); 
-        }
+            else if (removeOn) {
+                lineScript.EndRemove();
+                lineScript.FallOneColor(colorNum); 
+            }
 
-        else {
-            if (addSquareHasBeenCalled == false && interactable)
-            {
+            else {
                 int num = System.Convert.ToInt32(gameObject.name);
                 lineScript.AddSquare(num, colorNum, hoverSwitch);
-
-                addSquareHasBeenCalled = true;
             }
+
+            addSquareHasBeenCalled = true;
         }
     }
 

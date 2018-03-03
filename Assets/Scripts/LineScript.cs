@@ -26,7 +26,7 @@ public class LineScript : MonoBehaviour
     [Space]
 
     public int score;
-	public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI scoreText;
 
     public Text highScoreText;
 
@@ -63,7 +63,7 @@ public class LineScript : MonoBehaviour
     public List<int> squareList = new List<int>();
     public List<int> rowList = new List<int>();
     public List<int> colorList = new List<int>();
-    public List<int> deadSquareCounterList = new List<int>(); 
+    public List<int> deadSquareCounterList = new List<int>();
     public List<int> circleList = new List<int>();
 
     public AudioClip[] hits;
@@ -106,6 +106,10 @@ public class LineScript : MonoBehaviour
     public float deadOdds;
 
     public bool addToScore;
+    public GameObject hammer;
+    public GameObject hammerActive;
+    public TextMeshProUGUI hammerCountDownText;
+    private int hammerCount;
     private bool hammerToggle;
     private bool removeToggle;
 
@@ -116,26 +120,26 @@ public class LineScript : MonoBehaviour
     public int StartAnimationCounter;
 
     public List<int> colorList2 = new List<int>();
- 
+
     #endregion
 
     void Start()
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         platformInt = 0;
-        #endif
+#endif
 
-        #if UNITY_IOS && !UNITY_EDITOR
+#if UNITY_IOS && !UNITY_EDITOR
         platformInt = 1;
-        #endif
+#endif
 
-        #if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
         platformInt = 2;
-        #endif
+#endif
 
-        audioSource = GetComponent<AudioSource> ();
-      
-		controlsEnabled = true;
+        audioSource = GetComponent<AudioSource>();
+
+        controlsEnabled = true;
 
         if (Manager.loadColors) {
             score = Manager.previousScore;
@@ -144,30 +148,30 @@ public class LineScript : MonoBehaviour
             score = 0;
         }
 
-		scoreText.SetText("" + score);
+        scoreText.SetText("" + score);
 
         UpdateDeadOdds();
 
         highScoreText.text = "<color=#B7A921ff>★</color>" + Manager.highScore;
 
-		randomizeColors = false;
+        randomizeColors = false;
 
-		squareRows = Squares.Rows;	
+        squareRows = Squares.Rows;
 
         if (!Manager.loadColors) {
             SaveScore();
         }
 
-		foreach (Transform square in squares.transform) {
-			square.gameObject.SetActive (true);
-		}
+        foreach (Transform square in squares.transform) {
+            square.gameObject.SetActive(true);
+        }
 
-		colorList.Clear ();
-		for(int i=0;i<=squareRows*squareRows;i++)
-		{
-			colorList.Add (-1);
-		}
-		colorList [0] = -1;
+        colorList.Clear();
+        for (int i = 0; i <= squareRows * squareRows; i++)
+        {
+            colorList.Add(-1);
+        }
+        colorList[0] = -1;
 
         deadSquareCounterList.Clear();
         for (int i = 0; i <= squareRows * squareRows; i++)
@@ -184,9 +188,9 @@ public class LineScript : MonoBehaviour
         }
         circleList[0] = -1;
 
-		for (int i = 0; i < squareRows; i++) {
-			rowList.Add (0);
-		}
+        for (int i = 0; i < squareRows; i++) {
+            rowList.Add(0);
+        }
 
         controlsEnabled = true;
         lastSquare = 0;
@@ -227,10 +231,12 @@ public class LineScript : MonoBehaviour
 
             Manager.previousPreviousScore = score;
         }
-	}
 
-	void Update ()
-	{
+        hammerCount = 3;
+    }
+
+    void Update()
+    {
         if (platformInt == 0) {
             if ((Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)) && controlsEnabled)
             {
@@ -300,48 +306,48 @@ public class LineScript : MonoBehaviour
                     RemoveLine();
                     updateInitialize = true;
                 }
-            }  
+            }
         }
 
         if (platformInt > 0) {
-			if (Input.touchCount > 0 && controlsEnabled) {
-				if (lastSquare != 0) {
-					if (updateInitialize == true) {
-						square2 = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString ());
+            if (Input.touchCount > 0 && controlsEnabled) {
+                if (lastSquare != 0) {
+                    if (updateInitialize == true) {
+                        square2 = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString());
 
-						dragLine.SetActive (true);
-						dragCircle.SetActive (true);
+                        dragLine.SetActive(true);
+                        dragCircle.SetActive(true);
 
-						dragCircle.transform.localScale = new Vector3 (square2.transform.lossyScale.x * size * 10, square2.transform.lossyScale.x * size * 10, 1);
+                        dragCircle.transform.localScale = new Vector3(square2.transform.lossyScale.x * size * 10, square2.transform.lossyScale.x * size * 10, 1);
 
-						updateInitialize = false;
-					}
+                        updateInitialize = false;
+                    }
 
-					if (newSquareInitialize == true) {
-						dragCircleSpr.color = setColor [currentColor];
-						dragLineSpr.color = setColor [currentColor];
+                    if (newSquareInitialize == true) {
+                        dragCircleSpr.color = setColor[currentColor];
+                        dragLineSpr.color = setColor[currentColor];
 
-						lastOkSquare = GameObject.Find ("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString ());
+                        lastOkSquare = GameObject.Find("Game/GameCanvas/BG1/BG2/Squares/" + lastSquare.ToString());
 
-						newSquareInitialize = false;
-					}
+                        newSquareInitialize = false;
+                    }
 
-					point1 = lastOkSquare.transform.position;
-					point2 = Camera.main.ScreenToWorldPoint (Input.touches [0].position);
-					point2 [2] = 0;
+                    point1 = lastOkSquare.transform.position;
+                    point2 = Camera.main.ScreenToWorldPoint(Input.touches[0].position);
+                    point2[2] = 0;
 
-					dragCircle.transform.position = point2; 
-					dragLine.transform.position = point1;
+                    dragCircle.transform.position = point2;
+                    dragLine.transform.position = point1;
 
-					float rot_z = Mathf.Atan2 (point2.y - point1.y, point2.x - point1.x) * Mathf.Rad2Deg;
-					dragLine.transform.rotation = Quaternion.Euler (0f, 0f, rot_z);
+                    float rot_z = Mathf.Atan2(point2.y - point1.y, point2.x - point1.x) * Mathf.Rad2Deg;
+                    dragLine.transform.rotation = Quaternion.Euler(0f, 0f, rot_z);
 
-					dragLine.transform.position = point1;
-					Vector2 direction = point2 - point1;
-					dragLine.transform.localScale = new Vector3 (direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 75f, 1);
-				}
+                    dragLine.transform.position = point1;
+                    Vector2 direction = point2 - point1;
+                    dragLine.transform.localScale = new Vector3(direction.magnitude * 1.25f, dragCircle.transform.lossyScale.x / 75f, 1);
+                }
 
-			} else if (Input.touchCount == 0) {
+            } else if (Input.touchCount == 0) {
                 if (updateInitialize == false)
                 {
                     dragLine.SetActive(false);
@@ -364,12 +370,12 @@ public class LineScript : MonoBehaviour
                         }
 
                         if (squareList.Count > 0) {
-                            VibError(); 
+                            VibError();
                         }
 
-						if (squareList.Count > 0) {
-							VibError ();
-						}
+                        if (squareList.Count > 0) {
+                            VibError();
+                        }
 
                         FallingDone();
                     }
@@ -377,9 +383,9 @@ public class LineScript : MonoBehaviour
                     RemoveLine();
                     updateInitialize = true;
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 
     void GameOver()
     {
@@ -402,7 +408,7 @@ public class LineScript : MonoBehaviour
         payToContinue.SetActive(false);
         noThanksHigh.SetActive(false);
 
-        cont.GetComponent<Animator>().SetTrigger("STARTW");    
+        cont.GetComponent<Animator>().SetTrigger("STARTW");
     }
 
     public void PowerUpRedo() {
@@ -437,21 +443,30 @@ public class LineScript : MonoBehaviour
         Manager.SaveScene();
     }
 
-    public void PowerUpHammer() 
+    public void PowerUpHammer()
     {
-        if (hammerToggle) {
-            EndHammer();
-
-            hammerToggle = false;
-        }
-        else {
-            foreach (Transform square in squares.transform)
+        if (controlsEnabled)
+        {
+            if (hammerToggle)
             {
-                square.GetComponent<Animator>().SetTrigger("Hammer");
-                square.GetComponent<SquareScript>().hammerOn = true;
+                EndHammer();
+
+                hammerToggle = false;
+            }
+            else
+            {
+                hammer.SetActive(false);
+                hammerActive.SetActive(true);
+
+                foreach (Transform square in squares.transform)
+                {
+                    square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
+                    square.GetComponent<SquareScript>().hammerOn = true;
+                }
+
+                hammerToggle = true;
             }
 
-            hammerToggle = true;
         }
     }
 
@@ -461,6 +476,11 @@ public class LineScript : MonoBehaviour
             square.GetComponent<Animator>().SetTrigger("HammerEND");
             square.GetComponent<SquareScript>().hammerOn = false;
         }
+
+
+        hammerCount = 3;
+        hammerCountDownText.SetText("" + hammerCount);
+
         hammerToggle = false;
     }
 
@@ -475,7 +495,7 @@ public class LineScript : MonoBehaviour
         {
             foreach (Transform square in squares.transform)
             {
-                square.GetComponent<Animator>().SetTrigger("Hammer");
+                square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
                 square.GetComponent<SquareScript>().removeOn = true;
             }
 
@@ -531,7 +551,34 @@ public class LineScript : MonoBehaviour
     public void FallOne(int squareToFall) {
         squareList.Add(squareToFall);
         Manager.NextTimeLoadLevel();
+
+        hammerCount = hammerCount - 1;
+
+        if (hammerCount == 0)
+        {
+            EndHammer();
+        }
+        else
+        {
+            hammerCountDownText.SetText("" + hammerCount);
+        }
+
+        foreach (Transform square in squares.transform)
+        {
+            square.GetComponent<SquareScript>().interactable = false;
+        }
+
         StartAnimation();
+    }
+
+    public void ActivateHammerAnimation()
+    {
+        foreach (Transform square in squares.transform)
+        {
+            square.GetComponent<SquareScript>().interactable = true;
+
+            square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
+        }
     }
 
     public void FallOneColor(int colorToFall)
