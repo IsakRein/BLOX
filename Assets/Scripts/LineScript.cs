@@ -37,7 +37,7 @@ public class LineScript : MonoBehaviour
     private bool newSquareInitialize = true;
 
     //0=editor; 1=ios; 2=android
-    private int platformInt;
+    public int platformInt;
 
     public GameObject circlePrefab;
     private GameObject circle;
@@ -466,7 +466,6 @@ public class LineScript : MonoBehaviour
 
                 hammerToggle = true;
             }
-
         }
     }
 
@@ -1188,9 +1187,11 @@ public class LineScript : MonoBehaviour
 		
 	public void AddToColorList(int index, int value) {
         colorList[index] = value;
+
         Manager.colorList[index] = value;
 
         Manager.SaveScene();
+
         Manager.previousScore = score;
 	}
 
@@ -1342,12 +1343,19 @@ public class LineScript : MonoBehaviour
 
 		if (fallenSquareCounter == squareRows * squareRows) {
 			FallingDone ();
+
+            if (hammerToggle) {
+                ActivateHammerAnimation();
+            }
+
 			fallenSquareCounter = 0;
-		}
+        }
 	}
 
     public void FallingDone()
     {
+        Debug.Log("Falling done");
+
         UpdateDeadOdds();
 
         controlsEnabled = true;
@@ -1380,6 +1388,7 @@ public class LineScript : MonoBehaviour
                 }
             }
         }
+
 
         if (!movePossible)
         {

@@ -10,6 +10,8 @@ public class SquareScript : MonoBehaviour
     public GameObject squares;
     public GameObject Line;
 
+    public int platformInt;
+
     public Game squareScript;
     public LineScript lineScript;
 
@@ -18,8 +20,6 @@ public class SquareScript : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Animator animator;
-
-    private bool isOnMobile = true;
 
     public int number;
 
@@ -52,11 +52,24 @@ public class SquareScript : MonoBehaviour
 
     private bool firstFall;
 
-    public bool hammerOn;
-    public bool removeOn;
+    public bool hammerOn = false;
+    public bool removeOn = false;
 
     void Start()
     {
+
+#if UNITY_EDITOR
+        platformInt = 0;
+#endif
+
+#if UNITY_IOS && !UNITY_EDITOR
+        platformInt = 1;
+#endif
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        platformInt = 2;
+#endif
+
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         animator = gameObject.GetComponent<Animator>();
 
@@ -69,7 +82,8 @@ public class SquareScript : MonoBehaviour
 
         setColor = lineScript.setColor;
 
-        if (loadColors) {
+        if (loadColors)
+        {
             colorNum = Manager.colorList[number];
             spriteRenderer.color = setColor[colorNum];
 
@@ -78,9 +92,9 @@ public class SquareScript : MonoBehaviour
 
         else if (takeColorFromTop)
         {
-			GameObject square = GameObject.Find ("Game/GameCanvas/BG1/BG2/Circles/" + rowNum.ToString ());
-			colorNum = square.transform.GetChild(0).GetComponent<NextSquareScript>().colorNum;
-			square.transform.GetChild(0).SendMessage("NewColor");
+            GameObject square = GameObject.Find("Game/GameCanvas/BG1/BG2/Circles/" + rowNum.ToString());
+            colorNum = square.transform.GetChild(0).GetComponent<NextSquareScript>().colorNum;
+            square.transform.GetChild(0).SendMessage("NewColor");
 
             countDownCounter = countDownStart;
 
@@ -90,7 +104,7 @@ public class SquareScript : MonoBehaviour
         }
         else
         {
-            colorNum = Random.Range(0, setColor.Length-1);
+            colorNum = Random.Range(0, setColor.Length - 1);
             spriteRenderer.color = setColor[colorNum];
 
             countDownCounter = countDownStart;
@@ -108,7 +122,8 @@ public class SquareScript : MonoBehaviour
 
             countDown.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
-            if (loadColors) {
+            if (loadColors)
+            {
                 countDownCounter = Manager.deadSquareCounterList[number];
                 GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
             }
@@ -142,20 +157,16 @@ public class SquareScript : MonoBehaviour
                 //transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPos, ref velocity, 0.1f);
                 transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed / 50);
 
-                if (targetPos == transform.localPosition)
+                if (targetPos.y == transform.localPosition.y)
                 {
-                    if (firstFall) {
+                    lineScript.AddToFallCounter();
+
+                    if (firstFall)
+                    {
                         UpdateCountDown();
                     }
 
-                    if (hammerOn)
-                    {
-                        lineScript.ActivateHammerAnimation();
-                    }
-
                     fallCounter = 0;
-
-                    lineScript.AddToFallCounter();
 
                     NameSquare();
 
@@ -167,21 +178,19 @@ public class SquareScript : MonoBehaviour
         }
 
 
-#if UNITY_EDITOR
-        isOnMobile = false;
-
-        if (!(Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)))
+        if (platformInt == 0)
         {
-            addSquareHasBeenCalled = false;
+            if (!(Input.GetMouseButton(0) || Input.GetMouseButtonDown(0)))
+            {
+                addSquareHasBeenCalled = false;
 
-            hoverSwitch = false;
+                hoverSwitch = false;
+            }
         }
 
-#endif
-
-        if (isOnMobile)
+        else if (platformInt > 0)
         {
-            if (Input.touchCount == 0)
+           if (Input.touchCount == 0)
             {
                 addSquareHasBeenCalled = false;
 
@@ -258,7 +267,7 @@ public class SquareScript : MonoBehaviour
 
         UpdateColorlist();
     }
-
+   
     public void SetCountDown () {
         if (colorNum == setColor.Length - 1)
         {
@@ -275,8 +284,6 @@ public class SquareScript : MonoBehaviour
     }
 
     public void UpdateCountDown() {
-        NameSquare();
-
         if (colorNum == setColor.Length-1) {
             lineScript.AddToDeadSquareCounterList(number, countDownCounter); 
         }
@@ -314,33 +321,30 @@ public class SquareScript : MonoBehaviour
     void OnTouchUp()
     {
         isHovering = false;
-        hammerOn = true;
     }
 
     void OnTouchStay()
     {
         isHovering = true;
+                 
+        if (hammerOn) {
+            animator.SetTrigger("HammerEND");
+        
+            lineScript.FallOne(number);
+            hammerOn = false;
+        }
 
-        if (addSquareHasBeenCalled == false && interactable)
-        {
-            if (hammerOn) {
-                animator.SetTrigger("HammerEND");
-            
-                lineScript.FallOne(number);
-                hammerOn = false;
+        else if (removeOn) {
+            lineScript.EndRemove();
+            lineScript.FallOneColor(colorNum); 
+        }
+
+        else {
+            if (!addSquareHasBeenCalled && interactable) {
+                lineScript.AddSquare(number, colorNum, hoverSwitch);
+
+                addSquareHasBeenCalled = true;
             }
-
-            else if (removeOn) {
-                lineScript.EndRemove();
-                lineScript.FallOneColor(colorNum); 
-            }
-
-            else {
-                int num = System.Convert.ToInt32(gameObject.name);
-                lineScript.AddSquare(num, colorNum, hoverSwitch);
-            }
-
-            addSquareHasBeenCalled = true;
         }
     }
 
@@ -388,6 +392,8 @@ public class SquareScript : MonoBehaviour
     void MakeInteractable()
     {
         NameSquare();
+
+        animator.Play("Default");
 
         interactable = true;
     }

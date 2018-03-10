@@ -29,13 +29,8 @@ public class Manager : MonoBehaviour {
     public static int previousScore;
     public static int previousPreviousScore;
 
-    private void Update()
-    {
-        circleList2 = previousDeadSquareCounterList;
-    }
+    void Awake() {
 
-    void Awake()
-    {
         Application.targetFrameRate = 60;
 
         if (instance == null) {
@@ -48,32 +43,86 @@ public class Manager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
 
-		if (PlayerPrefs.HasKey ("LoadColors")) {			
+
+
+        //temporary code, change if more squares are needed
+
+
+
+        colorList.Clear();
+        for (int i = 0; i <= 36; i++)
+        {
+            colorList.Add(-1);
+        }
+
+        deadSquareCounterList.Clear();
+        for (int i = 0; i <= 36; i++)
+        {
+            deadSquareCounterList.Add(0);
+        }
+
+        circleList.Clear();
+        for (int i = 0; i <= 6; i++)
+        {
+            circleList.Add(-1);
+        }
+
+        previousColorList.Clear();
+        for (int i = 0; i <= 36; i++)
+        {
+            previousColorList.Add(-1);
+        }
+
+        previousDeadSquareCounterList.Clear();
+        for (int i = 0; i <= 36; i++)
+        {
+            previousDeadSquareCounterList.Add(-1);
+        }
+
+        previousCircleList.Clear();
+        for (int i = 0; i <= 6; i++)
+        {
+            previousCircleList.Add(-1);
+        }
+
+
+
+        //end of temporary code
+
+
+
+        if (PlayerPrefs.HasKey ("LoadColors")) {			
             if (PlayerPrefs.GetInt ("LoadColors") == 1) {
                 if (PlayerPrefs.HasKey ("colorList_1")) {
                     loadColors = true;
 
-					colorList.Clear ();
-					for (int i = 0; i < PlayerPrefs.GetInt ("colorListCount"); i++) {
-						colorList.Add (-1);
-					}
-					for (int i = 1; i < colorList.Count; i++) {
+                    colorList.Clear();
+                    for (int i = 0; i <= 36; i++)
+                    {
+                        colorList.Add(-1);
+                    }
+
+                    deadSquareCounterList.Clear();
+                    for (int i = 0; i <= 36; i++)
+                    {
+                        deadSquareCounterList.Add(0);
+                    }
+
+                    circleList.Clear();
+                    for (int i = 0; i <= 6; i++)
+                    {
+                        circleList.Add(-1);
+                    }
+
+                    for (int i = 1; i <= 36; i++) {
 						colorList [i] = PlayerPrefs.GetInt ("colorList_" + i);
 					}
 
-					deadSquareCounterList.Clear ();
-					for (int i = 0; i < PlayerPrefs.GetInt ("colorListCount"); i++) {
-						deadSquareCounterList.Add (0);
-					}
-					for (int i = 1; i < colorList.Count; i++) {
+                    for (int i = 1; i <= 36; i++) {
 						deadSquareCounterList [i] = PlayerPrefs.GetInt ("deadSquareCounter_" + i);
 					}
-
-					circleList.Clear ();
-					for (int i = 0; i < PlayerPrefs.GetInt ("circleListCount"); i++) {
-						circleList.Add (-1);
-					}
-                    for (int i = 1; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                    	
+                    for (int i = 1; i <= 6; i++)
                     {
                         circleList[i] = PlayerPrefs.GetInt("circleList_" + i);
                     }
@@ -84,19 +133,19 @@ public class Manager : MonoBehaviour {
                     loadColors = false;
 
                     colorList.Clear();
-                    for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                    for (int i = 0; i <= 36; i++)
                     {
                         colorList.Add(-1);
                     }
 
                     deadSquareCounterList.Clear();
-                    for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                    for (int i = 0; i <= 36; i++)
                     {
                         deadSquareCounterList.Add(0);
                     }
 
                     circleList.Clear();
-                    for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                    for (int i = 0; i <= 6; i++)
                     {
                         circleList.Add(-1);
                     }
@@ -105,31 +154,34 @@ public class Manager : MonoBehaviour {
                 if (PlayerPrefs.HasKey("previousColorList_1")) {
 
                     previousColorList.Clear();
-                    for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                    for (int i = 0; i <= 36; i++)
                     {
                         previousColorList.Add(-1);
                     }
-                    for (int i = 1; i < colorList.Count; i++)
+
+                    previousCircleList.Clear();
+                    for (int i = 0; i <= 6; i++)
+                    {
+                        previousCircleList.Add(-1);
+                    }
+
+                    previousDeadSquareCounterList.Clear();
+                    for (int i = 0; i <= 36; i++)
+                    {
+                        previousDeadSquareCounterList.Add(-1);
+                    }
+
+                    for (int i = 1; i <= 36; i++)
                     {
                         previousColorList[i] = PlayerPrefs.GetInt("previousColorList_" + i);
                     }
 
-                    previousCircleList.Clear();
-                    for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
-                    {
-                        previousCircleList.Add(-1);
-                    }
-                    for (int i = 1; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                    for (int i = 1; i <= 6; i++)
                     {
                         previousCircleList[i] = PlayerPrefs.GetInt("previousCircleList_" + i);
                     }
 
-                    previousDeadSquareCounterList.Clear();
-                    for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
-                    {
-                        previousDeadSquareCounterList.Add(-1);
-                    }
-                    for (int i = 1; i < colorList.Count; i++)
+                    for (int i = 1; i <= 36; i++)
                     {
                         previousDeadSquareCounterList[i] = PlayerPrefs.GetInt("previousDeadSquareCounterList_" + i);
                     }
@@ -149,31 +201,31 @@ public class Manager : MonoBehaviour {
                 loadColors = false;
 
                 colorList.Clear();
-                for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                for (int i = 0; i <= 36; i++)
                 {
                     colorList.Add(-1);
                 }
-                for (int i = 1; i < colorList.Count; i++)
+                for (int i = 1; i <= 36; i++)
                 {
                     colorList[i] = PlayerPrefs.GetInt("colorList_" + i);
                 }
 
                 deadSquareCounterList.Clear();
-                for (int i = 0; i < PlayerPrefs.GetInt("colorListCount"); i++)
+                for (int i = 0; i <= 36; i++)
                 {
                     deadSquareCounterList.Add(0);
                 }
-                for (int i = 1; i < colorList.Count; i++)
+                for (int i = 1; i <= 36; i++)
                 {
                     deadSquareCounterList[i] = PlayerPrefs.GetInt("deadSquareCounter_" + i);
                 }
 
                 circleList.Clear();
-                for (int i = 0; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                for (int i = 0; i <= 6; i++)
                 {
                     circleList.Add(-1);
                 }
-                for (int i = 1; i < PlayerPrefs.GetInt("circleListCount"); i++)
+                for (int i = 1; i <= 6; i++)
                 {
                     circleList[i] = PlayerPrefs.GetInt("circleList_" + i);
                 }
@@ -244,17 +296,14 @@ public class Manager : MonoBehaviour {
 
     public static void SaveScene() 
     {
-        PlayerPrefs.SetInt("colorListCount", colorList.Count);
-        PlayerPrefs.SetInt("circleListCount", circleList.Count);
-
-        for (int i = 1; i < colorList.Count; i++)
+        for (int i = 1; i <= 36; i++)
         {
             PlayerPrefs.SetInt("colorList_" + i, colorList[i]);
             PlayerPrefs.SetInt("deadSquareCounter_" + i, deadSquareCounterList[i]);
            
         }
 
-        for (int i = 1; i < circleList.Count; i++)
+        for (int i = 1; i <= 6; i++)
         {
             PlayerPrefs.SetInt("circleList_" + i, circleList[i]);
         }
@@ -263,17 +312,17 @@ public class Manager : MonoBehaviour {
 
 
         //previous
-        for (int i = 1; i < colorList.Count; i++)
+        for (int i = 1; i <= 36; i++)
         {
             PlayerPrefs.SetInt("previousColorList_" + i, previousColorList[i]);
         }
 
-        for (int i = 1; i < circleList.Count; i++)
+        for (int i = 1; i <= 6; i++)
         {
             PlayerPrefs.SetInt("previousCircleList_" + i, previousCircleList[i]);
         }
 
-        for (int i = 1; i < colorList.Count; i++)
+        for (int i = 1; i <= 36; i++)
         {
             PlayerPrefs.SetInt("previousDeadSquareCounterList_" + i, previousDeadSquareCounterList[i]);
         }
@@ -314,4 +363,3 @@ public class Manager : MonoBehaviour {
         PlayerPrefs.SetInt("thereIsPrevious", 0);
     }
 }
-

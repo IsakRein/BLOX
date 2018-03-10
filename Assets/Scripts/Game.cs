@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Game : MonoBehaviour {
 
@@ -44,13 +45,16 @@ public class Game : MonoBehaviour {
 				square = Instantiate (squarePrefab, transform) as GameObject; 
 
 				xPos = j - ((Rows + 1f) / 2); 
-				square.transform.localPosition = new Vector2 (xPos, yPos);
+
+                square.transform.localPosition = new Vector2 (xPos, yPos);
 
                 SquareScript squareScript = square.GetComponent<SquareScript>();
+
                 squareScript.loadColors = Manager.loadColors;
+
                 squareScript.number = (i-1)*Rows + j;
 
-                square.GetComponent<Animator>().SetTrigger("OnEnable");
+                square.GetComponent<Animator>().Play("Entry");
 
 				transform.localScale = new Vector3 (scale, scale);
             }
@@ -65,9 +69,7 @@ public class Game : MonoBehaviour {
             GameObject.Destroy(child.gameObject);
         }
 
-        for (int i = 1; i <= Rows; i++) {
-            Debug.Log("Generating a circle");
-
+        for (int i = 1; i <= Rows; i++) {   
             circle = Instantiate (circlePrefab, circles) as GameObject; 
 
 			xPos = i - ((Rows + 1f) / 2);

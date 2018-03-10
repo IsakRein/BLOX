@@ -183,4 +183,3 @@ public class ViewportHandler : MonoBehaviour
 
 	public enum Constraint { Landscape, Portrait }
 }
-
