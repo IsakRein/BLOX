@@ -23,7 +23,30 @@ public class VibButton : MonoBehaviour
             colorSwitch = true;
         }
 
-        OnClick();
+        colorSwitch = !colorSwitch;
+
+        if (colorSwitch)
+        {
+            Manager.vibEnabled = true;
+
+            Manager.SaveVibSettings();
+
+            soundOn.SetActive(true);
+            soundOff.SetActive(false);
+
+            backSpr.color = backColor1;
+        }
+        else
+        {
+            Manager.vibEnabled = false;
+
+            Manager.SaveVibSettings();
+
+            soundOn.SetActive(false);
+            soundOff.SetActive(true);
+
+            backSpr.color = backColor2;
+        }
     }   
 
     public void OnClick()

@@ -438,6 +438,11 @@ namespace VoxelBusters.NativePlugins
 			OnSharingFinished	= _onCompletion;
 		}
 
+		internal void ShowView(MessageShareComposer composer)
+		{
+			throw new NotImplementedException();
+		}
+
 		#endregion
 	}
 }

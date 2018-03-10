@@ -7,12 +7,14 @@ public class GameOverScript : MonoBehaviour {
 
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI commentText;
+    public GameObject ShareBtn;
 
     void Start () {
 
         Manager.loadColors = false;
 
         scoreText.SetText(Manager.previousScore.ToString());
+        ShareBtn.SendMessage("SetPreviousScore", Manager.previousScore);
 
         GenerateText();
 	}

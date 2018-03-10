@@ -28,7 +28,31 @@ public class SoundButton : MonoBehaviour {
             colorSwitch = true;
         }
 
-        OnClick();
+        colorSwitch = !colorSwitch;
+
+        if (colorSwitch)
+        {
+            Manager.soundEnabled = true;
+
+            Manager.SaveSoundSettings();
+
+            soundOn.SetActive(true);
+            soundOff.SetActive(false);
+
+            backSpr.color = backColor1;
+        }
+
+        else
+        {
+            Manager.soundEnabled = false;
+
+            Manager.SaveSoundSettings();
+
+            soundOn.SetActive(false);
+            soundOff.SetActive(true);
+
+            backSpr.color = backColor2;
+        }    
     }	
 
 	void OnClick() {

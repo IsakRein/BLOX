@@ -205,6 +205,17 @@ public class LineScript : MonoBehaviour
 
         Manager.loadColors = true;
 
+        if (!Manager.thereIsPrevious)
+        {
+            Manager.previousColorList = new List<int>(Manager.colorList);
+            Manager.previousCircleList = new List<int>(Manager.circleList);
+            Manager.previousDeadSquareCounterList = new List<int>(Manager.deadSquareCounterList);
+
+            Manager.previousPreviousScore = score;
+        }
+
+        hammerCount = 3;
+
         bool movePossible = false;
 
         for (int i = 1; i <= squareRows * squareRows; i++)
@@ -222,17 +233,6 @@ public class LineScript : MonoBehaviour
         {
             GameOver();
         }
-
-        if (!Manager.thereIsPrevious)
-        {
-            Manager.previousColorList = new List<int>(Manager.colorList);
-            Manager.previousCircleList = new List<int>(Manager.circleList);
-            Manager.previousDeadSquareCounterList = new List<int>(Manager.deadSquareCounterList);
-
-            Manager.previousPreviousScore = score;
-        }
-
-        hammerCount = 3;
     }
 
     void Update()
@@ -1376,6 +1376,16 @@ public class LineScript : MonoBehaviour
             rowList.Add(0);
         }
 
+        Manager.colorList = colorList;
+        Manager.deadSquareCounterList = deadSquareCounterList;
+        Manager.circleList = circleList;
+        Manager.previousScore = score;
+
+        SaveScore();
+        Manager.SaveScene();
+
+        squareList.Clear();
+
         bool movePossible = false;
 
         for (int i = 1; i <= squareRows * squareRows; i++)
@@ -1394,16 +1404,6 @@ public class LineScript : MonoBehaviour
         {
             GameOver();
         }
-
-        Manager.colorList = colorList;
-        Manager.deadSquareCounterList = deadSquareCounterList;
-        Manager.circleList = circleList;
-        Manager.previousScore = score;
-
-        SaveScore();
-        Manager.SaveScene();
-
-        squareList.Clear();
     }
 
     public void SaveScore() {
