@@ -29,9 +29,31 @@ public class Manager : MonoBehaviour {
     public static int previousScore;
     public static int previousPreviousScore;
 
-    void Awake() {
+    public static int selectedTheme = 2;
 
+    public static List<Color> staticTheme = new List<Color>(); 
+
+    public List<Color> theme1 = new List<Color>(); 
+    public List<Color> theme2 = new List<Color>(); 
+    public List<Color> theme3 = new List<Color>();
+
+
+    void Awake() {
         Application.targetFrameRate = 60;
+
+        if (selectedTheme == 1) {
+            staticTheme = theme1;
+        }
+
+        else if (selectedTheme == 2)
+        {
+            staticTheme = theme2;
+        }
+
+        else if (selectedTheme == 3)
+        {
+            staticTheme = theme3;
+        }
 
         if (instance == null) {
             instance = this;
