@@ -60,6 +60,13 @@ public class Manager : MonoBehaviour {
         staticTheme2 = theme2;
         staticTheme3 = theme3;
 
+        if (PlayerPrefs.HasKey("Theme")) {
+            selectedTheme = PlayerPrefs.GetInt("Theme");
+        }
+        else {
+            selectedTheme = 1;
+        }
+
         UpdateTheme();
 
         colorManagerHome.GetComponent<ColorManagerHome>().LoadThemeColors();
