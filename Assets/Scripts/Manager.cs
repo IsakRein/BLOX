@@ -29,7 +29,9 @@ public class Manager : MonoBehaviour {
     public static int previousScore;
     public static int previousPreviousScore;
 
-    public static int selectedTheme = 2;
+    public static int selectedTheme = 1;
+
+    public GameObject colorManagerHome;
 
     public static List<Color> staticTheme = new List<Color>(); 
 
@@ -37,23 +39,12 @@ public class Manager : MonoBehaviour {
     public List<Color> theme2 = new List<Color>(); 
     public List<Color> theme3 = new List<Color>();
 
+    public static List<Color> staticTheme1 = new List<Color>();
+    public static List<Color> staticTheme2= new List<Color>();
+    public static List<Color> staticTheme3 = new List<Color>();
 
     void Awake() {
         Application.targetFrameRate = 60;
-
-        if (selectedTheme == 1) {
-            staticTheme = theme1;
-        }
-
-        else if (selectedTheme == 2)
-        {
-            staticTheme = theme2;
-        }
-
-        else if (selectedTheme == 3)
-        {
-            staticTheme = theme3;
-        }
 
         if (instance == null) {
             instance = this;
@@ -65,11 +56,15 @@ public class Manager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
 
+        staticTheme1 = theme1;
+        staticTheme2 = theme2;
+        staticTheme3 = theme3;
 
+        UpdateTheme();
+
+        colorManagerHome.GetComponent<ColorManagerHome>().LoadThemeColors();
 
         //temporary code, change if more squares are needed
-
-
 
         colorList.Clear();
         for (int i = 0; i <= 36; i++)
@@ -106,8 +101,6 @@ public class Manager : MonoBehaviour {
         {
             previousCircleList.Add(-1);
         }
-
-
 
         //end of temporary code
 
@@ -308,6 +301,24 @@ public class Manager : MonoBehaviour {
         }
         else {
             highScore = 0;
+        }
+    }
+
+    public void UpdateTheme()
+    {
+        if (selectedTheme == 1)
+        {
+            staticTheme = staticTheme1;
+        }
+
+        else if (selectedTheme == 2)
+        {
+            staticTheme = staticTheme2;
+        }
+
+        else if (selectedTheme == 3)
+        {
+            staticTheme = staticTheme3;
         }
     }
 
