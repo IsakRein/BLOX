@@ -10,8 +10,6 @@ public class ColorManagerGame : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("Game start");
-
         LoadThemeColors();
     }
 

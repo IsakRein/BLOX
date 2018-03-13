@@ -31,13 +31,7 @@ public class ThemesScript : MonoBehaviour {
     {
         Manager.selectedTheme = themeNum;
         PlayerPrefs.SetInt("Theme", themeNum);
-
-        foreach (Transform child in chosens)
-        {
-            child.gameObject.SetActive(false);
-        }
-
-        transform.GetChild(themeNum - 1).Find("Chosen").gameObject.SetActive(true);
+        Manager.UpdateTheme();
 
         //load scene
         string sceneToLoad = Manager.sceneOrder[Manager.sceneOrder.Count - 1];
