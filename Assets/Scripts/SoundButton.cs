@@ -21,6 +21,9 @@ public class SoundButton : MonoBehaviour {
 	void Start() {
         audioSource = gameObject.GetComponent<AudioSource>();
 
+        backColor1 = Manager.staticTheme[13];
+        backColor2 = Manager.staticTheme[14];
+
         if (Manager.soundEnabled) {
             colorSwitch = false;
         }

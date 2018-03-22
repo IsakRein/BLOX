@@ -122,6 +122,8 @@ public class SquareScript : MonoBehaviour
 
             countDown.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
+            countDown.GetComponentInChildren<TextMeshProUGUI>().color = Manager.staticTheme[28];
+
             if (loadColors)
             {
                 countDownCounter = Manager.deadSquareCounterList[number];
@@ -230,7 +232,6 @@ public class SquareScript : MonoBehaviour
 
             countDownCounter = Manager.previousDeadSquareCounterList[number];
 
-            Debug.Log("SETTING TEXT");
             countDown.GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
         }
 

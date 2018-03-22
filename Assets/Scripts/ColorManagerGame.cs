@@ -7,6 +7,10 @@ using TMPro;
 public class ColorManagerGame : MonoBehaviour
 {
     public List<GameObject> gameObjects = new List<GameObject>();
+    public List<GameObject> pausedGameObjects = new List<GameObject>();
+    public List<GameObject> pausedGameObjectsChildren = new List<GameObject>();
+
+    public List<Sprite> powerUps = new List<Sprite>();
 
     private void Start()
     {
@@ -18,5 +22,54 @@ public class ColorManagerGame : MonoBehaviour
         gameObjects[0].GetComponent<Camera>().backgroundColor = Manager.staticTheme[6];
         gameObjects[1].GetComponent<Image>().color = Manager.staticTheme[7];
         gameObjects[2].GetComponent<Image>().color = Manager.staticTheme[8];
+        gameObjects[3].GetComponent<Image>().color = Manager.staticTheme[9];
+        gameObjects[4].GetComponent<Image>().color = Manager.staticTheme[9];
+        gameObjects[5].GetComponent<Image>().color = Manager.staticTheme[9];
+        gameObjects[6].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[11];
+        gameObjects[7].GetComponent<Text>().color = Manager.staticTheme[11];
+        gameObjects[8].GetComponent<Image>().color = Manager.staticTheme[14];
+
+        if (Manager.staticTheme[16].r == 0)
+        {
+            gameObjects[9].GetComponent<Image>().sprite = powerUps[0];
+            gameObjects[10].GetComponent<Image>().sprite = powerUps[0];
+            gameObjects[11].GetComponent<Image>().sprite = powerUps[0];
+            gameObjects[12].GetComponent<Image>().sprite = powerUps[0];
+        }
+        else
+        {
+            gameObjects[9].GetComponent<Image>().sprite = powerUps[1];
+            gameObjects[10].GetComponent<Image>().sprite = powerUps[1];
+            gameObjects[11].GetComponent<Image>().sprite = powerUps[1];
+            gameObjects[12].GetComponent<Image>().sprite = powerUps[1];
+        }
+
+        gameObjects[13].GetComponent<SpriteRenderer>().color = Manager.staticTheme[17];
+        gameObjects[14].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[18];
+        gameObjects[15].GetComponent<SpriteRenderer>().color = Manager.staticTheme[19];
+        gameObjects[16].GetComponent<Image>().color = Manager.staticTheme[20];
+        gameObjects[17].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[21];
+        gameObjects[18].GetComponent<Text>().color = Manager.staticTheme[22];
+
+        foreach (GameObject obj in pausedGameObjects) {
+            obj.GetComponent<Image>().color = Manager.staticTheme[13];
+        }
+
+        foreach (GameObject obj in pausedGameObjectsChildren)
+        {
+            if (obj.GetComponent<SpriteRenderer>()) 
+            {
+                obj.GetComponent<SpriteRenderer>().color = Manager.staticTheme[15];
+            }
+
+            else if (obj.GetComponent<Image>())
+            {
+                obj.GetComponent<Image>().color = Manager.staticTheme[15];
+            }
+
+            else {
+                obj.GetComponent<Text>().color = Manager.staticTheme[15];
+            }
+        }
     }
 }

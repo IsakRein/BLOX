@@ -16,6 +16,9 @@ public class VibButton : MonoBehaviour
     public Image backSpr;
 
     void Start() {
+        backColor1 = Manager.staticTheme[13];
+        backColor2 = Manager.staticTheme[14];
+
         if (Manager.vibEnabled) {
             colorSwitch = false;
         }

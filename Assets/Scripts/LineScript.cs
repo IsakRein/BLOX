@@ -121,10 +121,11 @@ public class LineScript : MonoBehaviour
 
     public List<int> colorList2 = new List<int>();
 
-    #endregion
+	#endregion
 
-    void Start()
-    {
+	private void Awake()
+	{
+
 #if UNITY_EDITOR
         platformInt = 0;
 #endif
@@ -136,6 +137,17 @@ public class LineScript : MonoBehaviour
 #if UNITY_ANDROID && !UNITY_EDITOR
         platformInt = 2;
 #endif
+
+        setColor[0] = Manager.staticTheme[23];
+        setColor[1] = Manager.staticTheme[24];
+        setColor[2] = Manager.staticTheme[25];
+        setColor[3] = Manager.staticTheme[26];
+        setColor[4] = Manager.staticTheme[27];
+	}
+
+	void Start()
+    {
+
 
         audioSource = GetComponent<AudioSource>();
 
@@ -450,8 +462,6 @@ public class LineScript : MonoBehaviour
             if (hammerToggle)
             {
                 EndHammer();
-
-                hammerToggle = false;
             }
             else
             {
@@ -476,11 +486,13 @@ public class LineScript : MonoBehaviour
             square.GetComponent<SquareScript>().hammerOn = false;
         }
 
-
         hammerCount = 3;
         hammerCountDownText.SetText("" + hammerCount);
 
         hammerToggle = false;
+
+        hammer.SetActive(true);
+        hammerActive.SetActive(false);
     }
 
     public void PowerUpRemove() {
@@ -1354,8 +1366,6 @@ public class LineScript : MonoBehaviour
 
     public void FallingDone()
     {
-        Debug.Log("Falling done");
-
         UpdateDeadOdds();
 
         controlsEnabled = true;
