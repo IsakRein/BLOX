@@ -12,6 +12,8 @@ public class ColorManagerGame : MonoBehaviour
 
     public List<Sprite> powerUps = new List<Sprite>();
 
+    public List<GameObject> continueButtons = new List<GameObject>();
+
     private void Start()
     {
         LoadThemeColors();
@@ -50,6 +52,24 @@ public class ColorManagerGame : MonoBehaviour
         gameObjects[16].GetComponent<Image>().color = Manager.staticTheme[20];
         gameObjects[17].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[21];
         gameObjects[18].GetComponent<Text>().color = Manager.staticTheme[22];
+
+        gameObjects[19].GetComponent<Image>().color = Manager.staticTheme[29];
+        gameObjects[20].GetComponent<Image>().color = Manager.staticTheme[29];
+        gameObjects[21].GetComponent<Image>().color = Manager.staticTheme[29];
+
+        gameObjects[22].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[30];
+        gameObjects[23].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[30];
+        gameObjects[24].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[30];
+        gameObjects[25].GetComponent<SpriteRenderer>().color = Manager.staticTheme[30];
+        gameObjects[26].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[30];
+
+        gameObjects[27].GetComponent<Image>().color = Manager.staticTheme[31];
+        gameObjects[28].GetComponent<Image>().color = Manager.staticTheme[31];
+
+        gameObjects[29].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[32];
+        gameObjects[30].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[32];
+
+        gameObjects[31].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[33];
 
         foreach (GameObject obj in pausedGameObjects) {
             obj.GetComponent<Image>().color = Manager.staticTheme[13];
