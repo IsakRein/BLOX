@@ -167,7 +167,7 @@ public class SquareScript : MonoBehaviour
 
                     if (firstFall)
                     {
-                        UpdateCountDown();
+                        //UpdateCountDown();
                     }
 
                     fallCounter = 0;
@@ -327,25 +327,37 @@ public class SquareScript : MonoBehaviour
     void OnTouchStay()
     {
         isHovering = true;
-                 
-        if (hammerOn) {
-            animator.SetTrigger("HammerEND");
-        
-            lineScript.FallOne(number);
-            hammerOn = false;
-        }
 
-        else if (removeOn) {
-            lineScript.EndRemove();
-            lineScript.FallOneColor(colorNum); 
-        }
+        if (!addSquareHasBeenCalled && interactable)
+        {
+            if (hammerOn)
+            {
+                Debug.Log("Hammer on!");
 
-        else {
-            if (!addSquareHasBeenCalled && interactable) {
-                lineScript.AddSquare(number, colorNum, hoverSwitch);
+                animator.SetTrigger("HammerEND");
 
-                addSquareHasBeenCalled = true;
+                lineScript.FallOne(number);
             }
+
+            else if (removeOn)
+            {
+                Debug.Log("Remove on!");
+
+                lineScript.EndRemove();
+                lineScript.FallOneColor(colorNum);
+            }
+
+            else
+            {
+                if (!addSquareHasBeenCalled && interactable)
+                {
+                    Debug.Log("Add square");
+
+                    lineScript.AddSquare(number, colorNum, hoverSwitch);
+                }
+            }
+
+            addSquareHasBeenCalled = true;
         }
     }
 

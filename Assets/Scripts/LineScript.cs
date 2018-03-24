@@ -455,7 +455,7 @@ public class LineScript : MonoBehaviour
 
     public void PowerUpHammer()
     {
-        if (controlsEnabled)
+        if (controlsEnabled && squares.GetComponentInChildren<SquareScript>().interactable == true)
         {
             if (hammerToggle)
             {
@@ -477,38 +477,46 @@ public class LineScript : MonoBehaviour
         }
     }
 
-    public void EndHammer() {
-        foreach (Transform square in squares.transform)
-        {
-            square.GetComponent<Animator>().SetTrigger("HammerEND");
-            square.GetComponent<SquareScript>().hammerOn = false;
-        }
-
-        hammerCount = 3;
-        hammerCountDownText.SetText("" + hammerCount);
-
-        hammerToggle = false;
-
-        hammer.SetActive(true);
-        hammerActive.SetActive(false);
-    }
-
-    public void PowerUpRemove() {
-        if (removeToggle)
-        {
-            EndRemove();
-
-            removeToggle = false;
-        }
-        else
+    public void EndHammer()
+    {
+        if (controlsEnabled && squares.GetComponentInChildren<SquareScript>().interactable == true)
         {
             foreach (Transform square in squares.transform)
             {
-                square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
-                square.GetComponent<SquareScript>().removeOn = true;
+                square.GetComponent<Animator>().SetTrigger("HammerEND");
+                square.GetComponent<SquareScript>().hammerOn = false;
             }
 
-            hammerToggle = true;
+            hammerCount = 3;
+            hammerCountDownText.SetText("" + hammerCount);
+
+            hammerToggle = false;
+
+            hammer.SetActive(true);
+            hammerActive.SetActive(false);
+        }
+    }
+
+    public void PowerUpRemove()
+    {
+        if (!hammerToggle)
+        {
+            if (removeToggle)
+            {
+                EndRemove();
+
+                removeToggle = false;
+            }
+            else
+            {
+                foreach (Transform square in squares.transform)
+                {
+                    square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
+                    square.GetComponent<SquareScript>().removeOn = true;
+                }
+
+                hammerToggle = true;
+            }
         }
     }
 
@@ -558,26 +566,31 @@ public class LineScript : MonoBehaviour
     }
 
     public void FallOne(int squareToFall) {
-        squareList.Add(squareToFall);
-        Manager.NextTimeLoadLevel();
-
-        hammerCount = hammerCount - 1;
-
-        if (hammerCount == 0)
+        if (controlsEnabled)
         {
-            EndHammer();
-        }
-        else
-        {
-            hammerCountDownText.SetText("" + hammerCount);
-        }
+            squareList.Add(squareToFall);
+            Manager.NextTimeLoadLevel();
 
-        foreach (Transform square in squares.transform)
-        {
-            square.GetComponent<SquareScript>().interactable = false;
-        }
+            hammerCount = hammerCount - 1;
 
-        StartAnimation();
+            if (hammerCount == 0)
+            {
+                Debug.Log("End hammer set false");
+
+                EndHammer();
+            }
+            else
+            {
+                hammerCountDownText.SetText("" + hammerCount);
+            }
+
+            foreach (Transform square in squares.transform)
+            {
+                square.GetComponent<SquareScript>().interactable = false;
+            }
+
+            StartAnimation();
+        }     
     }
 
     public void ActivateHammerAnimation()
@@ -1373,6 +1386,7 @@ public class LineScript : MonoBehaviour
             SquareScript squareScript = square.GetComponent<SquareScript>();
 
             squareScript.UpdateCountDown();
+            squareScript.interactable = true;
         }
 
         rowList.Clear();
@@ -1391,23 +1405,34 @@ public class LineScript : MonoBehaviour
 
         squareList.Clear();
 
-        bool movePossible = false;
-
-        for (int i = 1; i <= squareRows * squareRows; i++)
+        if (!hammerToggle)
         {
+            bool movePossible = false;
+
+            for (int i = 1; i <= squareRows * squareRows; i++)
+            {
+                if (!movePossible)
+                {
+                    if (CheckAroundSquare1(i))
+                    {
+                        movePossible = true;
+                    }
+                }
+            }
+
+
             if (!movePossible)
             {
-                if (CheckAroundSquare1(i))
-                {
-                    movePossible = true;
-                }
+                GameOver();
             }
         }
 
-
-        if (!movePossible)
+        else
         {
-            GameOver();
+            foreach (Transform square in squares.transform)
+            {
+                square.GetComponent<SquareScript>().hammerOn = true;
+            }
         }
     }
 
