@@ -147,8 +147,6 @@ public class LineScript : MonoBehaviour
 
 	void Start()
     {
-
-
         audioSource = GetComponent<AudioSource>();
 
         controlsEnabled = true;

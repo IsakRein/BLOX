@@ -161,6 +161,8 @@ public class SquareScript : MonoBehaviour
 
                 if (targetPos.y == transform.localPosition.y)
                 {
+                    NameSquare();
+
                     lineScript.AddToFallCounter();
 
                     if (firstFall)
@@ -169,8 +171,6 @@ public class SquareScript : MonoBehaviour
                     }
 
                     fallCounter = 0;
-
-                    NameSquare();
 
                     fallInitialized = false;
 
