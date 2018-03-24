@@ -1222,34 +1222,31 @@ public class LineScript : MonoBehaviour
     }
 
     void UpdateDeadOdds() {
-        if (score < 50) {
-            deadOdds = 0.2f;
-        } 
-        else if (score < 200) {
-            deadOdds = 0.1f;
+        if (score < 200) {
+            deadOdds = 0.0f;
         }
         else if (score < 300)
         {
-            deadOdds = 0.15f;
+            deadOdds = 0.05f;
         }
         else if (score < 400)
         {
-            deadOdds = 0.2f;
+            deadOdds = 0.1f;
         }
         else if (score < 500)
         {
-            deadOdds = 0.25f;
+            deadOdds = 0.15f;
         }
         else if (score < 600)
         {
-            deadOdds = 0.3f;
+            deadOdds = 0.2f;
         }
         else if (score < 800)
         {
-            deadOdds = 0.35f;
+            deadOdds = 0.25f;
         }
         else {
-            deadOdds = 0.4f;
+            deadOdds = 0.3f;
         }
     } 
 

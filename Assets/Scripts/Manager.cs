@@ -67,8 +67,6 @@ public class Manager : MonoBehaviour {
             selectedTheme = 1;
         }
 
-        Debug.Log("Awake is called.");
-
         UpdateTheme();
 
         colorManagerHome.GetComponent<ColorManagerHome>().LoadThemeColors();
