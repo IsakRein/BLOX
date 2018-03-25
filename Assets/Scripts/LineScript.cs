@@ -121,6 +121,9 @@ public class LineScript : MonoBehaviour
 
     public List<int> colorList2 = new List<int>();
 
+    public GemScript gemScript;
+    public int gemsGiven = 0;
+
 	#endregion
 
 	private void Awake()
@@ -226,23 +229,9 @@ public class LineScript : MonoBehaviour
 
         hammerCount = 3;
 
-        bool movePossible = false;
+        gemsGiven = score / 10;
 
-        for (int i = 1; i <= squareRows * squareRows; i++)
-        {
-            if (!movePossible)
-            {
-                if (CheckAroundSquare1(i))
-                {
-                    movePossible = true;
-                }
-            }
-        }
-
-        if (!movePossible)
-        {
-            GameOver();
-        }
+        CheckGameOver();
     }
 
     void Update()
@@ -397,6 +386,27 @@ public class LineScript : MonoBehaviour
         }
     }
 
+    void CheckGameOver()
+    {
+        bool movePossible = false;
+
+        for (int i = 1; i <= squareRows * squareRows; i++)
+        {
+            if (!movePossible)
+            {
+                if (CheckAroundSquare1(i))
+                {
+                    movePossible = true;
+                }
+            }
+        }
+
+        if (!movePossible)
+        {
+            GameOver();
+        }
+    }
+
     void GameOver()
     {
         Manager.loadColors = false;
@@ -441,6 +451,17 @@ public class LineScript : MonoBehaviour
             scoreText.SetText("" + score);
 
             Manager.thereIsPrevious = false;
+
+            hammerCount = hammerCount + 1;
+
+            if (hammerCount == 4)
+            {
+                EndHammer();
+            }
+            else
+            {
+                hammerCountDownText.SetText("" + hammerCount);
+            }
         }
 
         Manager.previousColorList = new List<int>(colorList);
@@ -459,6 +480,8 @@ public class LineScript : MonoBehaviour
         {
             if (hammerToggle)
             {
+                CheckGameOver();
+
                 EndHammer();
             }
             else
@@ -575,8 +598,7 @@ public class LineScript : MonoBehaviour
 
             if (hammerCount == 0)
             {
-                Debug.Log("End hammer set false");
-
+                CheckGameOver();
                 EndHammer();
             }
             else
@@ -1290,7 +1312,18 @@ public class LineScript : MonoBehaviour
 
         if (addToScore) {
             score = score + squareList.Count;
-            scoreText.text = "" + score; 
+            scoreText.text = "" + score;
+
+            if (score/10 > gemsGiven)
+            {
+                Debug.Log(score / 10);
+
+                Manager.gemCount += 1;
+
+                gemScript.UpdateValue();
+
+                gemsGiven = score / 10;
+            }
         }
 
         addToScore = true;
@@ -1407,24 +1440,7 @@ public class LineScript : MonoBehaviour
 
         if (!hammerToggle)
         {
-            bool movePossible = false;
-
-            for (int i = 1; i <= squareRows * squareRows; i++)
-            {
-                if (!movePossible)
-                {
-                    if (CheckAroundSquare1(i))
-                    {
-                        movePossible = true;
-                    }
-                }
-            }
-
-
-            if (!movePossible)
-            {
-                GameOver();
-            }
+            CheckGameOver();
         }
 
         else
