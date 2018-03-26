@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System.Linq;
 using TMPro;
 
+
 public class LineScript : MonoBehaviour
 {
     #region variables
@@ -124,9 +125,11 @@ public class LineScript : MonoBehaviour
     public GemScript gemScript;
     public int gemsGiven = 0;
 
-	#endregion
+    #endregion
 
-	private void Awake()
+    #region MainGame
+
+    private void Awake()
 	{
 
 #if UNITY_EDITOR
@@ -431,8 +434,14 @@ public class LineScript : MonoBehaviour
         cont.GetComponent<Animator>().SetTrigger("STARTW");
     }
 
+    #endregion
+
+    #region PowerUps
+
     public void PowerUpRedo() {
-        if (Manager.thereIsPrevious) {
+        if (Manager.thereIsPrevious && Manager.gemCount >= 30) {
+            ChargeGems(30);
+
             foreach (Transform square in squares.transform)
             {
                 SquareScript squareScript = square.GetComponent<SquareScript>();
@@ -482,20 +491,29 @@ public class LineScript : MonoBehaviour
             {
                 CheckGameOver();
 
+                if (hammerCount == 3) {
+                    AddGems(80);
+                } 
+
                 EndHammer();
             }
             else
             {
-                hammer.SetActive(false);
-                hammerActive.SetActive(true);
+                if (Manager.gemCount >= 80) {
+                    ChargeGems(80);
 
-                foreach (Transform square in squares.transform)
-                {
-                    square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
-                    square.GetComponent<SquareScript>().hammerOn = true;
+                    hammer.SetActive(false);
+                    hammerActive.SetActive(true);
+
+
+                    foreach (Transform square in squares.transform)
+                    {
+                        square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
+                        square.GetComponent<SquareScript>().hammerOn = true;
+                    }
+
+                    hammerToggle = true;
                 }
-
-                hammerToggle = true;
             }
         }
     }
@@ -526,19 +544,26 @@ public class LineScript : MonoBehaviour
         {
             if (removeToggle)
             {
+                AddGems(120);
+
                 EndRemove();
 
                 removeToggle = false;
             }
             else
             {
-                foreach (Transform square in squares.transform)
-                {
-                    square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
-                    square.GetComponent<SquareScript>().removeOn = true;
-                }
+                if (Manager.gemCount >= 120) {
 
-                hammerToggle = true;
+                    ChargeGems(120);
+
+                    foreach (Transform square in squares.transform)
+                    {
+                        square.GetComponent<Animator>().Play("Hammer", -1, UnityEngine.Random.value);
+                        square.GetComponent<SquareScript>().removeOn = true;
+                    }
+
+                    removeToggle = true;
+                }
             }
         }
     }
@@ -562,6 +587,8 @@ public class LineScript : MonoBehaviour
 
     public void PayToContinue() {
         //charge gems (and change multiplier)
+
+        ChargeGems(200);
 
         //then
         ContinueAfterLoss();
@@ -643,7 +670,25 @@ public class LineScript : MonoBehaviour
         StartAnimation();
     }
 
-	public void ControlChange() {
+    public void AddGems(int price)
+    {
+        Manager.gemCount += price;
+        Manager.SaveGemCount();
+
+        gemScript.UpdateValue();
+    }
+
+    public void ChargeGems (int price) 
+    {
+        Manager.gemCount -= price;
+        Manager.SaveGemCount();
+
+        gemScript.UpdateValue();
+    }
+
+#endregion
+
+    public void ControlChange() {
 		controlsEnabled = !controlsEnabled;
 	}
 
@@ -1316,9 +1361,8 @@ public class LineScript : MonoBehaviour
 
             if (score/10 > gemsGiven)
             {
-                Debug.Log(score / 10);
-
                 Manager.gemCount += 1;
+                Manager.SaveGemCount();
 
                 gemScript.UpdateValue();
 

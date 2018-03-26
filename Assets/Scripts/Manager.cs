@@ -111,7 +111,13 @@ public class Manager : MonoBehaviour {
 
         //end of temporary code
 
+        if (PlayerPrefs.HasKey ("Gems")) {
+            gemCount = PlayerPrefs.GetInt("Gems");
+        }
 
+        else {
+            gemCount = 0;
+        }
 
         if (PlayerPrefs.HasKey ("LoadColors")) {			
             if (PlayerPrefs.GetInt ("LoadColors") == 1) {
@@ -332,6 +338,11 @@ public class Manager : MonoBehaviour {
     public static void SaveScore()
     {
         PlayerPrefs.SetInt("highScore", highScore);
+    }
+
+    public static void SaveGemCount()
+    {
+        PlayerPrefs.SetInt("Gems", gemCount);
     }
 
     public static void SaveScene() 

@@ -161,20 +161,20 @@ public class SquareScript : MonoBehaviour
 
                 if (targetPos.y == transform.localPosition.y)
                 {
+                    fallInitialized = false;
+
+                    fallCounter = 0;
+
+                    firstFall = false;
+
                     NameSquare();
 
                     lineScript.AddToFallCounter();
 
                     if (firstFall)
                     {
-                        //UpdateCountDown();
+                        UpdateCountDown();
                     }
-
-                    fallCounter = 0;
-
-                    fallInitialized = false;
-
-                    firstFall = false;
                 }
             }
         }
