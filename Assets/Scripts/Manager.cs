@@ -22,9 +22,6 @@ public class Manager : MonoBehaviour {
     public static List<int> previousDeadSquareCounterList = new List<int>(); 
     public static List<int> previousCircleList = new List<int>();
 
-    public List<int> circleList2 = new List<int>();
-    public int publicPrevPrevScore;
-
     public static bool loadColors;
     public static int previousScore;
     public static int previousPreviousScore;
@@ -38,10 +35,23 @@ public class Manager : MonoBehaviour {
     public List<Color> theme1 = new List<Color>(); 
     public List<Color> theme2 = new List<Color>(); 
     public List<Color> theme3 = new List<Color>();
+    public List<Color> theme4 = new List<Color>();
+    public List<Color> theme5 = new List<Color>();
+    public List<Color> theme6 = new List<Color>();
+    public List<Color> theme7 = new List<Color>();
+    public List<Color> theme8 = new List<Color>();
 
     public static List<Color> staticTheme1 = new List<Color>();
-    public static List<Color> staticTheme2= new List<Color>();
+    public static List<Color> staticTheme2 = new List<Color>();
     public static List<Color> staticTheme3 = new List<Color>();
+    public static List<Color> staticTheme4 = new List<Color>();
+    public static List<Color> staticTheme5 = new List<Color>();
+    public static List<Color> staticTheme6 = new List<Color>();
+    public static List<Color> staticTheme7 = new List<Color>();
+    public static List<Color> staticTheme8 = new List<Color>();
+
+    public static List<Sprite> cats = new List<Sprite>();
+    public List<Sprite> setCats = new List<Sprite>();
 
     void Awake() {
         Application.targetFrameRate = 60;
@@ -59,6 +69,13 @@ public class Manager : MonoBehaviour {
         staticTheme1 = theme1;
         staticTheme2 = theme2;
         staticTheme3 = theme3;
+        staticTheme4 = theme4;
+        staticTheme5 = theme5;
+        staticTheme6 = theme6;
+        staticTheme7 = theme7;
+        staticTheme8 = theme8;
+
+        cats = setCats;
 
         if (PlayerPrefs.HasKey("Theme")) {
             selectedTheme = PlayerPrefs.GetInt("Theme");

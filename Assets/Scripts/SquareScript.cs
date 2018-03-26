@@ -112,6 +112,11 @@ public class SquareScript : MonoBehaviour
             firstFall = true;
         }
 
+        if (Manager.selectedTheme == 8)
+        {
+            spriteRenderer.sprite = Manager.cats[colorNum];
+        }
+
         if (colorNum == setColor.Length - 1)
         {
             spriteRenderer.sprite = lineScript.deadSquare;
@@ -221,6 +226,11 @@ public class SquareScript : MonoBehaviour
             {
                 GameObject.Destroy(child.gameObject);
             }
+        }
+
+        if (Manager.selectedTheme == 8)
+        {
+            spriteRenderer.sprite = Manager.cats[colorNum];
         }
 
         if (colorNum == setColor.Length - 1)

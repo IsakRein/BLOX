@@ -410,7 +410,7 @@ public class LineScript : MonoBehaviour
         }
     }
 
-    void GameOver()
+    public void GameOver()
     {
         Manager.loadColors = false;
         Manager.NextTimeDontLoadLevel();
