@@ -45,13 +45,7 @@ public class NextSquareScript : MonoBehaviour {
             NewColor();
         }
 
-        if (colorNum == setColor.Length-1)
-        {
-            spriteRenderer.sprite = lineScript.deadSquare;
-        }
-        else {
-            spriteRenderer.sprite = lineScript.regularSquare;
-        }
+        SetSprite();
 	}
 
     void NewColor() {
@@ -71,14 +65,7 @@ public class NextSquareScript : MonoBehaviour {
         color.a = 0.5f;
         spriteRenderer.color = color;
 
-        if (colorNum == setColor.Length - 1)
-        {
-            spriteRenderer.sprite = lineScript.deadSquare;
-        }
-        else
-        {
-            spriteRenderer.sprite = lineScript.regularSquare;
-        }
+        SetSprite();
     }
 
     void SetColornum() {
@@ -88,14 +75,7 @@ public class NextSquareScript : MonoBehaviour {
         color.a = 0.5f;
         spriteRenderer.color = color;
 
-        if (colorNum == setColor.Length - 1)
-        {
-            spriteRenderer.sprite = lineScript.deadSquare;
-        }
-        else
-        {
-            spriteRenderer.sprite = lineScript.regularSquare;
-        }
+        SetSprite();
     }
 
     public void LoadPreviousColor()
@@ -103,15 +83,7 @@ public class NextSquareScript : MonoBehaviour {
         colorNum = Manager.previousCircleList[num];
         spriteRenderer.color = setColor[colorNum];
 
-        if (colorNum == setColor.Length - 1)
-        {
-            spriteRenderer.sprite = lineScript.deadSquare;
-        }
-
-        else
-        {
-            spriteRenderer.sprite = lineScript.regularSquare;
-        }
+        SetSprite();
 
         Color color = spriteRenderer.color;
         color.a = 0.5f;
@@ -123,5 +95,23 @@ public class NextSquareScript : MonoBehaviour {
     void UpdateCirclelist()
     {
         lineScript.AddToCircleList(num, colorNum);
+    }
+
+    void SetSprite() {
+        if (colorNum == setColor.Length - 1)
+        {
+            spriteRenderer.sprite = lineScript.deadSquare;
+        }
+
+        else
+        {
+            if (Manager.selectedTheme == 8) {
+                spriteRenderer.sprite = Manager.cats[colorNum];
+            }
+
+            else {
+                spriteRenderer.sprite = lineScript.regularSquare;
+            }
+        }
     }
 }

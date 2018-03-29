@@ -54,7 +54,7 @@ public class Game : MonoBehaviour {
 
                 squareScript.number = (i-1)*Rows + j;
 
-                square.GetComponent<Animator>().Play("Entry");
+                squareScript.isGenerated = true;
 
 				transform.localScale = new Vector3 (scale, scale);
             }

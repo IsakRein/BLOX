@@ -50,8 +50,12 @@ public class Manager : MonoBehaviour {
     public static List<Color> staticTheme7 = new List<Color>();
     public static List<Color> staticTheme8 = new List<Color>();
 
+    public static List<int> boughtThemes = new List<int>();
+
     public static List<Sprite> cats = new List<Sprite>();
     public List<Sprite> setCats = new List<Sprite>();
+
+    public bool loadColorsCheck;
 
     void Awake() {
         Application.targetFrameRate = 60;
@@ -87,6 +91,33 @@ public class Manager : MonoBehaviour {
         UpdateTheme();
 
         colorManagerHome.GetComponent<ColorManagerHome>().LoadThemeColors();
+
+
+        //load bought themes
+
+        if (PlayerPrefs.HasKey("BoughtTheme_1")) {
+            for (int i = 0; i <= 8; i++) {
+                boughtThemes.Add(0);
+            }
+
+            boughtThemes[0] = -1;
+
+            for (int i = 0; i <= 8; i++)
+            {
+                boughtThemes[i] = PlayerPrefs.GetInt("BoughtTheme_" + i);
+            }
+        }
+        else {
+            for (int i = 0; i <= 8; i++)
+            {
+                boughtThemes.Add(0);
+            }
+
+            boughtThemes[0] = -1;
+            boughtThemes[1] = 1;
+            boughtThemes[2] = 1;
+        }
+
 
         //temporary code, change if more squares are needed
 
@@ -334,7 +365,12 @@ public class Manager : MonoBehaviour {
         }
     }
 
-    public static void UpdateTheme()
+	void Update()
+	{
+        loadColorsCheck = loadColors;
+	}
+
+	public static void UpdateTheme()
     {
         if (selectedTheme == 1)
         {
@@ -350,6 +386,35 @@ public class Manager : MonoBehaviour {
         {
             staticTheme = staticTheme3;
         }
+
+        else if (selectedTheme == 4)
+        {
+            staticTheme = staticTheme4;
+        }
+
+        else if (selectedTheme == 5)
+        {
+            staticTheme = staticTheme5;
+        }
+
+        else if (selectedTheme == 6)
+        {
+            staticTheme = staticTheme6;
+        }
+
+        else if (selectedTheme == 7)
+        {
+            staticTheme = staticTheme7;
+        }
+
+        else if (selectedTheme == 8)
+        {
+            staticTheme = staticTheme8;
+        }
+
+        if (!PlayerPrefs.HasKey("showAds")) {
+            PlayerPrefs.SetInt("showAds", 1);
+        }
     }
 
     public static void SaveScore()
@@ -360,6 +425,14 @@ public class Manager : MonoBehaviour {
     public static void SaveGemCount()
     {
         PlayerPrefs.SetInt("Gems", gemCount);
+    }
+
+    public static void SaveBoughtThemes() 
+    {
+        for (int i = 0; i <= 8; i++)
+        {
+            PlayerPrefs.SetInt("BoughtTheme_" + i, boughtThemes[i]);
+        }
     }
 
     public static void SaveScene() 

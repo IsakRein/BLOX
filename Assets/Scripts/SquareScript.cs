@@ -55,6 +55,8 @@ public class SquareScript : MonoBehaviour
     public bool hammerOn = false;
     public bool removeOn = false;
 
+    public bool isGenerated;
+
     void Start()
     {
 
@@ -115,6 +117,7 @@ public class SquareScript : MonoBehaviour
         if (Manager.selectedTheme == 8)
         {
             spriteRenderer.sprite = Manager.cats[colorNum];
+            spriteRenderer.color = new Color(255, 255, 255);
         }
 
         if (colorNum == setColor.Length - 1)
@@ -133,6 +136,23 @@ public class SquareScript : MonoBehaviour
             {
                 countDownCounter = Manager.deadSquareCounterList[number];
                 GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
+            }
+        }
+
+        if (isGenerated) 
+        {
+            if (colorNum == setColor.Length - 1)
+            {
+                animator.Play("DeadSquareEntry");
+
+                transform.eulerAngles = new Vector3(0, 0, -90);
+            }
+
+            else
+            {
+                animator.Play("Entry");
+
+                transform.eulerAngles = new Vector3(0, 0, 0);
             }
         }
 
@@ -205,6 +225,7 @@ public class SquareScript : MonoBehaviour
             }
         }
     }
+
 
     public void LoadColor(int newColorNum) 
     {
@@ -342,17 +363,13 @@ public class SquareScript : MonoBehaviour
         {
             if (hammerOn)
             {
-                Debug.Log("Hammer on!");
-
-                animator.SetTrigger("HammerEND");
+                animator.Play("Default");
 
                 lineScript.FallOne(number);
             }
 
             else if (removeOn)
             {
-                Debug.Log("Remove on!");
-
                 lineScript.EndRemove();
                 lineScript.FallOneColor(colorNum);
             }
@@ -361,8 +378,6 @@ public class SquareScript : MonoBehaviour
             {
                 if (!addSquareHasBeenCalled && interactable)
                 {
-                    Debug.Log("Add square");
-
                     lineScript.AddSquare(number, colorNum, hoverSwitch);
                 }
             }

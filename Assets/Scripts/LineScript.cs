@@ -125,6 +125,8 @@ public class LineScript : MonoBehaviour
     public GemScript gemScript;
     public int gemsGiven = 0;
 
+    private int gemGivingFreq;
+
     #endregion
 
     #region MainGame
@@ -232,7 +234,23 @@ public class LineScript : MonoBehaviour
 
         hammerCount = 3;
 
-        gemsGiven = score / 10;
+        if (PlayerPrefs.HasKey("boughtRemoveAds"))
+        {
+            if (PlayerPrefs.GetInt("boughtRemoveAds") == 1)
+            {
+                gemGivingFreq = 5;
+            }
+
+            else
+            {
+                gemGivingFreq = 5;
+            }
+        }
+        else {
+            gemGivingFreq = 5;
+        }
+
+        gemsGiven = score / gemGivingFreq;
 
         CheckGameOver();
     }
@@ -524,7 +542,7 @@ public class LineScript : MonoBehaviour
         {
             foreach (Transform square in squares.transform)
             {
-                square.GetComponent<Animator>().SetTrigger("HammerEND");
+                square.GetComponent<Animator>().Play("Default");
                 square.GetComponent<SquareScript>().hammerOn = false;
             }
 
@@ -572,7 +590,7 @@ public class LineScript : MonoBehaviour
     {
         foreach (Transform square in squares.transform)
         {
-            square.GetComponent<Animator>().SetTrigger("HammerEND");
+            square.GetComponent<Animator>().Play("Default");
             square.GetComponent<SquareScript>().removeOn = false;
         }
         hammerToggle = false;
@@ -1359,14 +1377,14 @@ public class LineScript : MonoBehaviour
             score = score + squareList.Count;
             scoreText.text = "" + score;
 
-            if (score/10 > gemsGiven)
+            if (score/gemGivingFreq > gemsGiven)
             {
                 Manager.gemCount += 1;
                 Manager.SaveGemCount();
 
                 gemScript.UpdateValue();
 
-                gemsGiven = score / 10;
+                gemsGiven = score / gemGivingFreq;
             }
         }
 
@@ -1481,6 +1499,8 @@ public class LineScript : MonoBehaviour
         Manager.SaveScene();
 
         squareList.Clear();
+
+        removeToggle = false;
 
         if (!hammerToggle)
         {

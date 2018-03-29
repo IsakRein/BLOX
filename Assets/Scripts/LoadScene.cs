@@ -7,6 +7,7 @@ public class LoadScene : MonoBehaviour
     {
         if (scene == "Gameover") {
             Manager.NextTimeDontLoadLevel();
+            PlayerPrefs.DeleteKey("colorList_1");
             Manager.loadColors = false;
             Manager.thereIsPrevious = false;
         }
