@@ -8,7 +8,10 @@ public class GemScript : MonoBehaviour {
 
     private TextMeshProUGUI text;
     public GameObject plus;
+    public GameObject onePlus;
+
     public bool usePlus;
+    public bool useOnePlus;
 
 	void Start () {
         text = gameObject.GetComponent<TextMeshProUGUI>();
@@ -23,14 +26,26 @@ public class GemScript : MonoBehaviour {
             if (Manager.gemCount < 10)
             {
                 plus.transform.localPosition = new Vector2(-470, 0);
+                if (useOnePlus)
+                {
+                    onePlus.transform.localPosition = new Vector2(-800, 7);
+                }
             }
             else if (Manager.gemCount < 100)
             {
                 plus.transform.localPosition = new Vector2(-630, 0);
+                if (useOnePlus)
+                {
+                    onePlus.transform.localPosition = new Vector2(-960, 7);
+                }
             }
             else
             {
-                plus.transform.localPosition = new Vector2(-740, 0);
+                plus.transform.localPosition = new Vector2(-720, 0);
+                if (useOnePlus)
+                {
+                    onePlus.transform.localPosition = new Vector2(-1000, 7);
+                }
             }
         }
     }

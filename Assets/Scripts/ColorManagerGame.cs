@@ -73,6 +73,9 @@ public class ColorManagerGame : MonoBehaviour
 
         gameObjects[32].GetComponent<SpriteRenderer>().color = Manager.staticTheme[48];
 
+        gameObjects[33].GetComponent<Image>().color = Manager.staticTheme[9];
+        gameObjects[34].GetComponent<TextMeshProUGUI>().color = Manager.staticTheme[30];
+
         foreach (GameObject obj in pausedGameObjects) {
             obj.GetComponent<Image>().color = Manager.staticTheme[13];
         }

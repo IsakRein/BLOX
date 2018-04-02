@@ -127,6 +127,12 @@ public class LineScript : MonoBehaviour
 
     private int gemGivingFreq;
 
+    public Button redoBtn;
+    public Button hammerBtn;
+    public Button removeBtn;
+
+    public Animator plusOne;
+
     #endregion
 
     #region MainGame
@@ -215,6 +221,8 @@ public class LineScript : MonoBehaviour
         fallDown = false;
         InitializeFallHasBeenCalled = false;
 
+        addToScore = true;
+
         rowList.Clear();
         for (int i = 0; i < squareRows; i++)
         {
@@ -252,6 +260,7 @@ public class LineScript : MonoBehaviour
 
         gemsGiven = score / gemGivingFreq;
 
+        CheckPossibility();
         CheckGameOver();
     }
 
@@ -503,6 +512,8 @@ public class LineScript : MonoBehaviour
 
     public void PowerUpHammer()
     {
+
+
         if (controlsEnabled && squares.GetComponentInChildren<SquareScript>().interactable == true)
         {
             if (hammerToggle)
@@ -694,6 +705,8 @@ public class LineScript : MonoBehaviour
         Manager.SaveGemCount();
 
         gemScript.UpdateValue();
+
+        CheckPossibility();
     }
 
     public void ChargeGems (int price) 
@@ -702,6 +715,8 @@ public class LineScript : MonoBehaviour
         Manager.SaveGemCount();
 
         gemScript.UpdateValue();
+
+        CheckPossibility();
     }
 
 #endregion
@@ -1317,6 +1332,35 @@ public class LineScript : MonoBehaviour
         Manager.previousScore = score;
     }
 
+    void CheckPossibility()
+    {
+        if (Manager.gemCount >= 30) {
+            redoBtn.interactable = true;
+        }
+        else
+        {
+            redoBtn.interactable = false;
+        }
+
+        if (Manager.gemCount >= 80)
+        {
+            hammerBtn.interactable = true;
+        }
+        else
+        {
+            hammerBtn.interactable = false;
+        }
+
+        if (Manager.gemCount >= 120)
+        {
+            removeBtn.interactable = true;
+        }
+        else
+        {
+            removeBtn.interactable = false;
+        }
+    }
+
     void UpdateDeadOdds() {
         if (score < 200) {
             deadOdds = 0.0f;
@@ -1382,6 +1426,8 @@ public class LineScript : MonoBehaviour
                 Manager.gemCount += 1;
                 Manager.SaveGemCount();
 
+                plusOne.Play("fade");
+
                 gemScript.UpdateValue();
 
                 gemsGiven = score / gemGivingFreq;
@@ -1412,7 +1458,9 @@ public class LineScript : MonoBehaviour
             rowList[currentSquareRow - 1] = rowList[currentSquareRow - 1] + 1;
 		}
 
-		fallDown = true;
+        CheckPossibility();
+
+        fallDown = true;
 	}
 
 	public void InitializeFall ()
@@ -1501,6 +1549,9 @@ public class LineScript : MonoBehaviour
         squareList.Clear();
 
         removeToggle = false;
+
+        CheckPossibility();
+
 
         if (!hammerToggle)
         {

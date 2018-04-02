@@ -19,6 +19,15 @@ public class VibButton : MonoBehaviour
         backColor1 = Manager.staticTheme[13];
         backColor2 = Manager.staticTheme[14];
 
+        /*
+
+        if (Manager.selectedTheme == 4)
+        {
+            soundOff.GetComponent<SpriteRenderer>().color = backColor1;
+        }
+
+        */
+
         if (Manager.vibEnabled) {
             colorSwitch = false;
         }

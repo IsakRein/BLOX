@@ -55,6 +55,12 @@ public class Manager : MonoBehaviour {
     public static List<Sprite> cats = new List<Sprite>();
     public List<Sprite> setCats = new List<Sprite>();
 
+    public static Sprite circle = new Sprite();
+    public Sprite setCircle;
+
+    public static Sprite deadCircle = new Sprite();
+    public Sprite setDeadCircle;
+
     public bool loadColorsCheck;
 
     void Awake() {
@@ -80,6 +86,8 @@ public class Manager : MonoBehaviour {
         staticTheme8 = theme8;
 
         cats = setCats;
+        circle = setCircle;
+        deadCircle = setDeadCircle;
 
         if (PlayerPrefs.HasKey("Theme")) {
             selectedTheme = PlayerPrefs.GetInt("Theme");

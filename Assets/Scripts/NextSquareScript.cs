@@ -100,12 +100,25 @@ public class NextSquareScript : MonoBehaviour {
     void SetSprite() {
         if (colorNum == setColor.Length - 1)
         {
-            spriteRenderer.sprite = lineScript.deadSquare;
+            if (Manager.selectedTheme == 7)
+            {
+                spriteRenderer.sprite = Manager.deadCircle;
+            }
+
+            else
+            {
+                spriteRenderer.sprite = lineScript.deadSquare;
+            }
         }
 
         else
         {
-            if (Manager.selectedTheme == 8) {
+            if (Manager.selectedTheme == 7)
+            {
+                spriteRenderer.sprite = Manager.circle;
+            }
+
+            else if (Manager.selectedTheme == 8) {
                 spriteRenderer.sprite = Manager.cats[colorNum];
             }
 

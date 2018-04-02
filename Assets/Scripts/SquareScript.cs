@@ -114,15 +114,14 @@ public class SquareScript : MonoBehaviour
             firstFall = true;
         }
 
-        if (Manager.selectedTheme == 8)
-        {
-            spriteRenderer.sprite = Manager.cats[colorNum];
-            spriteRenderer.color = new Color(255, 255, 255);
-        }
-
         if (colorNum == setColor.Length - 1)
         {
             spriteRenderer.sprite = lineScript.deadSquare;
+
+            if (Manager.selectedTheme == 7)
+            {
+                spriteRenderer.sprite = Manager.deadCircle;
+            }
 
             countDownPrefab = (GameObject)Resources.Load("Prefabs/CountDown", typeof(GameObject));
 
@@ -139,6 +138,21 @@ public class SquareScript : MonoBehaviour
             }
         }
 
+        else
+        {
+            if (Manager.selectedTheme == 7)
+            {
+                spriteRenderer.sprite = Manager.circle;
+            }
+
+            if (Manager.selectedTheme == 8)
+            {
+                spriteRenderer.sprite = Manager.cats[colorNum];
+                spriteRenderer.color = new Color(255, 255, 255);
+            }
+        }
+
+        
         if (isGenerated) 
         {
             if (colorNum == setColor.Length - 1)
@@ -247,6 +261,11 @@ public class SquareScript : MonoBehaviour
             {
                 GameObject.Destroy(child.gameObject);
             }
+        }
+
+        if (Manager.selectedTheme == 7)
+        {
+            spriteRenderer.sprite = Manager.circle;
         }
 
         if (Manager.selectedTheme == 8)

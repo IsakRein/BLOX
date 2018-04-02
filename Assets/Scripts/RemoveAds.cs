@@ -34,7 +34,9 @@ public class RemoveAds : MonoBehaviour {
     {
         //purchase
         PlayerPrefs.SetInt("showAds", 0);
-        PlayerPrefs.SetInt("boughtRemoveAds", 1); 
+        PlayerPrefs.SetInt("boughtRemoveAds", 1);
+
+        button.interactable = false;
 
         price.gameObject.SetActive(false);
         purchased.gameObject.SetActive(true);
