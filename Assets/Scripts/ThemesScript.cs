@@ -46,12 +46,32 @@ public class ThemesScript : MonoBehaviour {
 
 	public void ChangeTheme(int themeNum)
     {
-        if (prices[themeNum] < Manager.gemCount) {
-            Manager.boughtThemes[themeNum] = 1;
-            Manager.SaveBoughtThemes();
+        if (Manager.boughtThemes[themeNum] == 0) {
+            if (prices[themeNum] < Manager.gemCount)
+            {
+                Manager.boughtThemes[themeNum] = 1;
+                Manager.SaveBoughtThemes();
 
-            ChargeGems(prices[themeNum]);
+                ChargeGems(prices[themeNum]);
 
+                Manager.selectedTheme = themeNum;
+                PlayerPrefs.SetInt("Theme", themeNum);
+                Manager.UpdateTheme();
+
+                //load scene
+                string sceneToLoad = Manager.sceneOrder[Manager.sceneOrder.Count - 1];
+                Manager.sceneOrder.RemoveAt(Manager.sceneOrder.Count - 1);
+                SceneManager.LoadScene(sceneToLoad);
+            }
+
+            else
+            {
+                Manager.sceneOrder.Add(SceneManager.GetActiveScene().name);
+                SceneManager.LoadScene("Gems");
+            }
+        }
+
+        else {
             Manager.selectedTheme = themeNum;
             PlayerPrefs.SetInt("Theme", themeNum);
             Manager.UpdateTheme();
@@ -60,11 +80,6 @@ public class ThemesScript : MonoBehaviour {
             string sceneToLoad = Manager.sceneOrder[Manager.sceneOrder.Count - 1];
             Manager.sceneOrder.RemoveAt(Manager.sceneOrder.Count - 1);
             SceneManager.LoadScene(sceneToLoad);
-        }
-
-        else {
-            Manager.sceneOrder.Add(SceneManager.GetActiveScene().name);
-            SceneManager.LoadScene("Gems");
         }
     }
 

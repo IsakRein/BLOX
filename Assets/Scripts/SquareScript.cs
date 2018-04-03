@@ -148,7 +148,9 @@ public class SquareScript : MonoBehaviour
             if (Manager.selectedTheme == 8)
             {
                 spriteRenderer.sprite = Manager.cats[colorNum];
-                spriteRenderer.color = new Color(255, 255, 255);
+
+                int tempColorValue = 255 - colorNum;
+                spriteRenderer.color = new Color(tempColorValue, tempColorValue, tempColorValue);
             }
         }
 
