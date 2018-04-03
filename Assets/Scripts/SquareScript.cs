@@ -34,7 +34,6 @@ public class SquareScript : MonoBehaviour
     public bool interactable = false;
     private int squareRows;
     public int fallCounter;
-    public float speed = 1f;
     public Vector3 targetPos;
     private bool fallInitialized = false;
     public bool isAnimating;
@@ -198,7 +197,10 @@ public class SquareScript : MonoBehaviour
             if (lineScript.fallDown == true && fallCounter > 0)
             {
                 //transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPos, ref velocity, 0.1f);
-                transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, speed / 50);
+
+                float step = 8f * Time.deltaTime;
+
+                transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, step);
 
                 if (targetPos.y == transform.localPosition.y)
                 {
