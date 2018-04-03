@@ -83,6 +83,8 @@ public class SquareScript : MonoBehaviour
 
         setColor = lineScript.setColor;
 
+        countDownStart = lineScript.deadSquareCountStart;
+
         if (loadColors)
         {
             colorNum = Manager.colorList[number];
@@ -97,8 +99,6 @@ public class SquareScript : MonoBehaviour
             colorNum = square.transform.GetChild(0).GetComponent<NextSquareScript>().colorNum;
             square.transform.GetChild(0).SendMessage("NewColor");
 
-            countDownCounter = countDownStart;
-
             spriteRenderer.color = setColor[colorNum];
 
             firstFall = true;
@@ -107,8 +107,6 @@ public class SquareScript : MonoBehaviour
         {
             colorNum = Random.Range(0, setColor.Length - 1);
             spriteRenderer.color = setColor[colorNum];
-
-            countDownCounter = countDownStart;
 
             firstFall = true;
         }
@@ -129,6 +127,12 @@ public class SquareScript : MonoBehaviour
             countDown.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
             countDown.GetComponentInChildren<TextMeshProUGUI>().color = Manager.staticTheme[28];
+
+            if (colorNum == setColor.Length - 1)
+            {
+                countDownCounter = countDownStart;
+                GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());
+            }
 
             if (loadColors)
             {
@@ -331,7 +335,10 @@ public class SquareScript : MonoBehaviour
             if (countDownCounter == 0)
             {
                 animator.SetTrigger("Trigger");
-                lineScript.squareList.Add(number);
+
+                if (!lineScript.squareList.Contains(number)) {
+                    lineScript.squareList.Add(number);
+                }
             }
 
             GetComponentInChildren<TextMeshProUGUI>().SetText(countDownCounter.ToString());

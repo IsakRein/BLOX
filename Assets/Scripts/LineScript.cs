@@ -133,6 +133,8 @@ public class LineScript : MonoBehaviour
 
     public Animator plusOne;
 
+    public int deadSquareCountStart;
+
     #endregion
 
     #region MainGame
@@ -1363,30 +1365,37 @@ public class LineScript : MonoBehaviour
 
     void UpdateDeadOdds() {
         if (score < 200) {
-            deadOdds = 0.0f;
+            deadOdds = 0.2f;
+            deadSquareCountStart = 3;
         }
         else if (score < 300)
         {
             deadOdds = 0.05f;
+            deadSquareCountStart = 4;
         }
         else if (score < 400)
         {
             deadOdds = 0.1f;
+            deadSquareCountStart = 5;
         }
         else if (score < 500)
         {
             deadOdds = 0.15f;
+            deadSquareCountStart = 6;
         }
         else if (score < 600)
         {
             deadOdds = 0.2f;
+            deadSquareCountStart = 7;
         }
         else if (score < 800)
         {
             deadOdds = 0.25f;
+            deadSquareCountStart = 8;
         }
         else {
             deadOdds = 0.3f;
+            deadSquareCountStart = 9;
         }
     } 
 
