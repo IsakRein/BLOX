@@ -1366,12 +1366,12 @@ public class LineScript : MonoBehaviour
     void UpdateDeadOdds() {
         if (score < 200) {
             deadOdds = 0.2f;
-            deadSquareCountStart = 3;
+            deadSquareCountStart = UnityEngine.Random.Range(3, 5);
         }
         else if (score < 300)
         {
             deadOdds = 0.05f;
-            deadSquareCountStart = 4;
+            deadSquareCountStart = UnityEngine.Random.Range(3, 5);
         }
         else if (score < 400)
         {

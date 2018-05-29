@@ -202,7 +202,7 @@ public class SquareScript : MonoBehaviour
             {
                 //transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPos, ref velocity, 0.1f);
 
-                float step = 8f * Time.deltaTime;
+                float step = 7f * Time.deltaTime;
 
                 transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, step);
 
