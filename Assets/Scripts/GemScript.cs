@@ -28,7 +28,7 @@ public class GemScript : MonoBehaviour {
                 plus.transform.localPosition = new Vector2(-470, 0);
                 if (useOnePlus)
                 {
-                    onePlus.transform.localPosition = new Vector2(-800, 7);
+                    onePlus.transform.localPosition = new Vector2(-850, 7);
                 }
             }
             else if (Manager.gemCount < 100)
@@ -36,7 +36,7 @@ public class GemScript : MonoBehaviour {
                 plus.transform.localPosition = new Vector2(-630, 0);
                 if (useOnePlus)
                 {
-                    onePlus.transform.localPosition = new Vector2(-960, 7);
+                    onePlus.transform.localPosition = new Vector2(-1000, 7);
                 }
             }
             else
@@ -44,7 +44,7 @@ public class GemScript : MonoBehaviour {
                 plus.transform.localPosition = new Vector2(-720, 0);
                 if (useOnePlus)
                 {
-                    onePlus.transform.localPosition = new Vector2(-1000, 7);
+                    onePlus.transform.localPosition = new Vector2(-1100, 7);
                 }
             }
         }

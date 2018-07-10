@@ -56,6 +56,9 @@ public class SquareScript : MonoBehaviour
 
     public bool isGenerated;
 
+    public Sprite circle;
+    public Sprite deadCircle;
+
     void Start()
     {
 
@@ -84,6 +87,9 @@ public class SquareScript : MonoBehaviour
         setColor = lineScript.setColor;
 
         countDownStart = lineScript.deadSquareCountStart;
+
+        circle = Resources.Load<Sprite>("Sprites/Circle2");
+        deadCircle = Resources.Load<Sprite>("Sprites/Deadcircle");
 
         if (loadColors)
         {
@@ -117,7 +123,7 @@ public class SquareScript : MonoBehaviour
 
             if (Manager.selectedTheme == 7)
             {
-                spriteRenderer.sprite = Manager.deadCircle;
+                spriteRenderer.sprite = deadCircle;
             }
 
             countDownPrefab = (GameObject)Resources.Load("Prefabs/CountDown", typeof(GameObject));
@@ -145,7 +151,7 @@ public class SquareScript : MonoBehaviour
         {
             if (Manager.selectedTheme == 7)
             {
-                spriteRenderer.sprite = Manager.circle;
+                spriteRenderer.sprite = circle;
             }
 
             if (Manager.selectedTheme == 8)
@@ -273,7 +279,7 @@ public class SquareScript : MonoBehaviour
 
         if (Manager.selectedTheme == 7)
         {
-            spriteRenderer.sprite = Manager.circle;
+            spriteRenderer.sprite = circle;
         }
 
         if (Manager.selectedTheme == 8)
@@ -283,7 +289,16 @@ public class SquareScript : MonoBehaviour
 
         if (colorNum == setColor.Length - 1)
         {
-            spriteRenderer.sprite = lineScript.deadSquare;
+            if (Manager.selectedTheme == 7)
+            {
+                spriteRenderer.sprite = deadCircle;
+            }
+
+            else 
+            {
+                spriteRenderer.sprite = lineScript.deadSquare;
+            }
+
             countDownPrefab = (GameObject)Resources.Load("Prefabs/CountDown", typeof(GameObject));
             countDown = Instantiate(countDownPrefab, transform);
             countDown.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
@@ -295,13 +310,27 @@ public class SquareScript : MonoBehaviour
 
         else
         {
-            spriteRenderer.sprite = lineScript.regularSquare;
+            if (Manager.selectedTheme == 7)
+            {
+                spriteRenderer.sprite = circle;
+            }
+         
+            else if (Manager.selectedTheme == 8)
+            {
+                spriteRenderer.sprite = Manager.cats[colorNum];
+            }
+
+            else
+            {
+                spriteRenderer.sprite = lineScript.regularSquare;
+            }
         }
 
         if (colorNum == setColor.Length - 1)
         {
             lineScript.AddToDeadSquareCounterList(number, countDownCounter);
         }
+
         else
         {
             lineScript.AddToDeadSquareCounterList(number, 0);

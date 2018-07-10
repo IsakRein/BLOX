@@ -1,6 +1,10 @@
 <dependencies>
   <packages>
-    <package>com.google.android.gms:play-services-ads:11.6.0</package>
+    <package>com.android.support:exifinterface:26.0.1+</package>
+    <package>com.android.support:support-v4:26.0.1+</package>
+    <package>com.google.android.gms:play-services-games:11.0+</package>
+    <package>com.google.android.gms:play-services-gcm:11.0+</package>
+    <package>com.google.android.gms:play-services-nearby:11.0+</package>
   </packages>
   <files />
 </dependencies>

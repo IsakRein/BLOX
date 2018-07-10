@@ -18,7 +18,7 @@
     <!--Game Play Services helper activity-->
     <activity android:name="com.voxelbusters.nativeplugins.helpers.PermissionRequestActivity" android:theme="@style/FloatingActivityTheme" />
     <!--Custom File Provider. Sharing from internal folders  "com.voxelbusters.nativeplugins.extensions.FileProviderExtended"-->
-    <provider android:name="com.voxelbusters.nativeplugins.extensions.FileProviderExtended" android:authorities="com.Company.ProductName.fileprovider" android:exported="false" android:grantUriPermissions="true">
+    <provider android:name="com.voxelbusters.nativeplugins.extensions.FileProviderExtended" android:authorities="com.Indigo.BLOX.fileprovider" android:exported="false" android:grantUriPermissions="true">
       <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/nativeplugins_file_paths" />
     </provider>
     <!--Billing : Amazon Billing Receiver-->
@@ -32,7 +32,7 @@
       <intent-filter>
         <action android:name="com.google.android.c2dm.intent.RECEIVE" />
         <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-        <category android:name="com.Company.ProductName" />
+        <category android:name="com.Indigo.BLOX" />
       </intent-filter>
     </receiver>
     <!--Notifications : Receiver for alarm to help Local Notifications-->
@@ -45,9 +45,9 @@
   <!--Billing-->
   <uses-permission android:name="com.android.vending.BILLING" />
   <!--For enabling GCM-->
-  <permission android:name="com.Company.ProductName.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+  <permission android:name="com.Indigo.BLOX.permission.C2D_MESSAGE" android:protectionLevel="signature" />
   <uses-permission android:name="android.permission.WAKE_LOCK" />
-  <uses-permission android:name="com.Company.ProductName.permission.C2D_MESSAGE" />
+  <uses-permission android:name="com.Indigo.BLOX.permission.C2D_MESSAGE" />
   <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
   <!--Notifications : If vibration is required for notification-->
   <uses-permission android:name="android.permission.VIBRATE" />

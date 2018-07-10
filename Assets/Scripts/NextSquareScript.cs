@@ -18,6 +18,9 @@ public class NextSquareScript : MonoBehaviour {
 
     public bool loadColors;
 
+    private Sprite circle;
+    private Sprite deadCircle;
+
 	void Start () {
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 
@@ -26,6 +29,9 @@ public class NextSquareScript : MonoBehaviour {
 
         squares = GameObject.Find("Squares");
         squareScript = squares.GetComponent<Game>();
+
+        circle = Resources.Load<Sprite>("Sprites/Circle2");
+        deadCircle = Resources.Load<Sprite>("Sprites/Deadcircle");
 
         setColor = lineScript.setColor;
 
@@ -102,7 +108,7 @@ public class NextSquareScript : MonoBehaviour {
         {
             if (Manager.selectedTheme == 7)
             {
-                spriteRenderer.sprite = Manager.deadCircle;
+                spriteRenderer.sprite = deadCircle;
             }
 
             else
@@ -115,7 +121,7 @@ public class NextSquareScript : MonoBehaviour {
         {
             if (Manager.selectedTheme == 7)
             {
-                spriteRenderer.sprite = Manager.circle;
+                spriteRenderer.sprite = circle;
             }
 
             else if (Manager.selectedTheme == 8) {
